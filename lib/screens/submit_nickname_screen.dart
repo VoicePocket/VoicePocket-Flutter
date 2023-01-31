@@ -28,11 +28,11 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
 
   void _onSubmit() {
     if (!_isNicknameValid()) return;
-    Navigator.push(
-      context,
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const HomeScreen(),
       ),
+      (route) => false,
     );
   }
 

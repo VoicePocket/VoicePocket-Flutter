@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/sizes.dart';
 
 class LoginButton extends StatelessWidget {
-  final bool disabled;
-
   const LoginButton({
-    required this.disabled,
     super.key,
   });
 
@@ -17,14 +14,13 @@ class LoginButton extends StatelessWidget {
         duration: const Duration(milliseconds: 500),
         margin: const EdgeInsets.only(bottom: Sizes.size10),
         decoration: BoxDecoration(
-          color:
-              disabled ? Colors.grey.shade200 : Theme.of(context).primaryColor,
+          color: Theme.of(context).primaryColor,
           borderRadius: BorderRadius.circular(Sizes.size32),
         ),
         child: AnimatedDefaultTextStyle(
           duration: const Duration(milliseconds: 500),
-          style: TextStyle(
-            color: disabled ? Colors.grey.shade600 : Colors.white,
+          style: const TextStyle(
+            color: Colors.white,
             fontSize: Sizes.size20,
             fontWeight: FontWeight.w600,
           ),
