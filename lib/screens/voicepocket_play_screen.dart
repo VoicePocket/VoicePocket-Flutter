@@ -22,13 +22,13 @@ class VoicePocketPlayScreen extends StatelessWidget {
   int _current = 0;
 
   final List<String> images = [
-    'images/page.png',
-    'images/page.png',
-    'images/page.png',
-    'images/page.png',
-    'images/page.png',
-    'images/page.png',
-    'images/page.png',
+    'images/playwidget.png',
+    'images/playwidget.png',
+    'images/playwidget.png',
+    'images/playwidget.png',
+    'images/playwidget.png',
+    'images/playwidget.png',
+    'images/playwidget.png',
   ];
 
   final List<String> places = [
