@@ -51,7 +51,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
     return images.map((element)=>ClipRRect(
       borderRadius: BorderRadius.circular(15.0),
       child: Image.asset(element,
-        fit:BoxFit.none,
+        fit:BoxFit.contain,
       ),
     )).toList();
   }
