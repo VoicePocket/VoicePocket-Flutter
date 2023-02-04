@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
@@ -5,9 +7,14 @@ import 'package:voicepocket/screens/create_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 
-class VoicePocketPlayScreen extends StatelessWidget {
+class VoicePocketPlayScreen extends StatefulWidget {
   VoicePocketPlayScreen({super.key});
 
+  @override
+  State<VoicePocketPlayScreen> createState() => _VoicePocketPlayScreenState();
+}
+
+class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   void _onCreateModelTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const CreateModelScreen()),
@@ -17,9 +24,12 @@ class VoicePocketPlayScreen extends StatelessWidget {
   final CarouselController _controller = CarouselController();
 
   List _isHovering = [false, false, false, false, false, false, false];
+
   List _isSelected = [true, false, false, false, false, false, false];
 
   int _current = 0;
+
+  double _value = 0.0;
 
   final List<String> images = [
     'images/playwidget.png',
@@ -44,7 +54,7 @@ class VoicePocketPlayScreen extends StatelessWidget {
     return images.map((element)=>ClipRRect(
       borderRadius: BorderRadius.circular(15.0),
       child: Image.asset(element,
-        fit:BoxFit.cover,
+        fit:BoxFit.contain,
       ),
     )).toList();
   }
@@ -81,10 +91,69 @@ class VoicePocketPlayScreen extends StatelessWidget {
                     children: [
                       CarouselSlider(items: generateImagesTiles(), options: CarouselOptions(
                         enlargeCenterPage: true,
-                      ))
+                      )),
                     ],
                   ),
-                )
+                ),
+                Slider(
+                  activeColor: Theme.of(context).primaryColor,
+                    value: _value,
+                    onChanged: (value) {
+                      setState(() {
+                        _value=value;
+                      });
+                    }
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    IconButton(
+                      padding: EdgeInsets.all(20),
+                      onPressed: ()=> MessageEvent(""),
+                      icon: Image.asset(
+                        "assets/images/return.png",
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.all(20),
+                      onPressed: ()=> MessageEvent(""),
+                      icon: Image.asset(
+                        "assets/images/back-button.png",
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.all(20),
+                      onPressed: ()=> MessageEvent(""),
+                      icon: Image.asset(
+                        "assets/images/play-button-arrowhead.png",
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.all(20),
+                      onPressed: ()=> MessageEvent(""),
+                      icon: Image.asset(
+                        "assets/images/forward-button.png",
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.all(20),
+                      onPressed: ()=> MessageEvent(""),
+                      icon: Image.asset(
+                        "assets/images/random.png",
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
