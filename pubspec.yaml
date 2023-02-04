@@ -68,6 +68,9 @@ flutter:
     - assets/images/random.png
     - assets/images/return.png
     - assets/images/back-button.png
+    - assets/images/speaker.png
+    - assets/images/playlist.png
+    - assets/images/heart.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

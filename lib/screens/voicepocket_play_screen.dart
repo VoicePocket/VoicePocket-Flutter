@@ -88,12 +88,36 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                 Container(
                   padding: const EdgeInsets.only(top: 50),
                   child: Stack(
+                    alignment: Alignment.topCenter,
                     children: [
                       CarouselSlider(items: generateImagesTiles(), options: CarouselOptions(
                         enlargeCenterPage: true,
                       )),
                     ],
                   ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    IconButton(
+                      padding: EdgeInsets.all(20),
+                      onPressed: ()=> MessageEvent(""),
+                      icon: Image.asset(
+                        "assets/images/speaker.png",
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.all(20),
+                      onPressed: ()=> MessageEvent(""),
+                      icon: Image.asset(
+                        "assets/images/playlist.png",
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
+                  ],
                 ),
                 Slider(
                   activeColor: Theme.of(context).primaryColor,
