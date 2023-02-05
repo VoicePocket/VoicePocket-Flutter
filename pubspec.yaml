@@ -63,7 +63,6 @@ flutter:
   assets:
     - assets/
     - assets/images/logo.png
-    - assets/images/playwidget.png
     - assets/images/play-button-arrowhead.png
     - assets/images/forward-button.png
     - assets/images/random.png
@@ -72,7 +71,7 @@ flutter:
     - assets/images/speaker.png
     - assets/images/playlist.png
     - assets/images/heart.png
-    - assets/images/playpage.png
+    - assets/images/playpage2.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

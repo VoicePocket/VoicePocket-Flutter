@@ -29,13 +29,13 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   double _value = 0.0;
 
   final List<String> images = [
-    'assets/images/playpage.png',
-    'assets/images/playpage.png',
-    'assets/images/playpage.png',
-    'assets/images/playpage.png',
-    'assets/images/playpage.png',
-    'assets/images/playpage.png',
-    'assets/images/playpage.png',
+    'assets/images/playpage2.png',
+    'assets/images/playpage2.png',
+    'assets/images/playpage2.png',
+    'assets/images/playpage2.png',
+    'assets/images/playpage2.png',
+    'assets/images/playpage2.png',
+    'assets/images/playpage2.png',
   ];
 
   final List<String> places = [
