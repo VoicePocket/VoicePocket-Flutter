@@ -2,13 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:voicepocket/models/text_model.dart';
 
-import 'device_info.dart';
-
-void postText(String text) async {
-  final String uuid = await getMobileId();
-
+void postText(String text, String uuid) async {
   final http.Response response = await http.post(
-    Uri.parse('http://10.0.2.2:8000/api/texts/psg1478795@naver.com/make_wav'),
+    Uri.parse('http://localhost:8000/api/texts/psg1478795@naver.com/make_wav'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -20,7 +16,8 @@ void postText(String text) async {
   print(response.body);
 
   if (response.statusCode == 201) {
-    TextModel.fromJson(json.decode(response.body));
+    TextModel model = TextModel.fromJson(json.decode(response.body));
+    print(model.text);
   } else {
     throw Exception('Failed to post');
   }

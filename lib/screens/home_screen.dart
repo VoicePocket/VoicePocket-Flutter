@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
   void _onVoiceTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => VoicePocketPlayScreen(),
+        builder: (context) => const VoicePocketPlayScreen(),
       ),
     );
   }

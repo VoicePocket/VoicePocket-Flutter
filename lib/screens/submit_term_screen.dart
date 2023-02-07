@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
-
-import 'submit_info_screen.dart';
+import 'package:voicepocket/screens/submit_info_screen.dart';
 
 class SubmitTermScreen extends StatelessWidget {
   const SubmitTermScreen({super.key});

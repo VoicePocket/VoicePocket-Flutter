@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/gaps.dart';
-import 'package:voicepocket/models/text_model.dart';
+import 'package:voicepocket/services/device_info.dart';
 import 'package:voicepocket/services/text_service.dart';
 
 class CreateModelScreen extends StatefulWidget {
@@ -13,7 +13,7 @@ class CreateModelScreen extends StatefulWidget {
 
 class _CreateModelScreenState extends State<CreateModelScreen> {
   final TextEditingController _textController = TextEditingController();
-  late Future<TextModel> _futureText;
+
   String name = "";
 
   @override
@@ -49,24 +49,29 @@ class _CreateModelScreenState extends State<CreateModelScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _textController,
+      body: FutureBuilder(
+        future: getMobileId(),
+        builder: (context, snapshot) {
+          return Padding(
+            padding: const EdgeInsets.all(10),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextField(
+                    controller: _textController,
+                  ),
+                  Gaps.v48,
+                  CupertinoButton(
+                    color: Theme.of(context).primaryColor,
+                    onPressed: () => postText(name, '${snapshot.data}'),
+                    child: const Text("POST"),
+                  ),
+                ],
               ),
-              Gaps.v48,
-              CupertinoButton(
-                color: Theme.of(context).primaryColor,
-                onPressed: () => postText(name),
-                child: const Text("POST"),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
