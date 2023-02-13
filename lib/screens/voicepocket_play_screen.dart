@@ -28,13 +28,13 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   double _value = 0.0;
 
   final List<String> images = [
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
   ];
 
   final List<String> places = [
@@ -52,7 +52,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
               borderRadius: BorderRadius.circular(15.0),
               child: Image.asset(
                 element,
-                fit: BoxFit.contain,
+                fit: BoxFit.cover,
               ),
             ))
         .toList();
@@ -98,6 +98,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                         CarouselSlider(
                             items: generateImagesTiles(),
                             options: CarouselOptions(
+                              height: MediaQuery.of(context).size.height * 0.58,
                               enlargeCenterPage: true,
                             )),
                       ],
