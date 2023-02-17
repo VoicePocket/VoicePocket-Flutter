@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/main_screen.dart';
+import 'package:voicepocket/screens/create_model.dart';
 
 void main() {
   runApp(const App());
@@ -33,7 +33,7 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      home: const MainScreen(),
+      home: const CreateModelScreen(),
     );
   }
 }

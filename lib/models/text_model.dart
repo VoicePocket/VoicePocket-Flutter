@@ -1,20 +1,22 @@
 class TextModel {
-  final String text;
-  final String uuid;
+  final int id;
+  //final int userId;
+  final String text, wavUrl, createdAt, updatedAt;
 
-  TextModel({
-    required this.uuid,
-    required this.text,
-  });
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data["uuid"] = uuid;
-    data["text"] = text;
-    return data;
-  }
+  TextModel(
+    this.id,
+    //this.userId,
+    this.wavUrl,
+    this.createdAt,
+    this.updatedAt,
+    this.text,
+  );
 
   TextModel.fromJson(Map<String, dynamic> json)
-      : uuid = json["uuid"],
+      : id = json["id"],
+        //userId = json["user_id"],
+        wavUrl = json["wav_url"],
+        createdAt = json["created_at"],
+        updatedAt = json["updated_at"],
         text = json["text"];
 }

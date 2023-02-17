@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/models/text_model.dart';
+import 'package:voicepocket/services/device_info.dart';
 import 'package:voicepocket/services/text_service.dart';
 
 class CreateModelScreen extends StatefulWidget {
@@ -13,15 +14,19 @@ class CreateModelScreen extends StatefulWidget {
 
 class _CreateModelScreenState extends State<CreateModelScreen> {
   final TextEditingController _textController = TextEditingController();
-  late Future<TextModel> _futureText;
-  String name = "";
+  TextModel? response;
+  String inputText = "";
+
+  void postTextTab(String text, String uuid) async {
+    response = await postText(text, uuid);
+  }
 
   @override
   void initState() {
     super.initState();
     _textController.addListener(() {
       setState(() {
-        name = _textController.text;
+        inputText = _textController.text;
       });
     });
   }
@@ -59,10 +64,15 @@ class _CreateModelScreenState extends State<CreateModelScreen> {
                 controller: _textController,
               ),
               Gaps.v48,
-              CupertinoButton(
-                color: Theme.of(context).primaryColor,
-                onPressed: () => postText(name),
-                child: const Text("POST"),
+              FutureBuilder(
+                future: getMobileId(),
+                builder: (context, snapshot) {
+                  return CupertinoButton(
+                    color: Theme.of(context).primaryColor,
+                    onPressed: () => postText(inputText, "${snapshot.data}"),
+                    child: const Text("POST"),
+                  );
+                },
               ),
             ],
           ),
