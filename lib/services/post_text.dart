@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 import 'package:voicepocket/models/text_model.dart';
+import 'package:voicepocket/services/bucket_to_local.dart';
 
-Future<TextModel> postText(String text, String uuid) async {
+Future<TextModel> postText(String text) async {
+  var uuid = const Uuid().v1();
   final http.Response response = await http.post(
     Uri.parse(
         'http://localhost:8000/api/texts/psg1478795@naver.com/make_wav'), // IOS
@@ -18,6 +21,7 @@ Future<TextModel> postText(String text, String uuid) async {
   if (response.statusCode == 201) {
     TextModel model = TextModel.fromJson(json.decode(response.body));
     print(model.wavUrl);
+    obtainCredentials(model, uuid);
     return model;
   } else {
     throw Exception('Failed to post');

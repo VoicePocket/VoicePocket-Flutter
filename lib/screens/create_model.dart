@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/models/text_model.dart';
-import 'package:voicepocket/services/device_info.dart';
-import 'package:voicepocket/services/text_service.dart';
+import 'package:voicepocket/services/post_text.dart';
 
 class CreateModelScreen extends StatefulWidget {
   const CreateModelScreen({super.key});
@@ -17,8 +16,11 @@ class _CreateModelScreenState extends State<CreateModelScreen> {
   TextModel? response;
   String inputText = "";
 
-  void postTextTab(String text, String uuid) async {
-    response = await postText(text, uuid);
+  void _postTextTab(String text) async {
+    response = await postText(text);
+    if (response == null) {
+      print("null");
+    }
   }
 
   @override
@@ -64,15 +66,16 @@ class _CreateModelScreenState extends State<CreateModelScreen> {
                 controller: _textController,
               ),
               Gaps.v48,
-              FutureBuilder(
-                future: getMobileId(),
-                builder: (context, snapshot) {
-                  return CupertinoButton(
-                    color: Theme.of(context).primaryColor,
-                    onPressed: () => postText(inputText, "${snapshot.data}"),
-                    child: const Text("POST"),
-                  );
-                },
+              CupertinoButton(
+                color: Theme.of(context).primaryColor,
+                onPressed: () => _postTextTab(inputText),
+                child: const Text("POST"),
+              ),
+              Gaps.v48,
+              CupertinoButton(
+                color: Theme.of(context).primaryColor,
+                onPressed: () {},
+                child: Text(response == null ? "null" : response!.wavUrl),
               ),
             ],
           ),
