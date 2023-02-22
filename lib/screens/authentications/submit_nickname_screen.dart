@@ -2,61 +2,53 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/submit_nickname_screen.dart';
+import 'package:voicepocket/screens/authentications/home_screen.dart';
 
-class SubmitInfoScreen extends StatefulWidget {
-  const SubmitInfoScreen({super.key});
+class SubmitNicknameScreen extends StatefulWidget {
+  const SubmitNicknameScreen({super.key});
 
   @override
-  State<SubmitInfoScreen> createState() => _SubmitInfoScreenState();
+  State<SubmitNicknameScreen> createState() => _SubmitNicknameScreenState();
 }
 
-class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
-  final TextEditingController _idController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
+  final TextEditingController _nicknameController = TextEditingController();
 
-  String _id = "";
-  String _password = "";
+  String _nickname = "";
 
   void _onScaffoldTab() => FocusScope.of(context).unfocus();
 
-  bool _isPasswordLengthValid() {
-    return _password.length >= 8 && _password.length <= 20;
-  }
-
-  bool _isPasswordValid() {
-    return _password.isNotEmpty && _isPasswordLengthValid();
+  bool _isNicknameValid() {
+    if (_nickname.length < 3 || _nickname.length > 10) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   void _onSubmit() {
-    if (!_isPasswordValid() || _id.isEmpty) return;
-    Navigator.push(
-      context,
+    if (!_isNicknameValid()) return;
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => const SubmitNicknameScreen(),
+        builder: (context) => const HomeScreen(),
       ),
+      (route) => false,
     );
   }
 
   @override
   void initState() {
     super.initState();
-    _idController.addListener(() {
+    _nicknameController.addListener(() {
       setState(() {
-        _id = _idController.text;
-      });
-    });
-    _passwordController.addListener(() {
-      setState(() {
-        _password = _passwordController.text;
+        _nickname = _nicknameController.text;
       });
     });
   }
 
   @override
   void dispose() {
-    _idController.dispose();
-    _passwordController.dispose();
+    _nicknameController.dispose();
     super.dispose();
   }
 
@@ -77,7 +69,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '아이디와 비밀번호를\n입력해주세요.',
+                  '닉네임을\n입력해주세요',
                   style: TextStyle(
                     fontSize: Sizes.size32,
                     color: Theme.of(context).primaryColor,
@@ -86,7 +78,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                 ),
                 Gaps.v52,
                 const Text(
-                  '아이디',
+                  '닉네임',
                   style: TextStyle(
                     fontSize: Sizes.size16,
                     fontWeight: FontWeight.w900,
@@ -98,7 +90,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                     color: Colors.black,
                     fontSize: Sizes.size16 + Sizes.size2,
                   ),
-                  controller: _idController,
+                  controller: _nicknameController,
                   cursorColor: Theme.of(context).primaryColor,
                   decoration: InputDecoration(
                     filled: true,
@@ -113,46 +105,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: _id.isEmpty ? Colors.red : Colors.grey.shade300,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        Sizes.size32,
-                      ),
-                    ),
-                  ),
-                ),
-                Gaps.v16,
-                const Text(
-                  '비밀번호',
-                  style: TextStyle(
-                    fontSize: Sizes.size16,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0XFF929292),
-                  ),
-                ),
-                TextField(
-                  //obscureText: _obsecureText,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: Sizes.size16 + Sizes.size2,
-                  ),
-                  controller: _passwordController,
-                  cursorColor: Theme.of(context).primaryColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade300,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        Sizes.size32,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _password.isEmpty
+                        color: _nickname.isEmpty
                             ? Colors.red
                             : Colors.grey.shade300,
                         width: 2,
@@ -164,7 +117,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                   ),
                 ),
                 const Text(
-                  'Your password must have:',
+                  'Your nickname must have:',
                   style: TextStyle(
                     fontSize: Sizes.size16,
                     fontWeight: FontWeight.w900,
@@ -175,16 +128,15 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                 Row(
                   children: [
                     FaIcon(
-                      _isPasswordLengthValid()
+                      _isNicknameValid()
                           ? FontAwesomeIcons.circleCheck
                           : FontAwesomeIcons.circleXmark,
-                      color:
-                          _isPasswordLengthValid() ? Colors.green : Colors.red,
+                      color: _isNicknameValid() ? Colors.green : Colors.red,
                       size: Sizes.size20,
                     ),
                     Gaps.h5,
                     const Text(
-                      '8 to 20 characters',
+                      '3 to 10 characters',
                       style: TextStyle(
                         fontSize: Sizes.size14,
                         fontWeight: FontWeight.w500,
@@ -193,6 +145,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                     ),
                   ],
                 ),
+                Gaps.v96,
                 Gaps.v96,
                 GestureDetector(
                   onTap: _onSubmit,
@@ -211,7 +164,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Text(
-                          "다음으로",
+                          "시작하기",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: Sizes.size20,

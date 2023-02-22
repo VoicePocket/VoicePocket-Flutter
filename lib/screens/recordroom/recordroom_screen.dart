@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/create_model.dart';
+import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 
 class RecordRoomScreen extends StatelessWidget {
   const RecordRoomScreen({super.key});
 
   void _onCreateModelTab(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const CreateModelScreen()),
+      MaterialPageRoute(builder: (context) => const PostTextScreen()),
     );
   }
 

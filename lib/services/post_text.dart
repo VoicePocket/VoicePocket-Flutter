@@ -21,7 +21,7 @@ Future<TextModel> postText(String text) async {
   if (response.statusCode == 201) {
     TextModel model = TextModel.fromJson(json.decode(response.body));
     print(model.wavUrl);
-    obtainCredentials(model, uuid);
+    await obtainCredentials(model, uuid);
     return model;
   } else {
     throw Exception('Failed to post');

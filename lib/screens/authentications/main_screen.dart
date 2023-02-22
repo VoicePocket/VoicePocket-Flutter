@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/home_screen.dart';
-import 'package:voicepocket/screens/submit_term_screen.dart';
+import 'package:voicepocket/screens/authentications/home_screen.dart';
+import 'package:voicepocket/screens/authentications/submit_term_screen.dart';
 import 'package:voicepocket/widgets/login_button.dart';
 import 'package:voicepocket/widgets/membership_button.dart';
 
-import '../constants/gaps.dart';
+import '../../constants/gaps.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

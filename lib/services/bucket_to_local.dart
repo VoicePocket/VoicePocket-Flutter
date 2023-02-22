@@ -20,15 +20,12 @@ Future<void> obtainCredentials(TextModel response, String uuid) async {
 
     var directory = await getApplicationDocumentsDirectory();
 
-    await bucket
-        .read(response.wavUrl)
-        .pipe(File("${directory.path}/$uuid.wav").openWrite());
+    await bucket.read(response.wavUrl).pipe(
+          File("${directory.path}/${response.wavUrl.split("/")[1]}")
+              .openWrite(),
+        );
 
-    await File('${directory.path}/my-file.txt')
-        .openRead()
-        .pipe(bucket.write('response.wavUrl'));
-    print(directory.path);
-    print(storage);
+    print("${directory.path}/${response.wavUrl.split("/")[1]}");
   } finally {
     client.close();
   }

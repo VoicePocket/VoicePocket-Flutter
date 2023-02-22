@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/create_model.dart';
+import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 
 void main() {
   runApp(const App());
@@ -33,7 +33,7 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      home: const CreateModelScreen(),
+      home: const PostTextScreen(),
     );
   }
 }

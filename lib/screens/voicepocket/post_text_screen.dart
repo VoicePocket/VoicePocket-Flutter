@@ -1,17 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/gaps.dart';
+import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/text_model.dart';
+import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/post_text.dart';
 
-class CreateModelScreen extends StatefulWidget {
-  const CreateModelScreen({super.key});
+class PostTextScreen extends StatefulWidget {
+  const PostTextScreen({super.key});
 
   @override
-  State<CreateModelScreen> createState() => _CreateModelScreenState();
+  State<PostTextScreen> createState() => _PostTextScreenState();
 }
 
-class _CreateModelScreenState extends State<CreateModelScreen> {
+class _PostTextScreenState extends State<PostTextScreen> {
   final TextEditingController _textController = TextEditingController();
   TextModel? response;
   String inputText = "";
@@ -21,6 +23,14 @@ class _CreateModelScreenState extends State<CreateModelScreen> {
     if (response == null) {
       print("null");
     }
+    if (!mounted) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MediaPlayerScreen(
+          path: response!.wavUrl.split("/")[1],
+        ),
+      ),
+    );
   }
 
   @override
@@ -31,6 +41,16 @@ class _CreateModelScreenState extends State<CreateModelScreen> {
         inputText = _textController.text;
       });
     });
+  }
+
+  void _onListenTap() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MediaPlayerScreen(
+          path: response!.wavUrl.split("/")[1],
+        ),
+      ),
+    );
   }
 
   @override
@@ -64,18 +84,20 @@ class _CreateModelScreenState extends State<CreateModelScreen> {
             children: [
               TextField(
                 controller: _textController,
+                style: const TextStyle(
+                  fontSize: Sizes.size24,
+                ),
               ),
               Gaps.v48,
               CupertinoButton(
                 color: Theme.of(context).primaryColor,
                 onPressed: () => _postTextTab(inputText),
-                child: const Text("POST"),
-              ),
-              Gaps.v48,
-              CupertinoButton(
-                color: Theme.of(context).primaryColor,
-                onPressed: () {},
-                child: Text(response == null ? "null" : response!.wavUrl),
+                child: const Text(
+                  "POST",
+                  style: TextStyle(
+                    fontSize: Sizes.size24,
+                  ),
+                ),
               ),
             ],
           ),
