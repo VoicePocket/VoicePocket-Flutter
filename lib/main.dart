@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
 
 void main() {
   runApp(const App());
@@ -33,7 +33,7 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      home: const PostTextScreen(),
+      home: const VoicePocketPlayScreen(),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 
 class VoicePocketPlayScreen extends StatefulWidget {
   const VoicePocketPlayScreen({super.key});
@@ -11,7 +11,7 @@ class VoicePocketPlayScreen extends StatefulWidget {
 }
 
 class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
-  void _onCreateModelTab() {
+  void _onCreateModelTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const PostTextScreen()),
     );
@@ -28,13 +28,13 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   double _value = 0.0;
 
   final List<String> images = [
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
-    'assets/images/playpage2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
+    'assets/images/Frame2.png',
   ];
 
   final List<String> places = [
@@ -48,15 +48,13 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
 
   List<Widget> generateImagesTiles() {
     return images
-        .map(
-          (element) => ClipRRect(
-            borderRadius: BorderRadius.circular(15.0),
-            child: Image.asset(
-              element,
-              fit: BoxFit.contain,
-            ),
-          ),
-        )
+        .map((element) => ClipRRect(
+              borderRadius: BorderRadius.circular(15.0),
+              child: Image.asset(
+                element,
+                fit: BoxFit.cover,
+              ),
+            ))
         .toList();
   }
 
@@ -100,6 +98,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                         CarouselSlider(
                             items: generateImagesTiles(),
                             options: CarouselOptions(
+                              height: MediaQuery.of(context).size.height * 0.58,
                               enlargeCenterPage: true,
                             )),
                       ],
