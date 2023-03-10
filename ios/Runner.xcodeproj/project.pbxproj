@@ -76,7 +76,6 @@
 				8479837602762236B70B80B5 /* Pods-Runner.release.xcconfig */,
 				F8F3BC3AE93F302C8B6C6AF7 /* Pods-Runner.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -364,6 +363,29 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"audio_session\"",
+					"-framework",
+					"\"audioplayers_darwin\"",
+					"-framework",
+					"\"flutter_sound\"",
+					"-framework",
+					"\"flutter_sound_core\"",
+					"-framework",
+					"\"just_audio\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"permission_handler_apple\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.voicepocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -492,6 +514,29 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"audio_session\"",
+					"-framework",
+					"\"audioplayers_darwin\"",
+					"-framework",
+					"\"flutter_sound\"",
+					"-framework",
+					"\"flutter_sound_core\"",
+					"-framework",
+					"\"just_audio\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"permission_handler_apple\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.voicepocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -513,6 +558,29 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+					"-framework",
+					"\"AVFoundation\"",
+					"-framework",
+					"\"MediaPlayer\"",
+					"-framework",
+					"\"audio_session\"",
+					"-framework",
+					"\"audioplayers_darwin\"",
+					"-framework",
+					"\"flutter_sound\"",
+					"-framework",
+					"\"flutter_sound_core\"",
+					"-framework",
+					"\"just_audio\"",
+					"-framework",
+					"\"path_provider_foundation\"",
+					"-framework",
+					"\"permission_handler_apple\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.voicepocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";

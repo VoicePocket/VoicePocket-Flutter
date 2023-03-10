@@ -53,6 +53,6 @@
     	<true/>
 	</dict>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>... explain why the app uses the microphone here ...</string>
+	<string>explain why the app uses the microphone here</string>
 </dict>
 </plist>

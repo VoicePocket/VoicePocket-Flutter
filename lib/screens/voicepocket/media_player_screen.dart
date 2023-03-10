@@ -25,9 +25,11 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
     super.initState();
     setAudio();
     audioPlayer.onPlayerStateChanged.listen((state) {
-      setState(() {
-        isPlaying = state == PlayerState.playing;
-      });
+      if (mounted) {
+        setState(() {
+          isPlaying = state == PlayerState.playing;
+        });
+      }
     });
     audioPlayer.onDurationChanged.listen((newDuration) {
       setState(() {
@@ -42,7 +44,7 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
   }
 
   Future setAudio() async {
-    audioPlayer.setReleaseMode(ReleaseMode.loop);
+    audioPlayer.setReleaseMode(ReleaseMode.stop);
 
     var directory = await getApplicationDocumentsDirectory();
     final file = File("${directory.path}/${widget.path}");
@@ -71,7 +73,13 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Image.asset(
+          "assets/images/logo.png",
+          width: 55,
+          height: 55,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
