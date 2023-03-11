@@ -54,5 +54,9 @@
 	</dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>explain why the app uses the microphone here</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
 </dict>
 </plist>

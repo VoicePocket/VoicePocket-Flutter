@@ -45,6 +45,9 @@ dependencies:
   permission_handler: ^10.2.0
   uuid: ^3.0.6
   flutter_sound: ^9.2.13
+  assets_audio_player: ^3.0.6
+  intl: ^0.18.0
+  sound_recorder: ^0.0.2
 
 dev_dependencies:
   flutter_test:
