@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 
@@ -16,6 +18,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
       MaterialPageRoute(builder: (context) => const PostTextScreen()),
     );
   }
+  final player = AudioPlayer(); 
 
   final CarouselController _controller = CarouselController();
 
@@ -25,15 +28,11 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
 
   final int _current = 0;
 
+  List<String> alone = [];
+
   double _value = 0.0;
 
   final List<String> images = [
-    'assets/images/Frame2.png',
-    'assets/images/Frame2.png',
-    'assets/images/Frame2.png',
-    'assets/images/Frame2.png',
-    'assets/images/Frame2.png',
-    'assets/images/Frame2.png',
     'assets/images/Frame2.png',
   ];
 
@@ -47,16 +46,39 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   ];
 
   List<Widget> generateImagesTiles() {
-    return images
-        .map((element) => ClipRRect(
+    return images.map((element) => ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
               child: Image.asset(
                 element,
-                fit: BoxFit.cover,
+                fit: BoxFit.cover,                
               ),
+              
             ))
         .toList();
   }
+
+  loadPathSounds(BuildContext context) async {
+    List<String> listaAssetsFiltered = [];
+
+  // Load as String
+    final manifestContent =
+      await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
+
+    // Decode to Map
+    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+
+    // Filter
+    final List<String> listMp3 = manifestMap.keys.where((String key) => key.contains('.mp3')).toList();
+
+    for (String mp3 in listMp3){
+      listaAssetsFiltered.add(mp3);
+    }
+
+    setState((){
+      alone = listaAssetsFiltered;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -86,12 +108,8 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
-                  //Carousel slider 크기 조절 부분
-                  //fit: FlexFit.tight,
-                  //flex:6,
                   child: Container(
                     alignment: Alignment.topCenter,
-                    //padding: const EdgeInsets.only(top: 50),
                     child: Stack(
                       alignment: Alignment.topCenter,
                       children: [
@@ -106,9 +124,6 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                   ),
                 ),
                 Flexible(
-                  //재생관련 부분 크기 조절
-                  //fit: FlexFit.tight,
-                  //flex: 3,
                   child: Container(
                     alignment: Alignment.bottomCenter,
                     child: Column(children: [
@@ -124,6 +139,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                               height: 40,
                             ),
                           ),
+                          //Text(alone[0]),
                           IconButton(
                             padding: const EdgeInsets.all(20),
                             onPressed: () => (""),
