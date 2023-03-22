@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
+import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 
 const sentences = [
   "Daily Life",
@@ -57,12 +59,15 @@ class RecordroomStudioScreen extends StatefulWidget {
 }
 
 class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
+  final recorder = FlutterSoundRecorder();
+  bool isRecorderReady = false;
+
   int _index = 1;
   final int _maxLine = sentences.length;
   double _value = 0.0;
   @override
   void initState() {
-    //initRecorder();
+    initRecorder();
     super.initState();
   }
 
@@ -72,25 +77,31 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     super.dispose();
   }
 
-  final recorder = FlutterSoundRecorder();
-
-  Future<void> initRecorder() async {
+  Future initRecorder() async {
     final status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {
-      openAppSettings();
+      throw "Microphone permission not granted";
     }
-    await recorder.openRecorder();
-    recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
+    recorder.openRecorder();
+    isRecorderReady = true;
+    await recorder.setSubscriptionDuration(
+      const Duration(milliseconds: 100),
+    );
   }
 
-  Future startRecord() async {
-    await recorder.startRecorder(toFile: "audio");
+  Future _startRecording() async {
+    if (!isRecorderReady) return;
+    await recorder.startRecorder(
+      toFile: "audioFile_${DateTime.now().millisecondsSinceEpoch}.aac",
+    );
   }
 
-  Future stopRecorder() async {
-    final filePath = await recorder.stopRecorder();
-    final file = File(filePath!);
-    print('Recorded file path: $filePath');
+  Future _stopRecording() async {
+    if (!isRecorderReady) return;
+    final path = await recorder.stopRecorder();
+    final audioFile = File(path!);
+
+    print(audioFile);
   }
 
   void toNextPage() {
@@ -238,7 +249,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                     ),
                     Gaps.v20,
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -259,7 +270,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                             shape: BoxShape.rectangle,
                           ),
                           child: IconButton(
-                            padding: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(10),
                             onPressed: () => (""),
                             icon: Image.asset(
                               "assets/images/return.png",
@@ -288,8 +299,16 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                             shape: BoxShape.rectangle,
                           ),
                           child: IconButton(
-                            padding: const EdgeInsets.all(20),
-                            onPressed: () => (""),
+                            padding: const EdgeInsets.all(10),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const MediaPlayerScreen(
+                                    path: "",
+                                  ),
+                                ),
+                              );
+                            },
                             icon: Image.asset(
                               "assets/images/play-button-arrowhead.png",
                               width: 40,
@@ -317,7 +336,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                             shape: BoxShape.rectangle,
                           ),
                           child: IconButton(
-                            padding: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(10),
                             onPressed: () => _index == _maxLine
                                 ? completeModelCreate(context)
                                 : toNextPage(),
@@ -339,13 +358,11 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
               FloatingActionButton.large(
                 backgroundColor: Theme.of(context).primaryColor,
                 onPressed: () async {
-                  // if (recorder.isRecording) {
-                  //   await stopRecorder();
-                  //   setState(() {});
-                  // } else {
-                  //   await startRecord();
-                  //   setState(() {});
-                  // }
+                  if (recorder.isRecording) {
+                    await _stopRecording();
+                  } else {
+                    await _startRecording();
+                  }
                 },
                 child: Container(
                   decoration: const BoxDecoration(

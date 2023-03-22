@@ -19,8 +19,6 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.0.4):
     - Flutter
-  - sound_recorder (0.0.1):
-    - Flutter
 
 DEPENDENCIES:
   - assets_audio_player (from `.symlinks/plugins/assets_audio_player/ios`)
@@ -32,7 +30,6 @@ DEPENDENCIES:
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
-  - sound_recorder (from `.symlinks/plugins/sound_recorder/ios`)
 
 SPEC REPOS:
   trunk:
@@ -57,8 +54,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
-  sound_recorder:
-    :path: ".symlinks/plugins/sound_recorder/ios"
 
 SPEC CHECKSUMS:
   assets_audio_player: edee322b9cb625571b830b35872ead1a295fd917
@@ -71,8 +66,7 @@ SPEC CHECKSUMS:
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   path_provider_foundation: 37748e03f12783f9de2cb2c4eadfaa25fe6d4852
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
-  sound_recorder: 140a13e135c77d6658f1e26bbd9f0975ea1eae4c
 
-PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
+PODFILE CHECKSUM: bf9668808f37e361e7fd372fb5e83b179ae1ad54
 
 COCOAPODS: 1.11.3

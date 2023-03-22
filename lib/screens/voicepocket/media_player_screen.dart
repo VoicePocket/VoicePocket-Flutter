@@ -32,14 +32,18 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
       }
     });
     audioPlayer.onDurationChanged.listen((newDuration) {
-      setState(() {
-        duration = newDuration;
-      });
+      if (mounted) {
+        setState(() {
+          duration = newDuration;
+        });
+      }
     });
     audioPlayer.onPositionChanged.listen((newPosition) {
-      setState(() {
-        position = newPosition;
-      });
+      if (mounted) {
+        setState(() {
+          position = newPosition;
+        });
+      }
     });
   }
 

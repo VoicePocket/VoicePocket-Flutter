@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
-import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
+import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
   void _onVoiceTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const VoicePocketPlayScreen(),
+        builder: (context) => const PostTextScreen(),
       ),
     );
   }
