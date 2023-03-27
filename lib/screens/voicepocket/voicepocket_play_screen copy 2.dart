@@ -5,7 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
-import 'dart:io' as io;
+import 'dart:io';
 
 class VoicePocketPlayScreen extends StatefulWidget {
   const VoicePocketPlayScreen({super.key});
