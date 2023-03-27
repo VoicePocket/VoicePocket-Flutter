@@ -211,11 +211,11 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                         await player.play(UrlSource(songs2![recent_song]));
                                       }
                                     },
-                                    icon: Image.asset(
-                                      "assets/images/play-button-arrowhead.png",
-                                      width: 40,
-                                      height: 40,
-                                    ),
+                                    icon: Icon(
+                                      isPlaying ? Icons.pause : Icons.play_arrow,
+                                      ),
+                                      color: Theme.of(context).primaryColor,
+                                      iconSize: Sizes.size40,
                                   ),
                                   IconButton(
                                     padding: const EdgeInsets.all(20),
