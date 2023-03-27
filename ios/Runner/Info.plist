@@ -51,6 +51,8 @@
 	<dict>
     	<key>NSAllowsArbitraryLoads</key>
     	<true/>
+    	<key>NSAllowsArbitraryLoadsInWebContent</key>
+    	<true/>
 	</dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>... explain why the app uses the microphone here ...</string>

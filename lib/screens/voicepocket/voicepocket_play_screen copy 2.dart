@@ -23,63 +23,36 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   
   final player = AudioPlayer(); 
 
-  final CarouselController _controller = CarouselController();
-
-  final List _isHovering = [false, false, false, false, false, false, false];
-
-  final List _isSelected = [true, false, false, false, false, false, false];
-
   final int _current = 0;
-  
 
-  List<String> alone = [];
+  int recent_song = 0;
+  List? songs2 = [];
 
   double _value = 0.0;
 
-  final List<String> images = [
-    'assets/images/Frame2.png',
-  ];
+  bool isPlaying = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
 
-  final List<String> places = [
-    'ASIA',
-    'AFRICA',
-    'EUROPE',
-    'SOUTH AMERICA',
-    'AUSTRALIA',
-    'ANTARCTICA',
-  ];
-
-  loadPathSounds(BuildContext context) async {
-    List<String> listaAssetsFiltered = [];
-
-    //var directory = (await getApplicationDocumentsDirectory()).path;
-
-    // Load as String
-    final manifestContent =
-      //await rootBundle.loadString('assets/AssetManifest.json');
-      await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
-
-    // Decode to Map
-    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-
-    // Filter
-    //final List<String> listMp3 = manifestMap.keys.where((String key) => key.contains('.mp3')).toList();
-
-    final listMp3 = manifestMap.keys
-      .where((String key) => key.contains('song/'))
-      .where((String key) => key.contains('.mp3'))
-      .toList();
-
-    //for (String mp3 in listMp3){
-      //listaAssetsFiltered.add(mp3);
-    //}
-
-    setState((){
-      alone = listMp3;
-      //alone = io.Directory("$directory").listSync();
+  @override
+  void initState() {
+    super.initState();
+    player.onPlayerStateChanged.listen((state) {
+      setState(() {
+        isPlaying = state == PlayerState.playing;
+      });
+    });
+    player.onDurationChanged.listen((newDuration) {
+      setState(() {
+        duration = newDuration;
+      });
+    });
+    player.onPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -123,8 +96,8 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                               return CarouselSlider.builder(
                                 itemCount: songs?.length, 
                                 //itemCount: places.length,
-                                itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) =>
-                                  Container(
+                                itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
+                                  return Container(
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
@@ -135,14 +108,19 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                             fit: BoxFit.cover,
                                             ),
                                         ),
-                                        Text(songs?[itemIndex])
-                                        //Text(alone[itemIndex])
+                                        Text(songs?[itemIndex]),
                                   ],
                                 )
-                              ),
+                              );},
                               options: CarouselOptions(
                                 height: MediaQuery.of(context).size.height * 0.58,
                                 enlargeCenterPage: true,
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    print(index.toString());
+                                    recent_song = index;
+                                  });
+                                },
                               )
                               );
                             }
@@ -160,87 +138,111 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                   child: Container(
                     alignment: Alignment.bottomCenter,
                     child: Column(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          IconButton(
-                            padding: const EdgeInsets.all(20),
-                            onPressed: () => (""),
-                            icon: Image.asset(
-                              "assets/images/speaker.png",
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                          IconButton(
-                            padding: const EdgeInsets.all(20),
-                            onPressed: () => (""),
-                            icon: Image.asset(
-                              "assets/images/playlist.png",
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Slider(
-                          activeColor: Theme.of(context).primaryColor,
-                          value: _value,
-                          onChanged: (value) {
-                            setState(() {
-                              _value = value;
-                            });
-                          }),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          IconButton(
-                            padding: const EdgeInsets.all(20),
-                            onPressed: () => (""),
-                            icon: Image.asset(
-                              "assets/images/return.png",
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                          IconButton(
-                            padding: const EdgeInsets.all(20),
-                            onPressed: () => (""),
-                            icon: Image.asset(
-                              "assets/images/back-button.png",
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                          IconButton(
-                            padding: const EdgeInsets.all(20),
-                            onPressed: () => (""),
-                            icon: Image.asset(
-                              "assets/images/play-button-arrowhead.png",
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                          IconButton(
-                            padding: const EdgeInsets.all(20),
-                            onPressed: () => (""),
-                            icon: Image.asset(
-                              "assets/images/forward-button.png",
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                          IconButton(
-                            padding: const EdgeInsets.all(20),
-                            onPressed: () => (""),
-                            icon: Image.asset(
-                              "assets/images/random.png",
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                        ],
-                      ),
+                      FutureBuilder(
+                      future: DefaultAssetBundle.of(context).loadString('AssetManifest.json'),
+                          builder: (context, item){
+                            if(item.hasData){
+                              Map? jsonMap = json.decode(item.data!);
+                              List? songs2 = jsonMap?.keys.where((element) => element.contains('.mp3')).toList();
+                              return Container(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  IconButton(
+                                    padding: const EdgeInsets.all(20),
+                                    onPressed: () => (""),
+                                    icon: Image.asset(
+                                      "assets/images/speaker.png",
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                                  Text(recent_song.toString()),
+                                  //Text(songs2![recent_song]),
+                                  IconButton(
+                                    padding: const EdgeInsets.all(20),
+                                    onPressed: () => (""),
+                                    icon: Image.asset(
+                                      "assets/images/playlist.png",
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Slider(
+                                  activeColor: Theme.of(context).primaryColor,
+                                  value: _value,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _value = value;
+                                    });
+                                  }),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  IconButton(
+                                    padding: const EdgeInsets.all(20),
+                                    onPressed: () => (""),
+                                    icon: Image.asset(
+                                      "assets/images/return.png",
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    padding: const EdgeInsets.all(20),
+                                    onPressed: () => (""),
+                                    icon: Image.asset(
+                                      "assets/images/back-button.png",
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    padding: const EdgeInsets.all(20),
+                                    onPressed: () async {
+                                      if (isPlaying) {
+                                        await player.pause();
+                                      }
+                                      else {
+                                        await player.play(UrlSource(songs2![recent_song]));
+                                      }
+                                    },
+                                    icon: Image.asset(
+                                      "assets/images/play-button-arrowhead.png",
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    padding: const EdgeInsets.all(20),
+                                    onPressed: () => (""),
+                                    icon: Image.asset(
+                                      "assets/images/forward-button.png",
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    padding: const EdgeInsets.all(20),
+                                    onPressed: () => (""),
+                                    icon: Image.asset(
+                                      "assets/images/random.png",
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                                  ],)
+                              );
+                            }
+                      else{
+                              return const Center(child: Text("no songs in assets"));
+                            };})
                     ]),
                   ),
                 ),
