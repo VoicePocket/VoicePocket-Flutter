@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter_audio_recorder2/flutter_audio_recorder2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
@@ -51,6 +51,13 @@ const sentences = [
   "Home & Garden",
 ];
 
+enum RecordingState {
+  unready,
+  ready,
+  recording,
+  stopped,
+}
+
 class RecordroomStudioScreen extends StatefulWidget {
   const RecordroomStudioScreen({Key? key}) : super(key: key);
 
@@ -59,55 +66,106 @@ class RecordroomStudioScreen extends StatefulWidget {
 }
 
 class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
-  final recorder = FlutterSoundRecorder();
-  bool isRecorderReady = false;
+  int seconds = 0, minutes = 0;
+  String digitSeconds = "00", digitMinutes = "00";
+
+  IconData _recordIcon = FontAwesomeIcons.microphone;
+  String _recordText = 'Click To Start';
+  RecordingState _recordingState = RecordingState.unready;
+  late FlutterAudioRecorder2 audioRecorder;
 
   int _index = 1;
   final int _maxLine = sentences.length;
   double _value = 0.0;
+
   @override
   void initState() {
-    initRecorder();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    recorder.closeRecorder();
-    super.dispose();
-  }
-
-  Future initRecorder() async {
-    final status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      throw "Microphone permission not granted";
-    }
-    recorder.openRecorder();
-    isRecorderReady = true;
-    await recorder.setSubscriptionDuration(
-      const Duration(milliseconds: 100),
-    );
-  }
-
-  Future _startRecording() async {
-    if (!isRecorderReady) return;
-    await recorder.startRecorder(
-      toFile: "audioFile_${DateTime.now().millisecondsSinceEpoch}.aac",
-    );
-  }
-
-  Future _stopRecording() async {
-    if (!isRecorderReady) return;
-    final path = await recorder.stopRecorder();
-    final audioFile = File(path!);
-
-    print(audioFile);
+    FlutterAudioRecorder2.hasPermissions.then((hasPermision) {
+      if (hasPermision!) {
+        _recordingState = RecordingState.ready;
+        _recordIcon = FontAwesomeIcons.microphoneSlash;
+        _recordText = 'Record';
+      }
+    });
   }
 
   void toNextPage() {
     setState(() {
       _index = _index + 1;
     });
+  }
+
+  Future<void> _onRecordButtonPressed() async {
+    switch (_recordingState) {
+      case RecordingState.ready:
+        await _recordVoice();
+        break;
+
+      case RecordingState.recording:
+        await _stopRecording();
+        _recordingState = RecordingState.stopped;
+        _recordIcon = FontAwesomeIcons.solidCircle;
+        _recordText = 'Record new one';
+        break;
+
+      case RecordingState.stopped:
+        await _recordVoice();
+        break;
+
+      case RecordingState.unready:
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Please allow recording from settings.'),
+        ));
+        break;
+    }
+  }
+
+  _initRecorder() async {
+    Directory appDirectory = await getApplicationDocumentsDirectory();
+    String filePath =
+        '${appDirectory.path}/${DateTime.now().millisecondsSinceEpoch}.wav';
+    print(filePath);
+    audioRecorder =
+        FlutterAudioRecorder2(filePath, audioFormat: AudioFormat.WAV);
+    await audioRecorder.initialized;
+  }
+
+  _startRecording() async {
+    await audioRecorder.start();
+    // await audioRecorder.current(channel: 0);
+  }
+
+  _stopRecording() async {
+    await audioRecorder.stop();
+  }
+
+  Future<void> _recordVoice() async {
+    final hasPermission = await FlutterAudioRecorder2.hasPermissions;
+    if (hasPermission ?? false) {
+      await _initRecorder();
+
+      await _startRecording();
+      _recordingState = RecordingState.recording;
+      _recordIcon = FontAwesomeIcons.stop;
+      _recordText = 'Recording';
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please allow recording from settings.'),
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _recordingState = RecordingState.unready;
+    super.dispose();
   }
 
   void completeModelCreate(BuildContext context) {
@@ -210,29 +268,13 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                 ),
               ),
               Gaps.v20,
-              StreamBuilder<RecordingDisposition>(
-                builder: (context, snapshot) {
-                  final duration = snapshot.hasData
-                      ? snapshot.data!.duration
-                      : Duration.zero;
-
-                  String twoDigits(int n) => n.toString().padLeft(2, '0');
-
-                  final twoDigitMinutes =
-                      twoDigits(duration.inMinutes.remainder(60));
-                  final twoDigitSeconds =
-                      twoDigits(duration.inSeconds.remainder(60));
-
-                  return Text(
-                    '$twoDigitMinutes:$twoDigitSeconds',
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: Sizes.size32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                },
-                stream: recorder.onProgress,
+              Text(
+                "00:00",
+                style: TextStyle(
+                  color: Colors.grey.shade700,
+                  fontSize: Sizes.size32,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Container(
                 alignment: Alignment.bottomCenter,
@@ -358,23 +400,22 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
               FloatingActionButton.large(
                 backgroundColor: Theme.of(context).primaryColor,
                 onPressed: () async {
-                  if (recorder.isRecording) {
-                    await _stopRecording();
-                  } else {
-                    await _startRecording();
-                  }
+                  await _onRecordButtonPressed();
+                  setState(() {});
                 },
                 child: Container(
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                   ),
                   child: FaIcon(
-                    recorder.isRecording
-                        ? FontAwesomeIcons.stop
-                        : FontAwesomeIcons.microphone,
+                    _recordIcon,
                     size: Sizes.size64,
                   ),
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Text(_recordText),
               ),
             ],
           ),

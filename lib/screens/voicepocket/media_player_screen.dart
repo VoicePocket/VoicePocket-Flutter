@@ -15,6 +15,8 @@ class MediaPlayerScreen extends StatefulWidget {
 }
 
 class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
+  final stopwatch = Stopwatch();
+
   final audioPlayer = AudioPlayer();
   bool isPlaying = false;
   Duration duration = Duration.zero;
