@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_recorder2/flutter_audio_recorder2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
-import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 
 const sentences = [
   "Daily Life",
@@ -66,6 +67,7 @@ class RecordroomStudioScreen extends StatefulWidget {
 }
 
 class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
+  late Directory routeDir;
   int seconds = 0, minutes = 0;
   String digitSeconds = "00", digitMinutes = "00";
 
@@ -88,12 +90,28 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
         _recordText = 'Record';
       }
     });
+    createModelFolder().then((dir) => routeDir = dir);
   }
 
   void toNextPage() {
     setState(() {
       _index = _index + 1;
     });
+  }
+
+  Future<Directory> createModelFolder() async {
+    final routeDir = await getApplicationDocumentsDirectory();
+    final dir = Directory('${routeDir.path}/model');
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+    if ((await dir.exists())) {
+      return dir;
+    } else {
+      dir.create();
+      return dir;
+    }
   }
 
   Future<void> _onRecordButtonPressed() async {
@@ -123,11 +141,14 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     }
   }
 
+  void zipEncoder(Directory dir, String zipPath) {
+    var encoder = ZipFileEncoder();
+    encoder.zipDirectory(dir, filename: zipPath);
+  }
+
   _initRecorder() async {
-    Directory appDirectory = await getApplicationDocumentsDirectory();
     String filePath =
-        '${appDirectory.path}/${DateTime.now().millisecondsSinceEpoch}.wav';
-    print(filePath);
+        "${routeDir.path}/${DateTime.now().millisecondsSinceEpoch}.wav";
     audioRecorder =
         FlutterAudioRecorder2(filePath, audioFormat: AudioFormat.WAV);
     await audioRecorder.initialized;
@@ -169,6 +190,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   }
 
   void completeModelCreate(BuildContext context) {
+    zipEncoder(routeDir, "${routeDir.path}/psg1478795@naver.zip");
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const RecordroomMainScreen(),
@@ -342,15 +364,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                           ),
                           child: IconButton(
                             padding: const EdgeInsets.all(10),
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const MediaPlayerScreen(
-                                    path: "",
-                                  ),
-                                ),
-                              );
-                            },
+                            onPressed: () {},
                             icon: Image.asset(
                               "assets/images/play-button-arrowhead.png",
                               width: 40,
