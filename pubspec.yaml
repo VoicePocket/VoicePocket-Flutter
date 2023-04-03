@@ -45,6 +45,8 @@ dependencies:
   permission_handler: ^10.2.0
   uuid: ^3.0.6
   uri_to_file: ^0.2.0
+  audio_video_progress_bar: ^1.0.1
+  rxdart: ^0.27.7
 
 dev_dependencies:
   flutter_test:
