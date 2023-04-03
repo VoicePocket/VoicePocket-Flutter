@@ -1,8 +1,6 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
-import 'dart:convert';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:path_provider/path_provider.dart';
@@ -70,7 +68,7 @@ class Controls extends StatelessWidget{
 }
 
 int recent_song = 0;
-int past_song = 1;
+int past_song = -1;
 
 class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   late AudioPlayer player; 
@@ -138,14 +136,12 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                     child: Stack(
                       alignment: Alignment.topCenter,
                       children: [
-                        FutureBuilder<String>(
-                          future: DefaultAssetBundle.of(context).loadString('AssetManifest.json'),
-                          builder: (context, item){
-                            if(item.hasData){
-                              Map? jsonMap = json.decode(item.data!);
-                              List? songs = jsonMap?.keys.where((element) => element.contains('.mp3')).toList();
+                        FutureBuilder(
+                        future: loadingSongs2(),
+                        builder: (BuildContext context, AsyncSnapshot snapshot){
+                          if (snapshot.hasData == true){
                               return CarouselSlider.builder(
-                                itemCount: songs?.length, 
+                                itemCount: snapshot.data.length, 
                                 itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
                                   return Container(
                                     child: Stack(
@@ -158,7 +154,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                             fit: BoxFit.cover,
                                             ),
                                         ),
-                                        Text(songs?[itemIndex]),
+                                        Text(snapshot.data?[itemIndex]),
                                   ],
                                 )
                               );},
@@ -354,7 +350,25 @@ Future<String> loadingSongs() async {
   var songname = fileNames[recent_song];
   var file = File("${directory.path}/$songname"); 
 
-  print(file.path);
-
   return file.path;
+}
+
+Future<List<String>> loadingSongs2() async {
+  late AudioPlayer player; 
+
+  final directory = await getApplicationDocumentsDirectory();                                    
+
+  List<String> fileNames = [];
+
+  if (await directory.exists()) {
+    List<FileSystemEntity> files = directory.listSync();
+    for (FileSystemEntity file in files) {
+      if (file is File) {
+        fileNames.add(file.path.split('/').last);
+      }
+    }
+  }
+  print(fileNames);
+
+  return fileNames;
 }
