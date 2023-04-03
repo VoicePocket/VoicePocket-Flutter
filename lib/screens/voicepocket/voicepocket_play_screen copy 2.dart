@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
+import 'package:just_audio/just_audio.dart';
 import 'dart:io';
 
 class VoicePocketPlayScreen extends StatefulWidget {
@@ -15,43 +15,35 @@ class VoicePocketPlayScreen extends StatefulWidget {
 } 
 
 class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
-  void _onCreateModelTab(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const PostTextScreen()),
-    );
-  }
   
-  final player = AudioPlayer(); 
+  final player = AudioPlayer(audioLoadConfiguration: AudioLoadConfiguration( androidLoadControl: AndroidLoadControl( prioritizeTimeOverSizeThresholds: true ))); 
 
   final int _current = 0;
 
   int recent_song = 0;
   List? songs2 = [];
 
-  double _value = 0.0;
-
   bool isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
 
+  String formatTime(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes);
+    final seconds = twoDigits(duration.inSeconds);
+
+    return [
+      if (duration.inHours > 0) hours,
+      minutes,
+      seconds,
+    ].join(":");
+  }
+
   @override
-  void initState() {
-    super.initState();
-    player.onPlayerStateChanged.listen((state) {
-      setState(() {
-        isPlaying = state == PlayerState.playing;
-      });
-    });
-    player.onDurationChanged.listen((newDuration) {
-      setState(() {
-        duration = newDuration;
-      });
-    });
-    player.onPositionChanged.listen((newPosition) {
-      setState(() {
-        position = newPosition;
-      });
-    });
+  void dispose() {
+    player.dispose();
+    super.dispose();
   }
 
   @override
@@ -113,10 +105,12 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                 )
                               );},
                               options: CarouselOptions(
-                                height: MediaQuery.of(context).size.height * 0.58,
+                                height: MediaQuery.of(context).size.height * 0.46,
                                 enlargeCenterPage: true,
                                 onPageChanged: (index, reason) {
                                   setState(() {
+                                    player.stop();
+                                    isPlaying = false;
                                     print(index.toString());
                                     recent_song = index;
                                   });
@@ -174,12 +168,27 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                               ),
                               Slider(
                                   activeColor: Theme.of(context).primaryColor,
-                                  value: _value,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _value = value;
-                                    });
-                                  }),
+                                  min: 0,
+                                  max: duration.inSeconds.toDouble(),
+                                  value: position.inSeconds.toDouble(),
+                                  onChanged: (value) async {
+                                    final position = Duration(seconds: value.toInt());
+                                    await player.seek(position);
+
+                                    await player.play();
+                                  },),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: Sizes.size16,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(formatTime(position)),
+                                        Text(formatTime(duration)),
+                                      ],
+                                    ),
+                                  ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
@@ -204,12 +213,29 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                   IconButton(
                                     padding: const EdgeInsets.all(20),
                                     onPressed: () async {
-                                      if (isPlaying) {
-                                        await player.pause();
+                                      var content = await rootBundle.load(songs2![recent_song]);
+                                      int findslash = songs2[recent_song].lastIndexOf('/');
+                                      String songname = songs2[recent_song].substring(findslash);
+                                      print(songname);
+
+                                      final directory = await getApplicationDocumentsDirectory();
+                                      var file = File("${directory.path}$songname");                                        
+                                      file.writeAsBytesSync(content.buffer.asUint8List());
+                                      print(file.path);
+                                      await player.setFilePath(file.path);
+
+                                      setState(() {
+                                        if (isPlaying) {
+                                        player.stop();
+                                        print(isPlaying);
+                                        isPlaying = false;
                                       }
                                       else {
-                                        await player.play(UrlSource(songs2![recent_song]));
+                                        player.play();
+                                        print(isPlaying);
+                                        isPlaying = true;
                                       }
+                                      });
                                     },
                                     icon: Icon(
                                       isPlaying ? Icons.pause : Icons.play_arrow,
@@ -254,3 +280,4 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
     );
   }
 }
+
