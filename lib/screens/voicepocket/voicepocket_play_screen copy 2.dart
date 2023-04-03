@@ -76,7 +76,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   @override
   void initState(){
     super.initState();
-    player = AudioPlayer(audioLoadConfiguration: AudioLoadConfiguration( androidLoadControl: AndroidLoadControl( prioritizeTimeOverSizeThresholds: true)));
+    player = AudioPlayer();
   }
 
   final int _current = 0;
@@ -343,10 +343,15 @@ Future<String> loadingSongs() async {
     List<FileSystemEntity> files = directory.listSync();
     for (FileSystemEntity file in files) {
       if (file is File) {
-        fileNames.add(file.path.split('/').last);
+        String fileName = file.path.split('/').last;
+        String extension = fileName.split('.').last;
+        if (extension == 'mp3') {
+          fileNames.add(fileName);
+        }
       }
     }
   }
+  
   var songname = fileNames[recent_song];
   var file = File("${directory.path}/$songname"); 
 
@@ -364,10 +369,15 @@ Future<List<String>> loadingSongs2() async {
     List<FileSystemEntity> files = directory.listSync();
     for (FileSystemEntity file in files) {
       if (file is File) {
-        fileNames.add(file.path.split('/').last);
+        String fileName = file.path.split('/').last;
+        String extension = fileName.split('.').last;
+        if (extension == 'mp3') {
+          fileNames.add(fileName);
+        }
       }
     }
   }
+
   print(fileNames);
 
   return fileNames;
