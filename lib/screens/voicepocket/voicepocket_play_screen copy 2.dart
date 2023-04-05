@@ -69,6 +69,8 @@ class Controls extends StatelessWidget{
 
 int recent_song = 0;
 int past_song = -1;
+int LoopNum = 0;
+bool isLoop = false;
 
 class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   late AudioPlayer player; 
@@ -154,7 +156,12 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                             fit: BoxFit.cover,
                                             ),
                                         ),
-                                        Text(snapshot.data?[itemIndex]),
+                                        Text(
+                                          snapshot.data?[itemIndex],
+                                          overflow: TextOverflow.fade,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          ),
                                   ],
                                 )
                               );},
@@ -165,7 +172,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                   setState(() {
                                     player.stop();
                                     isPlaying = false;
-                                    print(index.toString());
+                                    //print(index.toString());
                                     recent_song = index;
                                   });
                                 },
@@ -202,7 +209,18 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       children: <Widget>[
                                         IconButton(
                                           padding: const EdgeInsets.all(20),
-                                          onPressed: () => (""),
+                                          onPressed: () {
+                                            showSliderDialog(
+                                              context: context,
+                                              title: "Volume Control",
+                                              divisions: 10,
+                                              min: 0.0,
+                                              max: 1.0,
+                                              value: player.volume,
+                                              stream: player.volumeStream,
+                                              onChanged: player.setVolume,
+                                            );
+                                          },
                                           icon: Image.asset(
                                             "assets/images/speaker.png",
                                             width: 40,
@@ -212,7 +230,9 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                         Text(recent_song.toString()),
                                         IconButton(
                                           padding: const EdgeInsets.all(20),
-                                          onPressed: () => (""),
+                                          onPressed: () {
+
+                                          },
                                           icon: Image.asset(
                                             "assets/images/playlist.png",
                                             width: 40,
@@ -242,22 +262,34 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                   children: [
                                     IconButton(
                                       padding: const EdgeInsets.all(20),
-                                      onPressed: () => (""),
-                                      icon: Image.asset(
-                                        "assets/images/return.png",
-                                        width: 40,
-                                        height: 40,
-                                      ),
+                                      //use LoopNum
+                                      onPressed: () async{
+                                        if(LoopNum == 0){
+                                          await player.setLoopMode(LoopMode.one);
+                                          LoopNum = 1;
+                                          isLoop = true;
+                                        }
+                                        else if (LoopNum == 1){
+                                          await player.setLoopMode(LoopMode.off);
+                                          LoopNum = 0;
+                                          isLoop = false;
+                                        }
+                                      },
+                                      icon: 
+                                        Icon(isLoop ? Icons.loop: Icons.shuffle),
+                                        color: Theme.of(context).primaryColor,
                                     ),
-                                    IconButton(
+                                    /* IconButton(
                                       padding: const EdgeInsets.all(20),
-                                      onPressed: () => (""),
+                                      onPressed: () {
+                                        player.seekToPrevious();
+                                      },
                                       icon: Image.asset(
                                         "assets/images/back-button.png",
                                         width: 40,
                                         height: 40,
                                       ),
-                                    ),
+                                    ), */
                                     StreamBuilder<PlayerState>(
                                       stream: player.playerStateStream,
                                       builder: (context, snapshot) {
@@ -295,15 +327,17 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                         );
                                       },
                                     ),
-                                    IconButton(
+                                    /* IconButton(
                                       padding: const EdgeInsets.all(20),
-                                      onPressed: () => (""),
+                                      onPressed: () {
+                                        player.seekToNext();
+                                      },
                                       icon: Image.asset(
                                         "assets/images/forward-button.png",
                                         width: 40,
                                         height: 40,
                                       ),
-                                    ),
+                                    ), */
                                     IconButton(
                                       padding: const EdgeInsets.all(20),
                                       onPressed: () => (""),
@@ -377,8 +411,49 @@ Future<List<String>> loadingSongs2() async {
       }
     }
   }
-
-  print(fileNames);
-
   return fileNames;
+}
+
+void showSliderDialog({
+  required BuildContext context,
+  required String title,
+  required int divisions,
+  required double min,
+  required double max,
+  String valueSuffix = '',
+  // TODO: Replace these two by ValueStream.
+  required double value,
+  required Stream<double> stream,
+  required ValueChanged<double> onChanged,
+}) {
+  showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(title, textAlign: TextAlign.center),
+      content: StreamBuilder<double>(
+        stream: stream,
+        builder: (context, snapshot) => SizedBox(
+          height: 100.0,
+          child: Column(
+            children: [
+              Text('${snapshot.data?.toStringAsFixed(1)}$valueSuffix',
+                  style: const TextStyle(
+                      fontFamily: 'Fixed',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24.0)),
+              Slider(
+                thumbColor: Theme.of(context).primaryColor,
+                activeColor: Theme.of(context).primaryColor,
+                divisions: divisions,
+                min: min,
+                max: max,
+                value: snapshot.data ?? value,
+                onChanged: onChanged,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
