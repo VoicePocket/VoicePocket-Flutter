@@ -172,7 +172,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                   setState(() {
                                     player.stop();
                                     isPlaying = false;
-                                    //print(index.toString());
+                                    print(index.toString());
                                     recent_song = index;
                                   });
                                 },
@@ -367,8 +367,6 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
 }
 
 Future<String> loadingSongs() async {
-  late AudioPlayer player; 
-
   final directory = await getApplicationDocumentsDirectory();                                    
 
   List<String> fileNames = [];
@@ -389,12 +387,31 @@ Future<String> loadingSongs() async {
   var songname = fileNames[recent_song];
   var file = File("${directory.path}/$songname"); 
 
+  print(file.path);
+
   return file.path;
 }
 
 Future<List<String>> loadingSongs2() async {
-  late AudioPlayer player; 
+  final directory = await getApplicationDocumentsDirectory();
+  final List<String> fileNames = [];
 
+  if (await directory.exists()) {
+    final List<FileSystemEntity> files = await directory.list().toList();
+    for (final FileSystemEntity file in files) {
+      if (file is File) {
+        final String fileName = file.path.split('/').last;
+        final String extension = fileName.split('.').last;
+        if (extension == 'mp3') {
+          fileNames.add(fileName);
+        }
+      }
+    }
+  }
+  return fileNames;
+}
+
+/* Future<List<String>> loadingSongs2() async {
   final directory = await getApplicationDocumentsDirectory();                                    
 
   List<String> fileNames = [];
@@ -411,8 +428,9 @@ Future<List<String>> loadingSongs2() async {
       }
     }
   }
+  print(fileNames);
   return fileNames;
-}
+} */
 
 void showSliderDialog({
   required BuildContext context,
