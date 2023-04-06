@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'package:voicepocket/models/text_model.dart';
-import 'package:voicepocket/services/bucket_to_local.dart';
+import 'package:voicepocket/services/google_cloud_service.dart';
 
 Future<TextModel> postText(String text) async {
   var uuid = const Uuid().v1();
@@ -21,7 +21,7 @@ Future<TextModel> postText(String text) async {
   if (response.statusCode == 201) {
     TextModel model = TextModel.fromJson(json.decode(response.body));
     print(model.wavUrl);
-    await obtainCredentials(model, uuid);
+    await readWavFileFromBucket(model, uuid);
     return model;
   } else {
     throw Exception('Failed to post');

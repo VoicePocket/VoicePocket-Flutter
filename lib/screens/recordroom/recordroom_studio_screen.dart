@@ -11,6 +11,8 @@ import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
 
+import '../../services/google_cloud_service.dart';
+
 const sentences = [
   "Daily Life",
   "Comedy",
@@ -102,6 +104,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   Future<Directory> createModelFolder() async {
     final routeDir = await getApplicationDocumentsDirectory();
     final dir = Directory('${routeDir.path}/model');
+    print(dir.parent.path);
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
@@ -189,8 +192,10 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     super.dispose();
   }
 
-  void completeModelCreate(BuildContext context) {
-    zipEncoder(routeDir, "${routeDir.path}/psg1478795@naver.zip");
+  void completeModelCreate(BuildContext context) async {
+    zipEncoder(routeDir, "${routeDir.parent.path}/psg1478795@naver.com.zip");
+    await uploadModelVoiceFileToBucket();
+    if (!mounted) return;
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const RecordroomMainScreen(),
