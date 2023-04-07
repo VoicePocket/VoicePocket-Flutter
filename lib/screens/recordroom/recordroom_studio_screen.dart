@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_recorder2/flutter_audio_recorder2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -69,18 +70,24 @@ class RecordroomStudioScreen extends StatefulWidget {
 }
 
 class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
-  late Directory routeDir;
-  int seconds = 0, minutes = 0;
-  String digitSeconds = "00", digitMinutes = "00";
+  Directory modelDir = Directory("");
+  final audioPlayer = AudioPlayer();
+  bool isPlaying = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
 
   IconData _recordIcon = FontAwesomeIcons.microphone;
-  String _recordText = 'Click To Start';
+  String _recordText = '녹음 준비 완료';
+  TextStyle _recordTextStyle = TextStyle(
+    color: Colors.grey.shade700,
+    fontWeight: FontWeight.w900,
+  );
   RecordingState _recordingState = RecordingState.unready;
   late FlutterAudioRecorder2 audioRecorder;
 
   int _index = 1;
   final int _maxLine = sentences.length;
-  double _value = 0.0;
+  final double _value = 0.0;
 
   @override
   void initState() {
@@ -88,33 +95,27 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     FlutterAudioRecorder2.hasPermissions.then((hasPermision) {
       if (hasPermision!) {
         _recordingState = RecordingState.ready;
-        _recordIcon = FontAwesomeIcons.microphoneSlash;
-        _recordText = 'Record';
+        _recordIcon = FontAwesomeIcons.microphone;
+        _recordText = '녹음 준비 완료';
       }
     });
-    createModelFolder().then((dir) => routeDir = dir);
+    createModelFolder().then((dir) => modelDir = dir);
   }
 
-  void toNextPage() {
+  Future setAudio() async {
+    audioPlayer.setReleaseMode(ReleaseMode.stop);
+    final file = File("${modelDir.path}/model_create$_index.wav");
+    audioPlayer.setSourceDeviceFile(file.path);
+    setState(() {});
+  }
+
+  void toNextPage() async {
+    if (_recordingState == RecordingState.recording) {
+      await _stopRecording();
+    }
     setState(() {
       _index = _index + 1;
     });
-  }
-
-  Future<Directory> createModelFolder() async {
-    final routeDir = await getApplicationDocumentsDirectory();
-    final dir = Directory('${routeDir.path}/model');
-    print(dir.parent.path);
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
-    if ((await dir.exists())) {
-      return dir;
-    } else {
-      dir.create();
-      return dir;
-    }
   }
 
   Future<void> _onRecordButtonPressed() async {
@@ -125,9 +126,6 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
 
       case RecordingState.recording:
         await _stopRecording();
-        _recordingState = RecordingState.stopped;
-        _recordIcon = FontAwesomeIcons.solidCircle;
-        _recordText = 'Record new one';
         break;
 
       case RecordingState.stopped:
@@ -144,14 +142,11 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     }
   }
 
-  void zipEncoder(Directory dir, String zipPath) {
-    var encoder = ZipFileEncoder();
-    encoder.zipDirectory(dir, filename: zipPath);
-  }
-
   _initRecorder() async {
-    String filePath =
-        "${routeDir.path}/${DateTime.now().millisecondsSinceEpoch}.wav";
+    String filePath = "${modelDir.path}/model_create$_index.wav";
+    if (await File(filePath).exists()) {
+      await File(filePath).delete();
+    }
     audioRecorder =
         FlutterAudioRecorder2(filePath, audioFormat: AudioFormat.WAV);
     await audioRecorder.initialized;
@@ -164,6 +159,14 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
 
   _stopRecording() async {
     await audioRecorder.stop();
+    _recordingState = RecordingState.stopped;
+    _recordIcon = FontAwesomeIcons.solidCircle;
+    _recordText = '녹음하기';
+    _recordTextStyle = TextStyle(
+      fontWeight: FontWeight.w900,
+      color: Colors.grey.shade700,
+    );
+    await setAudio();
   }
 
   Future<void> _recordVoice() async {
@@ -174,7 +177,11 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
       await _startRecording();
       _recordingState = RecordingState.recording;
       _recordIcon = FontAwesomeIcons.stop;
-      _recordText = 'Recording';
+      _recordText = '녹음중..';
+      _recordTextStyle = const TextStyle(
+        fontWeight: FontWeight.w900,
+        color: Colors.red,
+      );
     } else {
       if (!mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -186,14 +193,13 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    _recordingState = RecordingState.unready;
-    super.dispose();
+  void zipEncoder(Directory dir, String zipPath) {
+    var encoder = ZipFileEncoder();
+    encoder.zipDirectory(dir, filename: zipPath);
   }
 
   void completeModelCreate(BuildContext context) async {
-    zipEncoder(routeDir, "${routeDir.parent.path}/psg1478795@naver.com.zip");
+    zipEncoder(modelDir, "${modelDir.parent.path}/psg1478795@naver.com.zip");
     await uploadModelVoiceFileToBucket();
     if (!mounted) return;
     Navigator.of(context).push(
@@ -201,6 +207,29 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
         builder: (context) => const RecordroomMainScreen(),
       ),
     );
+  }
+
+  Future<Directory> createModelFolder() async {
+    final routeDir = await getApplicationDocumentsDirectory();
+    final modelDir = Directory('${routeDir.path}/model');
+    print(modelDir.parent.path);
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+    if ((await modelDir.exists())) {
+      return modelDir;
+    } else {
+      modelDir.create();
+      return modelDir;
+    }
+  }
+
+  @override
+  void dispose() {
+    _recordingState = RecordingState.unready;
+    audioPlayer.dispose();
+    super.dispose();
   }
 
   @override
@@ -251,9 +280,10 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                   ),
                   child: Text(
                     "$_index/$_maxLine",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: Sizes.size20,
                       fontWeight: FontWeight.w900,
+                      color: Colors.grey.shade700,
                     ),
                   ),
                 ),
@@ -307,15 +337,6 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                 alignment: Alignment.bottomCenter,
                 child: Column(
                   children: [
-                    Slider(
-                      activeColor: Theme.of(context).primaryColor,
-                      value: _value,
-                      onChanged: (value) {
-                        setState(() {
-                          _value = value;
-                        });
-                      },
-                    ),
                     Gaps.v20,
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -340,7 +361,10 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                           ),
                           child: IconButton(
                             padding: const EdgeInsets.all(10),
-                            onPressed: () => (""),
+                            onPressed: () async {
+                              await _recordVoice();
+                              setState(() {});
+                            },
                             icon: Image.asset(
                               "assets/images/return.png",
                               width: 40,
@@ -369,7 +393,13 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                           ),
                           child: IconButton(
                             padding: const EdgeInsets.all(10),
-                            onPressed: () {},
+                            onPressed: () async {
+                              if (isPlaying) {
+                                await audioPlayer.pause();
+                              } else {
+                                await audioPlayer.resume();
+                              }
+                            },
                             icon: Image.asset(
                               "assets/images/play-button-arrowhead.png",
                               width: 40,
@@ -434,7 +464,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8),
-                child: Text(_recordText),
+                child: Text(_recordText, style: _recordTextStyle),
               ),
             ],
           ),
