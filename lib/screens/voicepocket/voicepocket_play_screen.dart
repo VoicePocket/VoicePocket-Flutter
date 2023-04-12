@@ -379,6 +379,9 @@ Future<List<String>> loadingSongs2() async {
       mp3FileNames.add(file.path.split('/').last); 
     }
   }
+  print(mp3FileNames);
+  print(appDocDir.path);
+
   return mp3FileNames;
 }
 
@@ -387,7 +390,11 @@ Future<String> loadingSongs() async {
 
   Directory appDocDir = await getApplicationDocumentsDirectory();
 
-  List<FileSystemEntity> files = appDocDir.listSync();
+  //List<FileSystemEntity> files = appDocDir.listSync();
+
+  String DocDir = appDocDir.path;
+
+  List files = Directory(DocDir).listSync();
 
   print("loadingSongs $files");
 
