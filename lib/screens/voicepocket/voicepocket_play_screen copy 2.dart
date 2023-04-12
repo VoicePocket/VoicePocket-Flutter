@@ -366,71 +366,51 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   }
 }
 
-Future<String> loadingSongs() async {
-  final directory = await getApplicationDocumentsDirectory();                                    
+Future<List<String>> loadingSongs2() async {
+  List<String> mp3FileNames = [];
 
-  List<String> fileNames = [];
+  Directory appDocDir = await getApplicationDocumentsDirectory();
 
-  if (await directory.exists()) {
-    List<FileSystemEntity> files = directory.listSync();
-    for (FileSystemEntity file in files) {
-      if (file is File) {
-        String fileName = file.path.split('/').last;
-        String extension = fileName.split('.').last;
-        if (extension == 'mp3') {
-          fileNames.add(fileName);
-        }
-      }
+  List<FileSystemEntity> files = appDocDir.listSync();
+
+  print(files);
+
+  for (FileSystemEntity file in files) {
+    String filePath = file.path;
+    if (filePath.endsWith('.mp3')) {
+      mp3FileNames.add(file.path.split('/').last); 
     }
   }
-  
-  var songname = fileNames[recent_song];
-  var file = File("${directory.path}/$songname"); 
 
-  print(file.path);
+  print("songs2 $appDocDir");
+  print(mp3FileNames);
+
+  return mp3FileNames;
+}
+
+Future<String> loadingSongs() async {
+  List<String> mp3FileNames = [];
+
+  Directory appDocDir = await getApplicationDocumentsDirectory();
+
+  List<FileSystemEntity> files = appDocDir.listSync();
+
+  for (FileSystemEntity file in files) {
+    String filePath = file.path;
+    if (filePath.endsWith('.mp3')) {
+      mp3FileNames.add(file.path.split('/').last); 
+    }
+  }
+
+  var songname = mp3FileNames[recent_song];
+  var file = File("${appDocDir.path}/$songname");
+
+  print(songname);
+  print(mp3FileNames);
+  print(file);
 
   return file.path;
 }
-
-Future<List<String>> loadingSongs2() async {
-  final directory = await getApplicationDocumentsDirectory();
-  final List<String> fileNames = [];
-
-  if (await directory.exists()) {
-    final List<FileSystemEntity> files = await directory.list().toList();
-    for (final FileSystemEntity file in files) {
-      if (file is File) {
-        final String fileName = file.path.split('/').last;
-        final String extension = fileName.split('.').last;
-        if (extension == 'mp3') {
-          fileNames.add(fileName);
-        }
-      }
-    }
-  }
-  return fileNames;
-}
-
-/* Future<List<String>> loadingSongs2() async {
-  final directory = await getApplicationDocumentsDirectory();                                    
-
-  List<String> fileNames = [];
-
-  if (await directory.exists()) {
-    List<FileSystemEntity> files = directory.listSync();
-    for (FileSystemEntity file in files) {
-      if (file is File) {
-        String fileName = file.path.split('/').last;
-        String extension = fileName.split('.').last;
-        if (extension == 'mp3') {
-          fileNames.add(fileName);
-        }
-      }
-    }
-  }
-  print(fileNames);
-  return fileNames;
-} */
 
 void showSliderDialog({
   required BuildContext context,

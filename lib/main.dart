@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen copy 2.dart';
+import 'package:voicepocket/screens/authentications/home_screen.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  await Permission.storage.request();
+
   runApp(const App());
 }
 
@@ -33,7 +39,7 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      home: const VoicePocketPlayScreen(),
+      home: const HomeScreen(),
     );
   }
 }

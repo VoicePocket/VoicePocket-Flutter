@@ -35,11 +35,11 @@
 	</dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>... explain why the app uses the microphone here ...</string>
-	<key>UIApplicationSceneManifest</key>
+	<!-- <key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UISceneConfigurations</key>
 		<dict/>
-	</dict>
+	</dict> -->
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
