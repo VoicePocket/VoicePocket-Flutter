@@ -3,6 +3,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
+import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +40,7 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      home: const VoicePocketPlayScreen(),
+      home: const PostTextScreen(),
     );
   }
 }
