@@ -375,7 +375,7 @@ Future<List<String>> loadingSongs2() async {
 
   for (FileSystemEntity file in files) {
     String filePath = file.path;
-    if (filePath.endsWith('.mp3')) {
+    if (filePath.endsWith('.wav')) {
       mp3FileNames.add(file.path.split('/').last); 
     }
   }
@@ -400,7 +400,7 @@ Future<String> loadingSongs() async {
 
   for (FileSystemEntity file in files) {
     String filePath = file.path;
-    if (filePath.endsWith('.mp3')) {
+    if (filePath.endsWith('.wav')) {
       mp3FileNames.add(file.path.split('/').last); 
     }
   }

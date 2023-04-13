@@ -6,10 +6,6 @@ import 'package:voicepocket/screens/authentications/home_screen.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 
 void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  await Permission.storage.request();
-
   runApp(const App());
 }
 
