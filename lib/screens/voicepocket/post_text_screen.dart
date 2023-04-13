@@ -27,7 +27,7 @@ class _PostTextScreenState extends State<PostTextScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => MediaPlayerScreen(
-          path: response!.wavUrl.split("/")[1],
+          path: response!.data.wavUrl.split("/")[1],
         ),
       ),
     );
@@ -47,7 +47,7 @@ class _PostTextScreenState extends State<PostTextScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => MediaPlayerScreen(
-          path: response!.wavUrl.split("/")[1],
+          path: response!.data.wavUrl.split("/")[1],
         ),
       ),
     );
