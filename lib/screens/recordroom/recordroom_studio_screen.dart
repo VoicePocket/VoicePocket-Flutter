@@ -43,7 +43,7 @@ class RecordroomStudioScreen extends StatefulWidget {
 }
 
 class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
-  late Directory modelDir;
+  Directory modelDir = Directory("");
   late AudioPlayer audioPlayer;
   bool isPlaying = false;
   Duration duration = Duration.zero;
@@ -72,7 +72,10 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
         _recordText = '녹음 준비 완료';
       }
     });
-    createModelFolder().then((dir) => modelDir = dir);
+    getApplicationDocumentsDirectory().then((dir) {
+      modelDir = Directory("${dir.path}/model");
+    });
+    //createModelFolder().then((dir) => modelDir = dir);
   }
 
   void toNextPage() async {

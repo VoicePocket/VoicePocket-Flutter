@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
+import 'package:voicepocket/screens/authentications/home_screen.dart';
 
 void main() {
   runApp(const App());
@@ -33,7 +33,7 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      home: const RecordroomStudioScreen(),
+      home: const HomeScreen(),
     );
   }
 }

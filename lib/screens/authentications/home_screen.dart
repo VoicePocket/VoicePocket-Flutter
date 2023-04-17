@@ -1,12 +1,27 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    createFolder();
+  }
 
   void _onRecordTab(BuildContext context) {
     Navigator.of(context).push(
@@ -14,6 +29,23 @@ class HomeScreen extends StatelessWidget {
         builder: (context) => const RecordroomMainScreen(),
       ),
     );
+  }
+
+  Future<void> createFolder() async {
+    final routeDir = await getApplicationDocumentsDirectory();
+    print(routeDir.path);
+    final modelDir = Directory('${routeDir.path}/model');
+    final wavDir = Directory('${routeDir.path}/wav');
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+    if (!(await modelDir.exists())) {
+      modelDir.create();
+    }
+    if (!(await wavDir.exists())) {
+      wavDir.create();
+    }
   }
 
   void _onVoiceTab(BuildContext context) {
