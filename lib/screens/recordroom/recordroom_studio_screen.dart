@@ -210,26 +210,21 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     isPlaying = audioPlayer.state == PlayerState.playing;
     audioPlayer.onPlayerStateChanged.listen((state) {
       switch (state) {
-        case PlayerState.playing:
-          print("playing $state");
-          break;
-        case PlayerState.paused:
-          print("paused $state");
-          break;
         case PlayerState.completed:
-          audioPlayer.stop();
-          print("completed $state");
+          setState(() {
+            isPlaying = !isPlaying;
+          });
           break;
         default:
-          print("no $state");
+          break;
       }
     });
   }
 
   Future<void> mediaPlay() async {
-    print(isPlaying);
+    if (_recordingState == RecordingState.ready) return;
     if (isPlaying) {
-      audioPlayer.stop();
+      audioPlayer.pause();
       setState(() {
         isPlaying = !isPlaying;
       });
@@ -406,7 +401,6 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                           child: IconButton(
                             padding: const EdgeInsets.all(10),
                             onPressed: () async {
-                              //setAudio();
                               mediaPlay();
                               setState(() {});
                             },
