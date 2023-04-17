@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_recorder2/flutter_audio_recorder2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
@@ -187,22 +186,6 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
         builder: (context) => const RecordroomMainScreen(),
       ),
     );
-  }
-
-  Future<Directory> createModelFolder() async {
-    final routeDir = await getApplicationDocumentsDirectory();
-    final modelDir = Directory('${routeDir.path}/model');
-    print(modelDir.parent.path);
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
-    if ((await modelDir.exists())) {
-      return modelDir;
-    } else {
-      modelDir.create();
-      return modelDir;
-    }
   }
 
   Future<void> setAudio() async {
