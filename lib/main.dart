@@ -37,6 +37,7 @@ class App extends StatelessWidget {
         ),
       ),
       home: const VoicePocketPlayScreen(),
+      //home: const PostTextScreen(),
     );
   }
 }
