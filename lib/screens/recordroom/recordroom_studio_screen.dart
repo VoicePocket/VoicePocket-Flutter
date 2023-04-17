@@ -26,33 +26,6 @@ const sentences = [
   "Talent",
   "Sports",
   "Auto",
-  "Family",
-  "Fitness & Health",
-  "DIY & Life Hacks",
-  "Arts & Crafts",
-  "Dance",
-  "Outdoors",
-  "Oddly Satisfying",
-  "Home & Garden",
-  "Daily Life",
-  "Comedy",
-  "Entertainment",
-  "Animals",
-  "Food",
-  "Beauty & Style",
-  "Drama",
-  "Learning",
-  "Talent",
-  "Sports",
-  "Auto",
-  "Family",
-  "Fitness & Health",
-  "DIY & Life Hacks",
-  "Arts & Crafts",
-  "Dance",
-  "Outdoors",
-  "Oddly Satisfying",
-  "Home & Garden",
 ];
 
 enum RecordingState {
@@ -70,8 +43,8 @@ class RecordroomStudioScreen extends StatefulWidget {
 }
 
 class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
-  Directory modelDir = Directory("");
-  final audioPlayer = AudioPlayer();
+  late Directory modelDir;
+  late AudioPlayer audioPlayer;
   bool isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
@@ -79,6 +52,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   IconData _recordIcon = FontAwesomeIcons.microphone;
   String _recordText = '녹음 준비 완료';
   TextStyle _recordTextStyle = TextStyle(
+    fontSize: Sizes.size20,
     color: Colors.grey.shade700,
     fontWeight: FontWeight.w900,
   );
@@ -87,7 +61,6 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
 
   int _index = 1;
   final int _maxLine = sentences.length;
-  final double _value = 0.0;
 
   @override
   void initState() {
@@ -102,20 +75,22 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     createModelFolder().then((dir) => modelDir = dir);
   }
 
-  Future setAudio() async {
-    audioPlayer.setReleaseMode(ReleaseMode.stop);
-    final file = File("${modelDir.path}/model_create$_index.wav");
-    audioPlayer.setSourceDeviceFile(file.path);
-    setState(() {});
-  }
-
   void toNextPage() async {
     if (_recordingState == RecordingState.recording) {
       await _stopRecording();
     }
-    setState(() {
-      _index = _index + 1;
-    });
+    _index = _index + 1;
+    setState(() {});
+  }
+
+  void toPreviousPage() async {
+    if (_recordingState == RecordingState.recording) {
+      await _stopRecording();
+    }
+    if (_index != 1) {
+      _index = _index - 1;
+    }
+    setState(() {});
   }
 
   Future<void> _onRecordButtonPressed() async {
@@ -163,6 +138,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     _recordIcon = FontAwesomeIcons.solidCircle;
     _recordText = '녹음하기';
     _recordTextStyle = TextStyle(
+      fontSize: Sizes.size20,
       fontWeight: FontWeight.w900,
       color: Colors.grey.shade700,
     );
@@ -179,6 +155,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
       _recordIcon = FontAwesomeIcons.stop;
       _recordText = '녹음중..';
       _recordTextStyle = const TextStyle(
+        fontSize: Sizes.size20,
         fontWeight: FontWeight.w900,
         color: Colors.red,
       );
@@ -223,6 +200,46 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
       modelDir.create();
       return modelDir;
     }
+  }
+
+  Future<void> setAudio() async {
+    audioPlayer = AudioPlayer();
+    await audioPlayer
+        .setSourceDeviceFile("${modelDir.path}/model_create$_index.wav");
+    await audioPlayer.setReleaseMode(ReleaseMode.release);
+    isPlaying = audioPlayer.state == PlayerState.playing;
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      switch (state) {
+        case PlayerState.playing:
+          print("playing $state");
+          break;
+        case PlayerState.paused:
+          print("paused $state");
+          break;
+        case PlayerState.completed:
+          audioPlayer.stop();
+          print("completed $state");
+          break;
+        default:
+          print("no $state");
+      }
+    });
+  }
+
+  Future<void> mediaPlay() async {
+    print(isPlaying);
+    if (isPlaying) {
+      audioPlayer.stop();
+      setState(() {
+        isPlaying = !isPlaying;
+      });
+    } else {
+      audioPlayer.resume();
+      setState(() {
+        isPlaying = !isPlaying;
+      });
+    }
+    setState(() {});
   }
 
   @override
@@ -325,23 +342,17 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                 ),
               ),
               Gaps.v20,
-              Text(
-                "00:00",
-                style: TextStyle(
-                  color: Colors.grey.shade700,
-                  fontSize: Sizes.size32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Gaps.v20,
               Container(
                 alignment: Alignment.bottomCenter,
                 child: Column(
                   children: [
-                    Gaps.v20,
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
+                        Gaps.h10,
                         Container(
+                          width: MediaQuery.of(context).size.width * 0.25,
                           padding: const EdgeInsets.symmetric(
                             horizontal: Sizes.size28,
                           ),
@@ -361,54 +372,63 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                           ),
                           child: IconButton(
                             padding: const EdgeInsets.all(10),
+                            onPressed: () {
+                              if (_index == 0) return;
+                              toPreviousPage();
+                            },
+                            icon: Image.asset(
+                              "assets/images/back-button.png",
+                              width: 40,
+                              height: 40,
+                            ),
+                          ),
+                        ),
+                        Gaps.h10,
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.25,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Sizes.size28,
+                          ),
+                          decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                spreadRadius: 0.5,
+                                blurRadius: 5,
+                                offset:
+                                    Offset(3, 3), // changes position of shadow
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(Sizes.size32),
+                            color: Colors.white,
+                            shape: BoxShape.rectangle,
+                          ),
+                          child: IconButton(
+                            padding: const EdgeInsets.all(10),
                             onPressed: () async {
-                              await _recordVoice();
+                              //setAudio();
+                              mediaPlay();
                               setState(() {});
                             },
-                            icon: Image.asset(
-                              "assets/images/return.png",
-                              width: 40,
-                              height: 40,
+                            icon: FaIcon(
+                              isPlaying
+                                  ? FontAwesomeIcons.pause
+                                  : FontAwesomeIcons.play,
+                              color: Theme.of(context).primaryColor,
+                              size: Sizes.size32,
                             ),
+                            // icon: Image.asset(
+                            //   isPlaying
+                            //       ? "assets/images/random.png"
+                            //       : "assets/images/play-button-arrowhead.png",
+                            //   width: 40,
+                            //   height: 40,
+                            // ),
                           ),
                         ),
                         Gaps.h10,
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: Sizes.size28,
-                          ),
-                          decoration: BoxDecoration(
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.grey,
-                                spreadRadius: 0.5,
-                                blurRadius: 5,
-                                offset:
-                                    Offset(3, 3), // changes position of shadow
-                              ),
-                            ],
-                            borderRadius: BorderRadius.circular(Sizes.size32),
-                            color: Colors.white,
-                            shape: BoxShape.rectangle,
-                          ),
-                          child: IconButton(
-                            padding: const EdgeInsets.all(10),
-                            onPressed: () async {
-                              if (isPlaying) {
-                                await audioPlayer.pause();
-                              } else {
-                                await audioPlayer.resume();
-                              }
-                            },
-                            icon: Image.asset(
-                              "assets/images/play-button-arrowhead.png",
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                        ),
-                        Gaps.h10,
-                        Container(
+                          width: MediaQuery.of(context).size.width * 0.25,
                           padding: const EdgeInsets.symmetric(
                             horizontal: Sizes.size28,
                           ),
