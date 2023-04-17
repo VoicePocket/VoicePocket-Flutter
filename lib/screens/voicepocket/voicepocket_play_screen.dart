@@ -73,6 +73,9 @@ int recent_song = 0;
 int past_song = -1;
 int total_song = 0;
 int LoopNum = 0;
+
+List? songs2 = [];
+
 bool isLoop = false;
 
 class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
@@ -132,12 +135,10 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
       nextIndex = 0;
     }
     print("nextIndex $nextIndex");
-    await player.seek(Duration.zero, index: nextIndex);
+    _carouselController.animateToPage(nextIndex);
+
+    await player.seek(Duration.zero);
     await player.play();
-    // go to the next page in the carousel slider
-    //_carouselController.nextPage();
-    final int newIndex = recent_song + 1;
-    _carouselController.animateToPage(newIndex);
   }
 
   IconData get _loopIcon {
@@ -152,9 +153,6 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   }
 
   final int _current = 0;
-
-  List? songs2 = [];
-
   bool isPlaying = false;
 
   Stream<PositionData> get _positionDataStream =>
@@ -477,7 +475,7 @@ Future<String> loadingSongs() async {
 
   //print(mp3FileNames);
   //print(appDocDir.path);
-
+  songs2 = mp3FileNames;
   var songname = mp3FileNames[recent_song];
   var file = File("${appDocDir.path}/$songname");
 
