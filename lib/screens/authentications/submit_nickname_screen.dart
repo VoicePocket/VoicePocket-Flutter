@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/authentications/home_screen.dart';
+import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/services/signup_post.dart';
 
 class SubmitNicknameScreen extends StatefulWidget {
@@ -46,7 +46,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
+        builder: (context) => const MainScreen(),
       ),
       (route) => false,
     );

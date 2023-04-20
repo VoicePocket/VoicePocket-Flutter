@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:voicepocket/models/signup_model.dart';
 
-Future<SignUpPost> signUpPost(
+Future<SignUpModel> signUpPost(
     String email, String password, String name, String nickName) async {
   final http.Response response = await http.post(
     Uri.parse('http://localhost:8080/api/signup'), // IOS
@@ -20,12 +20,16 @@ Future<SignUpPost> signUpPost(
   );
   //sleep(Duration(seconds: 10));
   if (response.statusCode == 200) {
-    SignUpPost signUpModel = SignUpPost.fromJson(
-      json.decode(
-        utf8.decode(response.bodyBytes),
-      ),
+    SignUpModel signUpModel = SignUpModel.fromJson(
+      json.decode(utf8.decode(response.bodyBytes)),
     );
-    print(signUpModel.message);
+    print(signUpModel.code);
+    return signUpModel;
+  } else if (response.statusCode == 400) {
+    SignUpModel signUpModel = SignUpModel.fromJson(
+      json.decode(utf8.decode(response.bodyBytes)),
+    );
+    print(signUpModel.code);
     return signUpModel;
   } else {
     throw Exception('Failed to post');

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
 import 'package:voicepocket/screens/authentications/submit_term_screen.dart';
+import 'package:voicepocket/services/login_post.dart';
 import 'package:voicepocket/widgets/login_button.dart';
 import 'package:voicepocket/widgets/membership_button.dart';
 
@@ -16,21 +18,52 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final SharedPreferences _pref;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String _email = "";
+  String _password = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(() {
+      setState(() {
+        _email = _emailController.text;
+      });
+    });
+    _passwordController.addListener(() {
+      setState(() {
+        _password = _passwordController.text;
+      });
+    });
+    SharedPreferences.getInstance().then((pref) => _pref = pref);
+  }
 
   void _onScaffoldTab() {
     FocusScope.of(context).unfocus();
   }
 
-  void _onLoginTab(BuildContext context) {
+  void _onLoginTab(BuildContext context) async {
     if (_formKey.currentState != null) {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => const HomeScreen(),
-          ),
-          (route) => false,
-        );
+        final loginModel = await loginPost(_email, _password);
+        if (!mounted) return;
+        if (loginModel.success) {
+          _pref.setString("email", _email);
+          _pref.setString("password", _password);
+          _pref.setString("accessToken", loginModel.data!.accessToken);
+          _pref.setString("refreshToken", loginModel.data!.refreshToken);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ),
+            (route) => false,
+          );
+        }
       }
     }
   }
@@ -41,6 +74,13 @@ class _MainScreenState extends State<MainScreen> {
         builder: (context) => const SubmitTermScreen(),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -77,6 +117,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   Gaps.v36,
                   TextFormField(
+                    controller: _emailController,
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: Sizes.size16 + Sizes.size2,
@@ -136,6 +177,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   Gaps.v10,
                   TextFormField(
+                    controller: _passwordController,
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: Sizes.size16 + Sizes.size2,

@@ -36,7 +36,7 @@ class Data {
     return Data(
       type: json['type'],
       uuid: json['uuid'],
-      wavUrl: ("ljgsample@naver.com/${json['uuid']}.wav"),
+      wavUrl: json['wavUrl'],
       text: json['text'],
     );
   }

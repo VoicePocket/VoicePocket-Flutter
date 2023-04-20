@@ -1,16 +1,16 @@
-class SignUpPost {
+class SignUpModel {
   bool success;
   int code;
   String message;
 
-  SignUpPost({
+  SignUpModel({
     required this.success,
     required this.code,
     required this.message,
   });
 
-  factory SignUpPost.fromJson(Map<String, dynamic> json) {
-    return SignUpPost(
+  factory SignUpModel.fromJson(Map<String, dynamic> json) {
+    return SignUpModel(
       success: json['success'],
       code: json['code'],
       message: json['message'],
