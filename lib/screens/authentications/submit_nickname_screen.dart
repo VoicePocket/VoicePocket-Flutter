@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
 import 'package:voicepocket/services/signup_post.dart';
 
 class SubmitNicknameScreen extends StatefulWidget {
-  final String email, password;
   const SubmitNicknameScreen({
     super.key,
-    required this.email,
-    required this.password,
   });
 
   @override
@@ -18,10 +16,17 @@ class SubmitNicknameScreen extends StatefulWidget {
 }
 
 class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
+  late final SharedPreferences _pref;
+
   final TextEditingController _nickNameController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
   String _nickName = "", _name = "";
+
+  void setToken(String name, String nickName) {
+    _pref.setString('name', name);
+    _pref.setString('nickName', nickName);
+  }
 
   void _onScaffoldTab() => FocusScope.of(context).unfocus();
 
@@ -35,7 +40,9 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
 
   void _onSubmit() async {
     if (!_isNicknameValid()) return;
-    await signUpPost(widget.email, widget.password, _name, _nickName);
+    setToken(_name, _nickName);
+    await signUpPost(_pref.getString("email")!, _pref.getString("password")!,
+        _pref.getString("name")!, _pref.getString("nickName")!);
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
@@ -50,7 +57,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
     super.initState();
     _nameController.addListener(() {
       setState(() {
-        _name = _nickNameController.text;
+        _name = _nameController.text;
       });
     });
     _nickNameController.addListener(() {
@@ -58,6 +65,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
         _nickName = _nickNameController.text;
       });
     });
+    SharedPreferences.getInstance().then((pref) => _pref = pref);
   }
 
   @override
@@ -84,7 +92,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${widget.email}닉네임과 이름을\n입력해주세요',
+                  '닉네임과 이름을\n입력해주세요',
                   style: TextStyle(
                     fontSize: Sizes.size32,
                     color: Theme.of(context).primaryColor,

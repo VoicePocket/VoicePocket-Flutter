@@ -17,6 +17,9 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.0.4):
     - Flutter
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - uri_to_file (0.0.1):
     - Flutter
 
@@ -29,6 +32,7 @@ DEPENDENCIES:
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
   - uri_to_file (from `.symlinks/plugins/uri_to_file/ios`)
 
 SPEC REPOS:
@@ -52,6 +56,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/ios"
   uri_to_file:
     :path: ".symlinks/plugins/uri_to_file/ios"
 
@@ -65,6 +71,7 @@ SPEC CHECKSUMS:
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   path_provider_foundation: 37748e03f12783f9de2cb2c4eadfaa25fe6d4852
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
+  shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
   uri_to_file: c4726881848febf4806f0a5707bd12903e02b0f0
 
 PODFILE CHECKSUM: bf375fe85a44de6d37184a678046de726f8ed1c7

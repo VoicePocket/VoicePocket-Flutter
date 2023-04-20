@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/submit_nickname_screen.dart';
@@ -12,6 +13,8 @@ class SubmitInfoScreen extends StatefulWidget {
 }
 
 class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
+  late final SharedPreferences _pref;
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -19,6 +22,11 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
   String _password = "";
 
   void _onScaffoldTab() => FocusScope.of(context).unfocus();
+
+  void setToken(String email, String password) async {
+    _pref.setString('email', email);
+    _pref.setString('password', password);
+  }
 
   bool _isPasswordLengthValid() {
     return _password.length >= 8 && _password.length <= 20;
@@ -42,13 +50,11 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
     if (!_isPasswordValid() || _email.isEmpty || _isEmailValid() != null) {
       return;
     }
+    setToken(_email, _password);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SubmitNicknameScreen(
-          email: _email,
-          password: _password,
-        ),
+        builder: (context) => const SubmitNicknameScreen(),
       ),
     );
   }
@@ -66,6 +72,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
         _password = _passwordController.text;
       });
     });
+    SharedPreferences.getInstance().then((pref) => _pref = pref);
   }
 
   @override
