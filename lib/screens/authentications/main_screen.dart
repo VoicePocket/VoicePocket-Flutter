@@ -127,7 +127,7 @@ class _MainScreenState extends State<MainScreen> {
                           Sizes.size32,
                         ),
                       ),
-                      hintText: '아이디',
+                      hintText: '이메일',
                       hintStyle: const TextStyle(
                         fontSize: Sizes.size16 + Sizes.size2,
                         color: Color(0XFF929292),

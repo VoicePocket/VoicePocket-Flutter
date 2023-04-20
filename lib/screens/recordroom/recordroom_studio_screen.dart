@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/screens/authentications/home_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
 
 import '../../services/google_cloud_service.dart';
@@ -188,6 +189,15 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     );
   }
 
+  void toHomeScreen(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
+      (route) => false,
+    );
+  }
+
   Future<void> setAudio() async {
     audioPlayer = AudioPlayer();
     await audioPlayer
@@ -233,12 +243,15 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         title: Image.asset(
           "assets/images/logo.png",
           width: 55,
           height: 55,
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.house),
+          onPressed: () => toHomeScreen(context),
         ),
         actions: <Widget>[
           IconButton(

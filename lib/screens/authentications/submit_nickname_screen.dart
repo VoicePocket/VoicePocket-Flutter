@@ -3,31 +3,40 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
+import 'package:voicepocket/services/signup_post.dart';
 
 class SubmitNicknameScreen extends StatefulWidget {
-  const SubmitNicknameScreen({super.key});
+  final String email, password;
+  const SubmitNicknameScreen({
+    super.key,
+    required this.email,
+    required this.password,
+  });
 
   @override
   State<SubmitNicknameScreen> createState() => _SubmitNicknameScreenState();
 }
 
 class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
-  final TextEditingController _nicknameController = TextEditingController();
+  final TextEditingController _nickNameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
-  String _nickname = "";
+  String _nickName = "", _name = "";
 
   void _onScaffoldTab() => FocusScope.of(context).unfocus();
 
   bool _isNicknameValid() {
-    if (_nickname.length < 3 || _nickname.length > 10) {
+    if (_nickName.length < 3 || _nickName.length > 10) {
       return false;
     } else {
       return true;
     }
   }
 
-  void _onSubmit() {
+  void _onSubmit() async {
     if (!_isNicknameValid()) return;
+    await signUpPost(widget.email, widget.password, _name, _nickName);
+    if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const HomeScreen(),
@@ -39,16 +48,22 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
   @override
   void initState() {
     super.initState();
-    _nicknameController.addListener(() {
+    _nameController.addListener(() {
       setState(() {
-        _nickname = _nicknameController.text;
+        _name = _nickNameController.text;
+      });
+    });
+    _nickNameController.addListener(() {
+      setState(() {
+        _nickName = _nickNameController.text;
       });
     });
   }
 
   @override
   void dispose() {
-    _nicknameController.dispose();
+    _nickNameController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -69,7 +84,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '닉네임을\n입력해주세요',
+                  '${widget.email}닉네임과 이름을\n입력해주세요',
                   style: TextStyle(
                     fontSize: Sizes.size32,
                     color: Theme.of(context).primaryColor,
@@ -78,7 +93,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
                 ),
                 Gaps.v52,
                 const Text(
-                  '닉네임',
+                  '이름',
                   style: TextStyle(
                     fontSize: Sizes.size16,
                     fontWeight: FontWeight.w900,
@@ -90,7 +105,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
                     color: Colors.black,
                     fontSize: Sizes.size16 + Sizes.size2,
                   ),
-                  controller: _nicknameController,
+                  controller: _nameController,
                   cursorColor: Theme.of(context).primaryColor,
                   decoration: InputDecoration(
                     filled: true,
@@ -105,7 +120,46 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: _nickname.isEmpty
+                        color:
+                            _name.isEmpty ? Colors.red : Colors.grey.shade300,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        Sizes.size32,
+                      ),
+                    ),
+                  ),
+                ),
+                Gaps.v10,
+                const Text(
+                  '닉네임',
+                  style: TextStyle(
+                    fontSize: Sizes.size16,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0XFF929292),
+                  ),
+                ),
+                TextField(
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: Sizes.size16 + Sizes.size2,
+                  ),
+                  controller: _nickNameController,
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade300,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        Sizes.size32,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _nickName.isEmpty
                             ? Colors.red
                             : Colors.grey.shade300,
                         width: 2,

@@ -12,10 +12,10 @@ class SubmitInfoScreen extends StatefulWidget {
 }
 
 class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
-  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  String _id = "";
+  String _email = "";
   String _password = "";
 
   void _onScaffoldTab() => FocusScope.of(context).unfocus();
@@ -28,12 +28,27 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
     return _password.isNotEmpty && _isPasswordLengthValid();
   }
 
+  String? _isEmailValid() {
+    if (_email.isEmpty) return null;
+    final regExp = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+    if (!regExp.hasMatch(_email)) {
+      return "Email Not Valid";
+    }
+    return null;
+  }
+
   void _onSubmit() {
-    if (!_isPasswordValid() || _id.isEmpty) return;
+    if (!_isPasswordValid() || _email.isEmpty || _isEmailValid() != null) {
+      return;
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const SubmitNicknameScreen(),
+        builder: (context) => SubmitNicknameScreen(
+          email: _email,
+          password: _password,
+        ),
       ),
     );
   }
@@ -41,9 +56,9 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
   @override
   void initState() {
     super.initState();
-    _idController.addListener(() {
+    _emailController.addListener(() {
       setState(() {
-        _id = _idController.text;
+        _email = _emailController.text;
       });
     });
     _passwordController.addListener(() {
@@ -55,7 +70,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
 
   @override
   void dispose() {
-    _idController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -77,7 +92,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '아이디와 비밀번호를\n입력해주세요.',
+                  '이메일과 비밀번호를\n입력해주세요.',
                   style: TextStyle(
                     fontSize: Sizes.size32,
                     color: Theme.of(context).primaryColor,
@@ -86,7 +101,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                 ),
                 Gaps.v52,
                 const Text(
-                  '아이디',
+                  '이메일',
                   style: TextStyle(
                     fontSize: Sizes.size16,
                     fontWeight: FontWeight.w900,
@@ -98,7 +113,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                     color: Colors.black,
                     fontSize: Sizes.size16 + Sizes.size2,
                   ),
-                  controller: _idController,
+                  controller: _emailController,
                   cursorColor: Theme.of(context).primaryColor,
                   decoration: InputDecoration(
                     filled: true,
@@ -113,7 +128,9 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: _id.isEmpty ? Colors.red : Colors.grey.shade300,
+                        color: _isEmailValid() != null
+                            ? Colors.red
+                            : Colors.grey.shade300,
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(

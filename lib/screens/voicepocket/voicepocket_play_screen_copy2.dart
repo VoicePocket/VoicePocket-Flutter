@@ -1,12 +1,10 @@
-import 'dart:async';
-
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:just_audio/just_audio.dart';
 import 'dart:io';
 
 class VoicePocketPlayScreen extends StatefulWidget {
@@ -71,86 +69,22 @@ class Controls extends StatelessWidget {
 
 int recent_song = 0;
 int past_song = -1;
-int total_song = 0;
 int LoopNum = 0;
-
-List? songs2 = [];
-
 bool isLoop = false;
 
 class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   late AudioPlayer player;
-  final CarouselController _carouselController = CarouselController();
-  LoopMode _loopMode = LoopMode.off;
-  late StreamSubscription<PlayerState> _playerStateSubscription;
 
   @override
   void initState() {
     super.initState();
     player = AudioPlayer();
-    player.setLoopMode(_loopMode);
-    _playerStateSubscription =
-        player.playerStateStream.listen((PlayerState playerState) {
-      if (playerState.processingState == ProcessingState.completed) {
-        _playNext();
-      }
-    });
-  }
-
-  void _handlePreviousButtonPressed() async {
-    await player.seekToPrevious();
-    final int newIndex = recent_song - 1;
-    _carouselController.animateToPage(newIndex);
-  }
-
-  void _handleNextButtonPressed() async {
-    await player.seekToNext();
-    final int newIndex = recent_song + 1;
-    _carouselController.animateToPage(newIndex);
-  }
-
-  void _handleLoopButtonPressed() {
-    switch (_loopMode) {
-      case LoopMode.off:
-        _loopMode = LoopMode.one;
-        break;
-      case LoopMode.one:
-        _loopMode = LoopMode.all;
-        break;
-      case LoopMode.all:
-        _loopMode = LoopMode.off;
-        break;
-    }
-    player.setLoopMode(_loopMode);
-    setState(() {});
-  }
-
-  //2곡 밖에 없으면 if문 때문에 계속 0으로 값이 고정되어서 오류 발생
-  Future<void> _playNext() async {
-    print("recent_song $recent_song");
-    int nextIndex = recent_song + 1;
-    if (nextIndex >= total_song) {
-      nextIndex = 0;
-    }
-    print("nextIndex $nextIndex");
-    _carouselController.animateToPage(nextIndex);
-
-    await player.seek(Duration.zero);
-    await player.play();
-  }
-
-  IconData get _loopIcon {
-    switch (_loopMode) {
-      case LoopMode.off:
-        return Icons.repeat;
-      case LoopMode.one:
-        return Icons.repeat_one;
-      case LoopMode.all:
-        return Icons.event_repeat_outlined;
-    }
   }
 
   final int _current = 0;
+
+  List? songs2 = [];
+
   bool isPlaying = false;
 
   Stream<PositionData> get _positionDataStream =>
@@ -167,7 +101,6 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
 
   @override
   void dispose() {
-    _playerStateSubscription.cancel();
     player.dispose();
     super.dispose();
   }
@@ -211,7 +144,6 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                 (BuildContext context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData == true) {
                                 return CarouselSlider.builder(
-                                    carouselController: _carouselController,
                                     itemCount: snapshot.data.length,
                                     itemBuilder: (BuildContext context,
                                         int itemIndex, int pageViewIndex) {
@@ -247,7 +179,6 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                           isPlaying = false;
                                           print(index.toString());
                                           recent_song = index;
-                                          total_song = snapshot.data.length;
                                         });
                                       },
                                     ));
@@ -336,34 +267,32 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                   IconButton(
                                     padding: const EdgeInsets.all(20),
                                     //use LoopNum
-                                    onPressed: _handleLoopButtonPressed,
-                                    /* () async{
-                                        if(LoopNum == 0){
-                                          await player.setLoopMode(LoopMode.one);
-                                          LoopNum = 1;
-                                          isLoop = true;
-                                        }
-                                        else if (LoopNum == 1){
-                                          await player.setLoopMode(LoopMode.off);
-                                          LoopNum = 0;
-                                          isLoop = false;
-                                        }
-                                      }, */
+                                    onPressed: () async {
+                                      if (LoopNum == 0) {
+                                        await player.setLoopMode(LoopMode.one);
+                                        LoopNum = 1;
+                                        isLoop = true;
+                                      } else if (LoopNum == 1) {
+                                        await player.setLoopMode(LoopMode.off);
+                                        LoopNum = 0;
+                                        isLoop = false;
+                                      }
+                                    },
                                     icon: Icon(
-                                      _loopIcon,
-                                      size: 40,
-                                    ),
+                                        isLoop ? Icons.loop : Icons.shuffle),
                                     color: Theme.of(context).primaryColor,
                                   ),
-                                  IconButton(
-                                    padding: const EdgeInsets.all(20),
-                                    onPressed: _handlePreviousButtonPressed,
-                                    icon: Image.asset(
-                                      "assets/images/back-button.png",
-                                      width: 40,
-                                      height: 40,
-                                    ),
-                                  ),
+                                  /* IconButton(
+                                      padding: const EdgeInsets.all(20),
+                                      onPressed: () {
+                                        player.seekToPrevious();
+                                      },
+                                      icon: Image.asset(
+                                        "assets/images/back-button.png",
+                                        width: 40,
+                                        height: 40,
+                                      ),
+                                    ), */
                                   StreamBuilder<PlayerState>(
                                     stream: player.playerStateStream,
                                     builder: (context, snapshot) {
@@ -404,15 +333,17 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       );
                                     },
                                   ),
-                                  IconButton(
-                                    padding: const EdgeInsets.all(20),
-                                    onPressed: _handleNextButtonPressed,
-                                    icon: Image.asset(
-                                      "assets/images/forward-button.png",
-                                      width: 40,
-                                      height: 40,
-                                    ),
-                                  ),
+                                  /* IconButton(
+                                      padding: const EdgeInsets.all(20),
+                                      onPressed: () {
+                                        player.seekToNext();
+                                      },
+                                      icon: Image.asset(
+                                        "assets/images/forward-button.png",
+                                        width: 40,
+                                        height: 40,
+                                      ),
+                                    ), */
                                   IconButton(
                                     padding: const EdgeInsets.all(20),
                                     onPressed: () => (""),
@@ -447,14 +378,17 @@ Future<List<String>> loadingSongs2() async {
 
   List<FileSystemEntity> files = appDocDir.listSync();
 
+  print(files);
+
   for (FileSystemEntity file in files) {
     String filePath = file.path;
-    if (filePath.endsWith('.wav')) {
+    if (filePath.endsWith('.mp3')) {
       mp3FileNames.add(file.path.split('/').last);
     }
   }
-  //print(mp3FileNames);
-  //print(appDocDir.path);
+
+  print("songs2 $appDocDir");
+  print(mp3FileNames);
 
   return mp3FileNames;
 }
@@ -464,26 +398,21 @@ Future<String> loadingSongs() async {
 
   Directory appDocDir = await getApplicationDocumentsDirectory();
 
-  //List<FileSystemEntity> files = appDocDir.listSync();
-
-  String DocDir = appDocDir.path;
-
-  List files = Directory(DocDir).listSync();
-
-  //print("loadingSongs $files");
+  List<FileSystemEntity> files = appDocDir.listSync();
 
   for (FileSystemEntity file in files) {
     String filePath = file.path;
-    if (filePath.endsWith('.wav')) {
+    if (filePath.endsWith('.mp3')) {
       mp3FileNames.add(file.path.split('/').last);
     }
   }
 
-  //print(mp3FileNames);
-  //print(appDocDir.path);
-  songs2 = mp3FileNames;
   var songname = mp3FileNames[recent_song];
   var file = File("${appDocDir.path}/$songname");
+
+  print(songname);
+  print(mp3FileNames);
+  print(file);
 
   return file.path;
 }
