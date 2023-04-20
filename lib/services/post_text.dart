@@ -25,7 +25,11 @@ Future<TextModel> postText(String text) async {
   );
   //sleep(Duration(seconds: 10));
   if (response.statusCode == 200) {
-    TextModel model = TextModel.fromJson(json.decode(response.body));
+    TextModel model = TextModel.fromJson(
+      json.decode(
+        utf8.decode(response.bodyBytes),
+      ),
+    );
     print(model.data.wavUrl);
     await readWavFileFromBucket(model, uuid);
     return model;
