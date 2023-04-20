@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_recorder2/flutter_audio_recorder2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
@@ -179,7 +180,9 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   }
 
   void completeModelCreate(BuildContext context) async {
-    zipEncoder(modelDir, "${modelDir.parent.path}/psg1478795@naver.com.zip");
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    final email = pref.getString('email');
+    zipEncoder(modelDir, "${modelDir.parent.path}/$email.zip");
     await uploadModelVoiceFileToBucket();
     if (!mounted) return;
     Navigator.of(context).push(

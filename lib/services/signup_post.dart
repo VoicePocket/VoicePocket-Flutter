@@ -22,7 +22,7 @@ Future<SignUpPost> signUpPost(
   //sleep(Duration(seconds: 10));
   if (response.statusCode == 200) {
     SignUpPost signUpModel = SignUpPost.fromJson(json.decode(response.body));
-    print(signUpModel.code);
+    print(signUpModel.message);
     return signUpModel;
   } else {
     throw Exception('Failed to post');
