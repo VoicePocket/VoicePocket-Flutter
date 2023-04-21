@@ -9,13 +9,13 @@ Future<TextModel> postText(String text) async {
   var uuid = const Uuid().v1();
   final http.Response response = await http.post(
     Uri.parse(
-        //'http://localhost:8080/send'), // IOS
-        'http://172.20.10.12:8080/send'), // Real-test
+        'http://localhost:8080/send'), // IOS
+        //'http://172.20.10.12:8080/send'), // Real-test
     //Uri.parse('http://10.0.0.2:8000/api/texts/psg1478795@naver.com/make_wav'), // ANDROID
     headers: <String, String>{
       //토큰 추가 (이메일, 패스워드 송신 필요)
       'Content-Type': 'application/json; charset=UTF-8',
-      'X-AUTH-TOKEN':'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY4MTcyMzc5NCwiZXhwIjoxNjgxNzI3Mzk0fQ.DXjqD0cZIHqTrErdMzACgnagjlX82lghLT4ziUo8q-M',
+      'X-AUTH-TOKEN':'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY4MjEwMzM4MSwiZXhwIjoxNjgyMTA2OTgxfQ.XE6e6m_9ZegGPO-CVMR7KWoIKCvzvU_4wTJ12efAuk8',
     },
     body: jsonEncode(<String, String>{
     "type": "ETL",

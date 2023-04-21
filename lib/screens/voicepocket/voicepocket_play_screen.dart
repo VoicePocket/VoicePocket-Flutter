@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:path_provider/path_provider.dart';
@@ -127,7 +127,6 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
     setState(() {
     });
   }
-  //2곡 밖에 없으면 if문 때문에 계속 0으로 값이 고정되어서 오류 발생
   Future<void> _playNext() async {
     print("recent_song $recent_song");
     int nextIndex = recent_song + 1;
@@ -148,7 +147,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
       case LoopMode.one:
         return Icons.repeat_one;
       case LoopMode.all:
-        return Icons.event_repeat_outlined;
+        return FontAwesomeIcons.repeat;
     }
   }
 
@@ -254,8 +253,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                               return const Center(child: Text("no songs in assets"));
                             }
                           }
-                          ),
-                        
+                          ),                       
                       ],
                     ),
                   ),
@@ -348,7 +346,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                         }
                                       }, */
                                       icon: 
-                                        Icon(_loopIcon,size: 40,),
+                                        Icon(_loopIcon,size:30,),
                                         color: Theme.of(context).primaryColor,
                                     ),
                                     IconButton(
