@@ -132,6 +132,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
       nextIndex = 0;
     }
     print("nextIndex $nextIndex");
+    
     _carouselController.animateToPage(nextIndex);
 
     await player.seek(Duration.zero);
@@ -444,12 +445,15 @@ Future<List<String>> loadingSongs2() async {
 
   Directory appDocDir = await getApplicationDocumentsDirectory();
 
-  List<FileSystemEntity> files = appDocDir.listSync();
+  String DocDir1 = appDocDir.path;
+  String DocDir2 = '$DocDir1/wav';
+
+  List files = Directory(DocDir2).listSync();
 
   for (FileSystemEntity file in files) {
-    String filePath = file.path;
+    String filePath = (file.path);
     if (filePath.endsWith('.wav')) {
-      mp3FileNames.add(file.path.split('/').last);
+      mp3FileNames.add(filePath.split('/').last);
     }
   }
   //print(mp3FileNames);
@@ -465,24 +469,26 @@ Future<String> loadingSongs() async {
 
   //List<FileSystemEntity> files = appDocDir.listSync();
 
-  String DocDir = appDocDir.path;
+  String DocDir1 = appDocDir.path;
+  String DocDir2 = '$DocDir1/wav';
 
-  List files = Directory(DocDir).listSync();
+  List files = Directory(DocDir2).listSync();
 
-  //print("loadingSongs $files");
+  print("loadingSongs $files");
 
   for (FileSystemEntity file in files) {
-    String filePath = file.path;
+    String filePath = (file.path);
+    //String filePath2 = '$filePath';
     if (filePath.endsWith('.wav')) {
-      mp3FileNames.add(file.path.split('/').last);
+      mp3FileNames.add(filePath.split('/').last);
     }
   }
 
-  //print(mp3FileNames);
+  print(mp3FileNames);
   //print(appDocDir.path);
   songs2 = mp3FileNames;
   var songname = mp3FileNames[recent_song];
-  var file = File("${appDocDir.path}/$songname");
+  var file = File("${appDocDir.path}/wav/$songname");
 
   return file.path;
 }

@@ -8,6 +8,7 @@ import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -52,6 +53,14 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const PostTextScreen(),
+      ),
+    );
+  }
+
+  void _onVoicePocketTab(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const VoicePocketPlayScreen(),
       ),
     );
   }
@@ -172,7 +181,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             Expanded(
                               child: Container(),
                             ),
-                            Container(
+                            GestureDetector(
+                              onTap: () => _onVoicePocketTab(context),
+                              child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
@@ -192,6 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
+                            ),
+                            
                           ],
                         ),
                         Icon(
