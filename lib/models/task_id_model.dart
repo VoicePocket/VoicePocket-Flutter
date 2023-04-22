@@ -1,17 +1,17 @@
-class TextModel {
+class TextModel2 {
   bool success;
   int code;
   String message;
   Data data;
 
-  TextModel(
+  TextModel2(
       {required this.success,
       required this.code,
       required this.message,
       required this.data});
 
-  factory TextModel.fromJson(Map<String, dynamic> json) {
-    return TextModel(
+  factory TextModel2.fromJson(Map<String, dynamic> json) {
+    return TextModel2(
       success: json['success'],
       code: json['code'],
       message: json['message'],
@@ -21,24 +21,15 @@ class TextModel {
 }
 
 class Data {
-  String type;
   String uuid;
-  String email;
-  String text;
+  String taskId;
 
-  Data({
-    required this.type,
-    required this.uuid,
-    required this.email,
-    required this.text,
-  });
+  Data({required this.uuid, required this.taskId});
 
   factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
-      type: json['type'],
       uuid: json['uuid'],
-      email: json['email'],
-      text: json['text'],
+      taskId: json['taskId'],
     );
   }
 }

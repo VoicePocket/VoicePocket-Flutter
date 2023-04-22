@@ -53,7 +53,7 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
     audioPlayer.setReleaseMode(ReleaseMode.stop);
 
     var directory = await getApplicationDocumentsDirectory();
-    final file = File("${directory.path}/${widget.path}");
+    final file = File("${directory.path}/wav/${widget.path}");
     audioPlayer.setSourceDeviceFile(file.path);
   }
 

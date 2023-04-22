@@ -25,12 +25,11 @@ Future<void> readWavFileFromBucket(TextModel response, String uuid) async {
     final storage = Storage(client, "VoicePocket");
     final bucket = storage.bucket("voice_pocket");
 
-    await bucket.read(response.data.wavUrl).pipe(
-          File("${directory.path}/${response.data.wavUrl.split("/")[1]}")
-              .openWrite(),
+    await bucket.read("${response.data.email}/${response.data.uuid}.wav").pipe(
+          File("${directory.path}/wav/${response.data.uuid}.wav").openWrite(),
         );
 
-    print("${directory.path}/${response.data.wavUrl.split("/")[1]}");
+    print("${directory.path}/wav/${response.data.uuid}.wav");
   } finally {
     client.close();
   }

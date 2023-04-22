@@ -1,17 +1,19 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:voicepocket/models/text_model.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
+import 'package:voicepocket/services/request_task_status.dart';
 
 Future<TextModel> postText(String text) async {
-  final SharedPreferences pref = await SharedPreferences.getInstance();
+  final pref = await SharedPreferences.getInstance();
   final uuid = const Uuid().v1();
+  await pref.setString("uuid", uuid);
+  int count = 0;
 
   final http.Response response = await http.post(
-    Uri.parse('http://localhost:8080/send'), // IOS
+    Uri.parse('http://localhost:8080/api/tts/send'), // IOS
     //'http://172.20.10.12:8080/send'), // Real-test
     //Uri.parse('http://10.0.0.2:8000/api/texts/psg1478795@naver.com/make_wav'), // ANDROID
     headers: <String, String>{
@@ -26,14 +28,26 @@ Future<TextModel> postText(String text) async {
       "text": text
     }),
   );
-  sleep(const Duration(seconds: 20));
+  while (await taskStatus() != 200) {
+    // 2초 동안 기다립니다.
+    print('post text창 $taskStatus');
+    print("response 없는 상태, 2초 딜레이 $count");
+    await Future.delayed(const Duration(seconds: 2));
+    // 다시 요청합니다.
+    //taskStatus;
+    count += 1;
+    if (count == 15) {
+      throw Exception('Failed to post');
+    }
+  }
+
   if (response.statusCode == 200) {
     TextModel model = TextModel.fromJson(
       json.decode(
         utf8.decode(response.bodyBytes),
       ),
     );
-    print(model.data.wavUrl);
+    print(model.data.email);
     await readWavFileFromBucket(model, uuid);
     return model;
   } else {
