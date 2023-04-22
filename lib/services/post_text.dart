@@ -26,7 +26,7 @@ Future<TextModel> postText(String text) async {
       "text": text
     }),
   );
-  sleep(const Duration(seconds: 10));
+  sleep(const Duration(seconds: 20));
   if (response.statusCode == 200) {
     TextModel model = TextModel.fromJson(
       json.decode(

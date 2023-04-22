@@ -5,6 +5,7 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/text_model.dart';
 import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/post_text.dart';
+import 'package:voicepocket/services/token_refresh_post.dart';
 
 class PostTextScreen extends StatefulWidget {
   const PostTextScreen({super.key});
@@ -19,18 +20,21 @@ class _PostTextScreenState extends State<PostTextScreen> {
   String inputText = "";
 
   void _postTextTab(String text) async {
-    response = await postText(text);
-    if (response == null) {
-      print("null");
-    }
+    var response = await postText(text);
     if (!mounted) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MediaPlayerScreen(
-          path: response!.data.wavUrl.split("/")[1],
+    if (response.success) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => MediaPlayerScreen(
+            path: response.data.wavUrl.split("/")[1],
+          ),
         ),
-      ),
-    );
+      );
+    } else if (response.code == -1006) {
+      await tokenRefreshPost();
+    } else {
+      return;
+    }
   }
 
   @override

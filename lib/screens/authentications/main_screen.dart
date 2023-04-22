@@ -55,8 +55,6 @@ class _MainScreenState extends State<MainScreen> {
         if (loginModel.success) {
           _pref.setString("email", _email);
           _pref.setString("password", _password);
-          _pref.setString("accessToken", loginModel.data!.accessToken);
-          _pref.setString("refreshToken", loginModel.data!.refreshToken);
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => const HomeScreen(),
