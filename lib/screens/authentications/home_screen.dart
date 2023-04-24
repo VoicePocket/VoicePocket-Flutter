@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Flexible(
               fit: FlexFit.loose,
               child: GestureDetector(
-                onTap: () => _onVoiceTab(context),
+                onTap: () => _onVoicePocketListTab(context),
                 child: Container(
                   decoration: BoxDecoration(
                     color: const Color(0XFFBBD0FF),
@@ -182,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Container(),
                             ),
                             GestureDetector(
-                              onTap: () => _onVoicePocketListTab(context),
+                              onTap: () => _onVoiceTab(context),
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     horizontal: Sizes.size32,
                                   ),
                                   child: Text(
-                                    "듣기",
+                                    "생성",
                                     style: TextStyle(
                                       fontSize: Sizes.size16,
                                       fontWeight: FontWeight.w700,

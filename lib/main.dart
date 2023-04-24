@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/screens/authentications/home_screen.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
-import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
 
 void main() {
   runApp(const App());
