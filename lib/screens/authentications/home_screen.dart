@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> createFolder() async {
     final routeDir = await getApplicationDocumentsDirectory();
-    print(routeDir.path);
+    print("default 저장 경로: ${routeDir.path}");
     final modelDir = Directory('${routeDir.path}/model');
     final wavDir = Directory('${routeDir.path}/wav');
     var status = await Permission.storage.status;
@@ -184,27 +184,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             GestureDetector(
                               onTap: () => _onVoicePocketTab(context),
                               child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: Sizes.size10,
-                                  horizontal: Sizes.size32,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Text(
-                                  "듣기",
-                                  style: TextStyle(
-                                    fontSize: Sizes.size16,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.grey.shade800,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: Sizes.size10,
+                                    horizontal: Sizes.size32,
+                                  ),
+                                  child: Text(
+                                    "듣기",
+                                    style: TextStyle(
+                                      fontSize: Sizes.size16,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.grey.shade800,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                            ),
-                            
                           ],
                         ),
                         Icon(

@@ -21,7 +21,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   Duration position = Duration.zero;
 
   //Audio List
-  int recent_song = 0;
+  int recentSong = 0;
   List? songs2 = [];
 
   @override
@@ -89,23 +89,24 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
           ),
         ],
       ),
-      body: Column(children: [
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: Sizes.size40,
-              horizontal: Sizes.size16,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Container(
-                    alignment: Alignment.topCenter,
-                    child: Stack(
+      body: Column(
+        children: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: Sizes.size40,
+                horizontal: Sizes.size16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Container(
                       alignment: Alignment.topCenter,
-                      children: [
-                        FutureBuilder<String>(
+                      child: Stack(
+                        alignment: Alignment.topCenter,
+                        children: [
+                          FutureBuilder<String>(
                             future: DefaultAssetBundle.of(context)
                                 .loadString('AssetManifest.json'),
                             builder: (context, item) {
@@ -120,8 +121,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                     //itemCount: places.length,
                                     itemBuilder: (BuildContext context,
                                         int itemIndex, int pageViewIndex) {
-                                      return Container(
-                                          child: Stack(
+                                      return Stack(
                                         alignment: Alignment.center,
                                         children: [
                                           ClipRRect(
@@ -134,7 +134,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                           ),
                                           Text(songs?[itemIndex]),
                                         ],
-                                      ));
+                                      );
                                     },
                                     options: CarouselOptions(
                                       height:
@@ -143,159 +143,168 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       enlargeCenterPage: true,
                                       onPageChanged: (index, reason) {
                                         setState(() {
-                                          print(index.toString());
-                                          recent_song = index;
+                                          print("인덱스: ${index.toString()}");
+                                          recentSong = index;
                                         });
                                       },
                                     ));
                               } else {
                                 return const Center(
-                                    child: Text("no songs in assets"));
+                                  child: Text("no songs in assets"),
+                                );
                               }
-                            }),
-                      ],
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Flexible(
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    child: Column(children: [
-                      FutureBuilder(
-                          future: DefaultAssetBundle.of(context)
-                              .loadString('AssetManifest.json'),
-                          builder: (context, item) {
-                            if (item.hasData) {
-                              Map? jsonMap = json.decode(item.data!);
-                              List? songs2 = jsonMap?.keys
-                                  .where((element) => element.contains('.mp3'))
-                                  .toList();
-                              return Container(
-                                  child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      IconButton(
-                                        padding: const EdgeInsets.all(20),
-                                        onPressed: () => (""),
-                                        icon: Image.asset(
-                                          "assets/images/speaker.png",
-                                          width: 40,
-                                          height: 40,
-                                        ),
-                                      ),
-                                      Text(recent_song.toString()),
-                                      //Text(songs2![recent_song]),
-                                      IconButton(
-                                        padding: const EdgeInsets.all(20),
-                                        onPressed: () => (""),
-                                        icon: Image.asset(
-                                          "assets/images/playlist.png",
-                                          width: 40,
-                                          height: 40,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Slider(
-                                    activeColor: Theme.of(context).primaryColor,
-                                    min: 0,
-                                    max: duration.inSeconds.toDouble(),
-                                    value: position.inSeconds.toDouble(),
-                                    onChanged: (value) async {
-                                      final position =
-                                          Duration(seconds: value.toInt());
-                                      await player.seek(position);
-
-                                      await player.resume();
-                                    },
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: Sizes.size16,
-                                    ),
-                                    child: Row(
+                  Flexible(
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      child: Column(
+                        children: [
+                          FutureBuilder(
+                            future: DefaultAssetBundle.of(context)
+                                .loadString('AssetManifest.json'),
+                            builder: (context, item) {
+                              if (item.hasData) {
+                                Map? jsonMap = json.decode(item.data!);
+                                List? songs2 = jsonMap?.keys
+                                    .where(
+                                        (element) => element.contains('.mp3'))
+                                    .toList();
+                                return Column(
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(formatTime(position)),
-                                        Text(formatTime(duration)),
+                                      children: <Widget>[
+                                        IconButton(
+                                          padding: const EdgeInsets.all(20),
+                                          onPressed: () => (""),
+                                          icon: Image.asset(
+                                            "assets/images/speaker.png",
+                                            width: 40,
+                                            height: 40,
+                                          ),
+                                        ),
+                                        Text(recentSong.toString()),
+                                        //Text(songs2![recentSong]),
+                                        IconButton(
+                                          padding: const EdgeInsets.all(20),
+                                          onPressed: () => (""),
+                                          icon: Image.asset(
+                                            "assets/images/playlist.png",
+                                            width: 40,
+                                            height: 40,
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      IconButton(
-                                        padding: const EdgeInsets.all(20),
-                                        onPressed: () => (""),
-                                        icon: Image.asset(
-                                          "assets/images/return.png",
-                                          width: 40,
-                                          height: 40,
+                                    Slider(
+                                      activeColor:
+                                          Theme.of(context).primaryColor,
+                                      min: 0,
+                                      max: duration.inSeconds.toDouble(),
+                                      value: position.inSeconds.toDouble(),
+                                      onChanged: (value) async {
+                                        final position =
+                                            Duration(seconds: value.toInt());
+                                        await player.seek(position);
+
+                                        await player.resume();
+                                      },
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: Sizes.size16,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(formatTime(position)),
+                                          Text(formatTime(duration)),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        IconButton(
+                                          padding: const EdgeInsets.all(20),
+                                          onPressed: () => (""),
+                                          icon: Image.asset(
+                                            "assets/images/return.png",
+                                            width: 40,
+                                            height: 40,
+                                          ),
                                         ),
-                                      ),
-                                      IconButton(
-                                        padding: const EdgeInsets.all(20),
-                                        onPressed: () => (""),
-                                        icon: Image.asset(
-                                          "assets/images/back-button.png",
-                                          width: 40,
-                                          height: 40,
+                                        IconButton(
+                                          padding: const EdgeInsets.all(20),
+                                          onPressed: () => (""),
+                                          icon: Image.asset(
+                                            "assets/images/back-button.png",
+                                            width: 40,
+                                            height: 40,
+                                          ),
                                         ),
-                                      ),
-                                      IconButton(
-                                        padding: const EdgeInsets.all(20),
-                                        onPressed: () async {
-                                          if (isPlaying) {
-                                            await player.play(UrlSource(
-                                                songs2![recent_song]));
-                                          } else {
-                                            await player.resume();
-                                          }
-                                        },
-                                        icon: Image.asset(isPlaying
-                                            ? "assets/images/return"
-                                            : "assets/images/play-button-arrowhead.png"),
-                                        iconSize: Sizes.size40,
-                                      ),
-                                      IconButton(
-                                        padding: const EdgeInsets.all(20),
-                                        onPressed: () => (""),
-                                        icon: Image.asset(
-                                          "assets/images/forward-button.png",
-                                          width: 40,
-                                          height: 40,
+                                        IconButton(
+                                          padding: const EdgeInsets.all(20),
+                                          onPressed: () async {
+                                            if (isPlaying) {
+                                              await player.play(UrlSource(
+                                                  songs2![recentSong]));
+                                            } else {
+                                              await player.resume();
+                                            }
+                                          },
+                                          icon: Image.asset(isPlaying
+                                              ? "assets/images/return"
+                                              : "assets/images/play-button-arrowhead.png"),
+                                          iconSize: Sizes.size40,
                                         ),
-                                      ),
-                                      IconButton(
-                                        padding: const EdgeInsets.all(20),
-                                        onPressed: () => (""),
-                                        icon: Image.asset(
-                                          "assets/images/random.png",
-                                          width: 40,
-                                          height: 40,
+                                        IconButton(
+                                          padding: const EdgeInsets.all(20),
+                                          onPressed: () => (""),
+                                          icon: Image.asset(
+                                            "assets/images/forward-button.png",
+                                            width: 40,
+                                            height: 40,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ));
-                            } else {
-                              return const Center(
-                                  child: Text("no songs in assets"));
-                            }
-                          })
-                    ]),
+                                        IconButton(
+                                          padding: const EdgeInsets.all(20),
+                                          onPressed: () => (""),
+                                          icon: Image.asset(
+                                            "assets/images/random.png",
+                                            width: 40,
+                                            height: 40,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return const Center(
+                                  child: Text("no songs in assets"),
+                                );
+                              }
+                            },
+                          )
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }

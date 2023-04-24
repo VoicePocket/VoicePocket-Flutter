@@ -16,6 +16,16 @@ class _PostTextScreenState extends State<PostTextScreen> {
   TextModel? response;
   String inputText = "";
 
+  @override
+  void initState() {
+    super.initState();
+    _textController.addListener(() {
+      setState(() {
+        inputText = _textController.text;
+      });
+    });
+  }
+
   void _postTextTab(String text) async {
     var response = await postText(text);
     if (!mounted) return;
@@ -34,7 +44,13 @@ class _PostTextScreenState extends State<PostTextScreen> {
     }
   }
 
-  chatMessages() {
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  Widget chatMessages() {
     return ListView(
       children: [
         Container(
@@ -78,32 +94,6 @@ class _PostTextScreenState extends State<PostTextScreen> {
         )
       ],
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _textController.addListener(() {
-      setState(() {
-        inputText = _textController.text;
-      });
-    });
-  }
-
-  void _onListenTap() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MediaPlayerScreen(
-          path: "${response!.data.uuid}.wav",
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
   }
 
   @override

@@ -29,7 +29,7 @@ Future<void> readWavFileFromBucket(TextModel response, String uuid) async {
           File("${directory.path}/wav/${response.data.uuid}.wav").openWrite(),
         );
 
-    print("${directory.path}/wav/${response.data.uuid}.wav");
+    print("wav파일 받아온 저장 경로: ${directory.path}/wav/${response.data.uuid}.wav");
   } finally {
     client.close();
   }

@@ -67,9 +67,9 @@ class Controls extends StatelessWidget {
   }
 }
 
-int recent_song = 0;
-int past_song = -1;
-int LoopNum = 0;
+int recentSong = 0;
+int pastSong = -1;
+int loopNum = 0;
 bool isLoop = false;
 
 class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
@@ -81,7 +81,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
     player = AudioPlayer();
   }
 
-  final int _current = 0;
+  final int current = 0;
 
   List? songs2 = [];
 
@@ -147,8 +147,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                     itemCount: snapshot.data.length,
                                     itemBuilder: (BuildContext context,
                                         int itemIndex, int pageViewIndex) {
-                                      return Container(
-                                          child: Stack(
+                                      return Stack(
                                         alignment: Alignment.center,
                                         children: [
                                           ClipRRect(
@@ -166,7 +165,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                             maxLines: 2,
                                           ),
                                         ],
-                                      ));
+                                      );
                                     },
                                     options: CarouselOptions(
                                       height:
@@ -177,14 +176,15 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                         setState(() {
                                           player.stop();
                                           isPlaying = false;
-                                          print(index.toString());
-                                          recent_song = index;
+                                          print("인덱스: ${index.toString()}");
+                                          recentSong = index;
                                         });
                                       },
                                     ));
                               } else {
                                 return const Center(
-                                    child: Text("no songs in assets"));
+                                  child: Text("no songs in assets"),
+                                );
                               }
                             }),
                       ],
@@ -201,7 +201,8 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                             (BuildContext context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData == false) {
                             return const Center(
-                                child: Text("no songs in assets"));
+                              child: Text("no songs in assets"),
+                            );
                           } else {
                             String songname = snapshot.data;
                             return Column(children: [
@@ -229,7 +230,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       height: 40,
                                     ),
                                   ),
-                                  Text(recent_song.toString()),
+                                  Text(recentSong.toString()),
                                   IconButton(
                                     padding: const EdgeInsets.all(20),
                                     onPressed: () {},
@@ -266,15 +267,15 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                 children: [
                                   IconButton(
                                     padding: const EdgeInsets.all(20),
-                                    //use LoopNum
+                                    //use loopNum
                                     onPressed: () async {
-                                      if (LoopNum == 0) {
+                                      if (loopNum == 0) {
                                         await player.setLoopMode(LoopMode.one);
-                                        LoopNum = 1;
+                                        loopNum = 1;
                                         isLoop = true;
-                                      } else if (LoopNum == 1) {
+                                      } else if (loopNum == 1) {
                                         await player.setLoopMode(LoopMode.off);
-                                        LoopNum = 0;
+                                        loopNum = 0;
                                         isLoop = false;
                                       }
                                     },
@@ -304,10 +305,10 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       if (!(playing ?? false)) {
                                         return IconButton(
                                           onPressed: () async {
-                                            if (recent_song != past_song) {
+                                            if (recentSong != pastSong) {
                                               await player
                                                   .setFilePath(songname);
-                                              past_song = recent_song;
+                                              pastSong = recentSong;
                                               player.play();
                                             } else {
                                               player.play();
@@ -378,7 +379,7 @@ Future<List<String>> loadingSongs2() async {
 
   List<FileSystemEntity> files = appDocDir.listSync();
 
-  print(files);
+  print("파일: $files");
 
   for (FileSystemEntity file in files) {
     String filePath = file.path;
@@ -388,7 +389,7 @@ Future<List<String>> loadingSongs2() async {
   }
 
   print("songs2 $appDocDir");
-  print(mp3FileNames);
+  print("파일 이름: $mp3FileNames");
 
   return mp3FileNames;
 }
@@ -407,7 +408,7 @@ Future<String> loadingSongs() async {
     }
   }
 
-  var songname = mp3FileNames[recent_song];
+  var songname = mp3FileNames[recentSong];
   var file = File("${appDocDir.path}/$songname");
 
   print(songname);
