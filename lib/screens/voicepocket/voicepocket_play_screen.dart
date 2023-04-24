@@ -69,10 +69,10 @@ class Controls extends StatelessWidget {
   }
 }
 
-int recentSong = 0;
-int pastSong = -1;
-int totalSong = 0;
-int loopNum = 0;
+int recent_song = 0;
+int past_song = -1;
+int total_song = 0;
+int LoopNum = 0;
 
 List? songs2 = [];
 
@@ -99,13 +99,13 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
 
   void _handlePreviousButtonPressed() async {
     await player.seekToPrevious();
-    final int newIndex = recentSong - 1;
+    final int newIndex = recent_song - 1;
     _carouselController.animateToPage(newIndex);
   }
 
   void _handleNextButtonPressed() async {
     await player.seekToNext();
-    final int newIndex = recentSong + 1;
+    final int newIndex = recent_song + 1;
     _carouselController.animateToPage(newIndex);
   }
 
@@ -126,13 +126,13 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   }
 
   Future<void> _playNext() async {
-    print("recentSong $recentSong");
-    int nextIndex = recentSong + 1;
-    if (nextIndex >= totalSong) {
+    print("recent_song $recent_song");
+    int nextIndex = recent_song + 1;
+    if (nextIndex >= total_song) {
       nextIndex = 0;
     }
     print("nextIndex $nextIndex");
-
+    
     _carouselController.animateToPage(nextIndex);
 
     await player.seek(Duration.zero);
@@ -210,7 +210,12 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                             builder:
                                 (BuildContext context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData == true) {
-                                return CarouselSlider.builder(
+                                if(snapshot.data.isEmpty){
+                                  return const Center(
+                                    child: Text("no songs in assets"));
+                                }
+                                else{
+                                  return CarouselSlider.builder(
                                     carouselController: _carouselController,
                                     itemCount: snapshot.data.length,
                                     itemBuilder: (BuildContext context,
@@ -246,11 +251,12 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                           player.stop();
                                           isPlaying = false;
                                           print(index.toString());
-                                          recentSong = index;
-                                          totalSong = snapshot.data.length;
+                                          recent_song = index;
+                                          total_song = snapshot.data.length;
                                         });
                                       },
                                     ));
+                                }
                               } else {
                                 return const Center(
                                     child: Text("no songs in assets"));
@@ -272,6 +278,11 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                             return const Center(
                                 child: Text("no songs in assets"));
                           } else {
+                            if(snapshot.data.isEmpty){
+                                  return const Center(
+                                    child: Text("no songs in assets"));
+                                }
+                                else{
                             String songname = snapshot.data;
                             return Column(children: [
                               Row(
@@ -298,7 +309,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       height: 40,
                                     ),
                                   ),
-                                  Text(recentSong.toString()),
+                                  Text(recent_song.toString()),
                                   IconButton(
                                     padding: const EdgeInsets.all(20),
                                     onPressed: () {},
@@ -335,20 +346,9 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                 children: [
                                   IconButton(
                                     padding: const EdgeInsets.all(20),
-                                    //use loopNum
+                                    //use LoopNum
                                     onPressed: _handleLoopButtonPressed,
-                                    /* () async{
-                                        if(loopNum == 0){
-                                          await player.setLoopMode(LoopMode.one);
-                                          loopNum = 1;
-                                          isLoop = true;
-                                        }
-                                        else if (loopNum == 1){
-                                          await player.setLoopMode(LoopMode.off);
-                                          loopNum = 0;
-                                          isLoop = false;
-                                        }
-                                      }, */
+
                                     icon: Icon(
                                       _loopIcon,
                                       size: 30,
@@ -375,10 +375,10 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       if (!(playing ?? false)) {
                                         return IconButton(
                                           onPressed: () async {
-                                            if (recentSong != pastSong) {
+                                            if (recent_song != past_song) {
                                               await player
                                                   .setFilePath(songname);
-                                              pastSong = recentSong;
+                                              past_song = recent_song;
                                               player.play();
                                             } else {
                                               player.play();
@@ -425,8 +425,8 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                 ],
                               ),
                             ]);
-                          }
-                        },
+                          } }
+                        }, 
                       ),
                     ]),
                   ),
@@ -456,9 +456,6 @@ Future<List<String>> loadingSongs2() async {
       mp3FileNames.add(filePath.split('/').last);
     }
   }
-  //print(mp3FileNames);
-  //print(appDocDir.path);
-
   return mp3FileNames;
 }
 
@@ -487,11 +484,18 @@ Future<String> loadingSongs() async {
   print(mp3FileNames);
   //print(appDocDir.path);
   songs2 = mp3FileNames;
-  var songname = mp3FileNames[recentSong];
+  if(mp3FileNames.isEmpty){
+    return '';
+  }
+  else{
+    var songname = mp3FileNames[recent_song];
   var file = File("${appDocDir.path}/wav/$songname");
 
   return file.path;
+  }
 }
+
+
 
 void showSliderDialog({
   required BuildContext context,
@@ -536,3 +540,4 @@ void showSliderDialog({
     ),
   );
 }
+

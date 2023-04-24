@@ -23,7 +23,7 @@ Future<void> readWavFileFromBucket(TextModel response, String uuid) async {
   final directory = await getApplicationDocumentsDirectory();
   try {
     final storage = Storage(client, "VoicePocket");
-    final bucket = storage.bucket("voice_pocket");
+    final bucket = storage.bucket("voicepocket");
 
     await bucket.read("${response.data.email}/${response.data.uuid}.wav").pipe(
           File("${directory.path}/wav/${response.data.uuid}.wav").openWrite(),
@@ -43,7 +43,7 @@ Future<void> uploadModelVoiceFileToBucket() async {
   final directory = await getApplicationDocumentsDirectory();
   try {
     final storage = Storage(client, "VoicePocket");
-    final bucket = storage.bucket("voice_pocket");
+    final bucket = storage.bucket("voicepocket");
 
     await File("${directory.path}/$email.zip") // 로컬의 파일명
         .openRead()
