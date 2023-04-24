@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import '../authentications/home_screen.dart';
-import 'package:voicepocket/screens/voicepocket/voicepocket_select_action.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
 
-class ListScreen extends StatelessWidget {
-  const ListScreen({super.key});
+class SelectScreen extends StatelessWidget {
+  const SelectScreen({super.key});
 
   void toHomeScreen(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
@@ -19,7 +19,7 @@ class ListScreen extends StatelessWidget {
     void _onVoicePocketTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const SelectScreen(),
+        builder: (context) => const VoicePocketPlayScreen(),
       ),
     );
   }
@@ -53,15 +53,47 @@ class ListScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                Text(
-                  "Select Model",
+                /* Text(
+                  "",
                   style: TextStyle(
                     fontSize: Sizes.size40,
                     color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.w900,
                   ),
+                ), */
+                GestureDetector(
+                  child:Container(
+                  margin: const EdgeInsets.only(bottom: Sizes.size10),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(Sizes.size16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: Sizes.size16,
+                      horizontal: Sizes.size20,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            Text(
+                              "친구에게 전송",
+                              style: TextStyle(
+                                fontSize: Sizes.size36,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                )             
                 ),
-                Gaps.v40,
                 GestureDetector(
                   onTap: () => _onVoicePocketTab(context),
                   child:Container(
@@ -76,26 +108,17 @@ class ListScreen extends StatelessWidget {
                       horizontal: Sizes.size20,
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: const [
                             Text(
-                              "aaa@gmail.com",
+                              "재생",
                               style: TextStyle(
                                 fontSize: Sizes.size36,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Gaps.v16,
-                            Text(
-                              "2023.04.27",
-                              style: TextStyle(
-                                fontSize: Sizes.size20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],

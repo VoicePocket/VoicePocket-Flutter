@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../authentications/home_screen.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
@@ -97,6 +98,15 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
     });
   }
 
+  void toHomeScreen(BuildContext context) {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
+      (route) => false,
+    );
+  }
+
   void _handlePreviousButtonPressed() async {
     await player.seekToPrevious();
     final int newIndex = recent_song - 1;
@@ -175,13 +185,16 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
         title: Image.asset(
           "assets/images/logo.png",
           width: 55,
           height: 55,
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.house),
+          onPressed: () => toHomeScreen(context),
+      ),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.account_circle_rounded),
