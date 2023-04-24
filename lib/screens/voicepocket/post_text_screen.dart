@@ -95,7 +95,7 @@ class _PostTextScreenState extends State<PostTextScreen> {
       ],
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
     double buttonsize = MediaQuery.of(context).size.width * 0.3;

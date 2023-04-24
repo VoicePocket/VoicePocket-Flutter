@@ -10,6 +10,9 @@ PODS:
     - Flutter
     - flutter_sound_core (= 9.2.13)
   - flutter_sound_core (9.2.13)
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
   - just_audio (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -20,6 +23,7 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - Toast (4.0.0)
   - uri_to_file (0.0.1):
     - Flutter
 
@@ -29,6 +33,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_audio_recorder2 (from `.symlinks/plugins/flutter_audio_recorder2/ios`)
   - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -38,6 +43,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - flutter_sound_core
+    - Toast
 
 EXTERNAL SOURCES:
   audio_session:
@@ -50,6 +56,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_audio_recorder2/ios"
   flutter_sound:
     :path: ".symlinks/plugins/flutter_sound/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/ios"
   path_provider_foundation:
@@ -68,10 +76,12 @@ SPEC CHECKSUMS:
   flutter_audio_recorder2: 0eda9d0c791d9d093e6f5f07df414d34edec4eda
   flutter_sound: c60effa2a350fb977885f0db2fbc4c1ad5160900
   flutter_sound_core: 26c10e5832e76aaacfae252d8925232281c486ae
+  fluttertoast: eb263d302cc92e04176c053d2385237e9f43fad0
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   path_provider_foundation: 37748e03f12783f9de2cb2c4eadfaa25fe6d4852
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   uri_to_file: c4726881848febf4806f0a5707bd12903e02b0f0
 
 PODFILE CHECKSUM: bf375fe85a44de6d37184a678046de726f8ed1c7

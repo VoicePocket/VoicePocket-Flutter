@@ -32,7 +32,7 @@ Future<TextModel> postText(String text) async {
     // 2초 동안 기다립니다.
     print('post text창 $taskStatus');
     print("response 없는 상태, 2초 딜레이 $count");
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(milliseconds: 500));
     // 다시 요청합니다.
     //taskStatus;
     count += 1;
