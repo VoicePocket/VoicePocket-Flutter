@@ -1,54 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/home_screen.dart';
+import 'package:voicepocket/screens/authentications/submit_nickname_screen.dart';
 
-class SubmitNicknameScreen extends StatefulWidget {
-  const SubmitNicknameScreen({super.key});
+class SubmitInfoScreen extends StatefulWidget {
+  const SubmitInfoScreen({super.key});
 
   @override
-  State<SubmitNicknameScreen> createState() => _SubmitNicknameScreenState();
+  State<SubmitInfoScreen> createState() => _SubmitInfoScreenState();
 }
 
-class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
-  final TextEditingController _nicknameController = TextEditingController();
+class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
+  late final SharedPreferences _pref;
 
-  String _nickname = "";
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String _email = "";
+  String _password = "";
 
   void _onScaffoldTab() => FocusScope.of(context).unfocus();
 
-  bool _isNicknameValid() {
-    if (_nickname.length < 3 || _nickname.length > 10) {
-      return false;
-    } else {
-      return true;
+  void setToken(String email, String password) async {
+    _pref.setString('email', email);
+    _pref.setString('password', password);
+  }
+
+  bool _isPasswordLengthValid() {
+    return _password.length >= 8 && _password.length <= 20;
+  }
+
+  bool _isPasswordValid() {
+    return _password.isNotEmpty && _isPasswordLengthValid();
+  }
+
+  String? _isEmailValid() {
+    if (_email.isEmpty) return null;
+    final regExp = RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+    if (!regExp.hasMatch(_email)) {
+      return "Email Not Valid";
     }
+    return null;
   }
 
   void _onSubmit() {
-    if (!_isNicknameValid()) return;
-    Navigator.of(context).pushAndRemoveUntil(
+    if (!_isPasswordValid() || _email.isEmpty || _isEmailValid() != null) {
+      return;
+    }
+    setToken(_email, _password);
+    Navigator.push(
+      context,
       MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
+        builder: (context) => const SubmitNicknameScreen(),
       ),
-      (route) => false,
     );
   }
 
   @override
   void initState() {
     super.initState();
-    _nicknameController.addListener(() {
+    _emailController.addListener(() {
       setState(() {
-        _nickname = _nicknameController.text;
+        _email = _emailController.text;
       });
     });
+    _passwordController.addListener(() {
+      setState(() {
+        _password = _passwordController.text;
+      });
+    });
+    SharedPreferences.getInstance().then((pref) => _pref = pref);
   }
 
   @override
   void dispose() {
-    _nicknameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -69,7 +99,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '닉네임을\n입력해주세요',
+                  '이메일과 비밀번호를\n입력해주세요.',
                   style: TextStyle(
                     fontSize: Sizes.size32,
                     color: Theme.of(context).primaryColor,
@@ -78,7 +108,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
                 ),
                 Gaps.v52,
                 const Text(
-                  '닉네임',
+                  '이메일',
                   style: TextStyle(
                     fontSize: Sizes.size16,
                     fontWeight: FontWeight.w900,
@@ -90,7 +120,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
                     color: Colors.black,
                     fontSize: Sizes.size16 + Sizes.size2,
                   ),
-                  controller: _nicknameController,
+                  controller: _emailController,
                   cursorColor: Theme.of(context).primaryColor,
                   decoration: InputDecoration(
                     filled: true,
@@ -105,7 +135,48 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: _nickname.isEmpty
+                        color: _isEmailValid() != null
+                            ? Colors.red
+                            : Colors.grey.shade300,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        Sizes.size32,
+                      ),
+                    ),
+                  ),
+                ),
+                Gaps.v16,
+                const Text(
+                  '비밀번호',
+                  style: TextStyle(
+                    fontSize: Sizes.size16,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0XFF929292),
+                  ),
+                ),
+                TextField(
+                  //obscureText: _obsecureText,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: Sizes.size16 + Sizes.size2,
+                  ),
+                  controller: _passwordController,
+                  cursorColor: Theme.of(context).primaryColor,
+                  decoration: InputDecoration(
+                    filled: true,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade300,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        Sizes.size32,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _password.isEmpty
                             ? Colors.red
                             : Colors.grey.shade300,
                         width: 2,
@@ -117,7 +188,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
                   ),
                 ),
                 const Text(
-                  'Your nickname must have:',
+                  'Your password must have:',
                   style: TextStyle(
                     fontSize: Sizes.size16,
                     fontWeight: FontWeight.w900,
@@ -128,15 +199,16 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
                 Row(
                   children: [
                     FaIcon(
-                      _isNicknameValid()
+                      _isPasswordLengthValid()
                           ? FontAwesomeIcons.circleCheck
                           : FontAwesomeIcons.circleXmark,
-                      color: _isNicknameValid() ? Colors.green : Colors.red,
+                      color:
+                          _isPasswordLengthValid() ? Colors.green : Colors.red,
                       size: Sizes.size20,
                     ),
                     Gaps.h5,
                     const Text(
-                      '3 to 10 characters',
+                      '8 to 20 characters',
                       style: TextStyle(
                         fontSize: Sizes.size14,
                         fontWeight: FontWeight.w500,
@@ -145,7 +217,6 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
                     ),
                   ],
                 ),
-                Gaps.v96,
                 Gaps.v96,
                 GestureDetector(
                   onTap: _onSubmit,
@@ -164,7 +235,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Text(
-                          "시작하기",
+                          "다음으로",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: Sizes.size20,

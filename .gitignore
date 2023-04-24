@@ -42,3 +42,14 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+assets/credentials/voicepocket-bucketKey.json
+assets/song/Ikson-New-Day-Vlog-No-Copyright-Music_320kbps.mp3
+assets/song/Ikson-Lights-Vlog-No-Copyright-Music_320kbps.mp3
+assets/song/Fredji -Happy-Life-Vlog.mp3
+assets/song/Ehrling-You-And-Me-Vlog.mp3
+ios/Podfile.lock
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Runner.xcodeproj/project.pbxproj
+ios/Podfile.lock
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Runner.xcodeproj/project.pbxproj
