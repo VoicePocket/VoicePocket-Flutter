@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 import '../authentications/home_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
 
@@ -16,10 +16,18 @@ class SelectScreen extends StatelessWidget {
     );
   }
 
-    void _onVoicePocketTab(BuildContext context) {
+  void _onVoicePocketTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const VoicePocketPlayScreen(),
+      ),
+    );
+  }
+
+  void _onVoiceTab(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const PostTextScreen(),
       ),
     );
   }
@@ -62,72 +70,71 @@ class SelectScreen extends StatelessWidget {
                   ),
                 ), */
                 GestureDetector(
-                  child:Container(
-                  margin: const EdgeInsets.only(bottom: Sizes.size10),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(Sizes.size16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: Sizes.size16,
-                      horizontal: Sizes.size20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "친구에게 전송",
-                              style: TextStyle(
-                                fontSize: Sizes.size36,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
+                    onTap: () => _onVoiceTab(context),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: Sizes.size10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(Sizes.size16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: Sizes.size16,
+                          horizontal: Sizes.size20,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: const [
+                                Text(
+                                  "원하는 텍스트 입력하기",
+                                  style: TextStyle(
+                                    fontSize: Sizes.size36,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                )             
-                ),
+                      ),
+                    )),
                 GestureDetector(
-                  onTap: () => _onVoicePocketTab(context),
-                  child:Container(
-                  margin: const EdgeInsets.only(bottom: Sizes.size10),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(Sizes.size16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: Sizes.size16,
-                      horizontal: Sizes.size20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "재생",
-                              style: TextStyle(
-                                fontSize: Sizes.size36,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
+                    onTap: () => _onVoicePocketTab(context),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: Sizes.size10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(Sizes.size16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: Sizes.size16,
+                          horizontal: Sizes.size20,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: const [
+                                Text(
+                                  "음성 보관함",
+                                  style: TextStyle(
+                                    fontSize: Sizes.size36,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                )             
-                )
+                      ),
+                    ))
               ],
             ),
           ),

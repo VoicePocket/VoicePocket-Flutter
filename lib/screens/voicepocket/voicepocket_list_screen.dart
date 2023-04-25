@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import '../authentications/home_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_select_action.dart';
 
-class ListScreen extends StatelessWidget {
+class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
+
+  @override
+  State<ListScreen> createState() => _ListScreenState();
+}
+
+class _ListScreenState extends State<ListScreen> {
+  late final SharedPreferences _pref;
+  String email = "";
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((pref) {
+      _pref = pref;
+      email = _pref.getString("email")!;
+    });
+  }
 
   void toHomeScreen(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
@@ -16,7 +34,7 @@ class ListScreen extends StatelessWidget {
     );
   }
 
-    void _onVoicePocketTab(BuildContext context) {
+  void _onVoicePocketTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const SelectScreen(),
@@ -63,48 +81,47 @@ class ListScreen extends StatelessWidget {
                 ),
                 Gaps.v40,
                 GestureDetector(
-                  onTap: () => _onVoicePocketTab(context),
-                  child:Container(
-                  margin: const EdgeInsets.only(bottom: Sizes.size10),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(Sizes.size16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: Sizes.size16,
-                      horizontal: Sizes.size20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              "aaa@gmail.com",
-                              style: TextStyle(
-                                fontSize: Sizes.size36,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Gaps.v16,
-                            Text(
-                              "2023.04.27",
-                              style: TextStyle(
-                                fontSize: Sizes.size20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
+                    onTap: () => _onVoicePocketTab(context),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: Sizes.size10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(Sizes.size16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: Sizes.size16,
+                          horizontal: Sizes.size20,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  email,
+                                  style: const TextStyle(
+                                    fontSize: Sizes.size36,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Gaps.v16,
+                                const Text(
+                                  "2023.04.27",
+                                  style: TextStyle(
+                                    fontSize: Sizes.size20,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                )             
-                )
+                      ),
+                    ))
               ],
             ),
           ),
