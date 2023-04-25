@@ -15,6 +15,7 @@ class _PostTextScreenState extends State<PostTextScreen> {
   final TextEditingController _textController = TextEditingController();
   TextModel? response;
   String inputText = "";
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -27,9 +28,15 @@ class _PostTextScreenState extends State<PostTextScreen> {
   }
 
   void _postTextTab(String text) async {
+    setState(() {
+      isLoading = true;
+    });
     var response = await postText(text);
     if (!mounted) return;
     if (response.success) {
+      setState(() {
+        isLoading = false;
+      });
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => MediaPlayerScreen(
@@ -52,6 +59,7 @@ class _PostTextScreenState extends State<PostTextScreen> {
 
   Widget chatMessages() {
     return ListView(
+      shrinkWrap: true,
       children: [
         Container(
           padding: const EdgeInsets.only(
@@ -85,9 +93,11 @@ class _PostTextScreenState extends State<PostTextScreen> {
                 const SizedBox(
                   height: 8,
                 ),
-                Text(inputText,
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(fontSize: 16, color: Colors.white))
+                Text(
+                  inputText,
+                  textAlign: TextAlign.start,
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ],
             ),
           ),
@@ -95,7 +105,7 @@ class _PostTextScreenState extends State<PostTextScreen> {
       ],
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     double buttonsize = MediaQuery.of(context).size.width * 0.3;
@@ -114,57 +124,82 @@ class _PostTextScreenState extends State<PostTextScreen> {
           ),
         ],
       ),
-      body: Stack(
-        children: <Widget>[
-          if (inputText != "") chatMessages(),
-          Container(
-            alignment: Alignment.bottomCenter,
-            width: MediaQuery.of(context).size.width,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              width: MediaQuery.of(context).size.width,
-              color: const Color.fromRGBO(243, 230, 255, 0.816),
-              child: Row(children: [
-                Expanded(
-                    child: TextFormField(
-                  controller: _textController,
-                  style: const TextStyle(color: Colors.black),
-                  decoration: const InputDecoration(
-                    hintText: "메시지를 입력하세요.",
-                    hintStyle: TextStyle(color: Colors.black, fontSize: 16),
-                    border: InputBorder.none,
-                  ),
-                )),
-                const SizedBox(
-                  width: 12,
-                ),
-                /* IconButton(
-                  color: Theme.of(context).primaryColor,
-                  onPressed: () => {chatMessages(),_postTextTab(inputText)}, 
-                  icon: const Icon(Icons.send),
-                ), */
-                InkWell(
-                  onTap: () {
-                    _postTextTab(inputText);
-                  },
+      body: Expanded(
+        child: Column(
+          children: [
+            Stack(
+              children: <Widget>[
+                if (inputText != "") chatMessages(),
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  width: MediaQuery.of(context).size.width,
                   child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(30),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 18),
+                    width: MediaQuery.of(context).size.width,
+                    color: const Color.fromRGBO(243, 230, 255, 0.816),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: TextFormField(
+                          controller: _textController,
+                          style: const TextStyle(color: Colors.black),
+                          decoration: const InputDecoration(
+                            hintText: "메시지를 입력하세요.",
+                            hintStyle:
+                                TextStyle(color: Colors.black, fontSize: 16),
+                            border: InputBorder.none,
+                          ),
+                        )),
+                        const SizedBox(
+                          width: 12,
+                        ),
+                        /* IconButton(
+                        color: Theme.of(context).primaryColor,
+                        onPressed: () => {chatMessages(),_postTextTab(inputText)}, 
+                        icon: const Icon(Icons.send),
+                      ), */
+                        InkWell(
+                          onTap: () {
+                            _postTextTab(inputText);
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: const Center(
+                                child: Icon(
+                              Icons.send,
+                              color: Colors.white,
+                            )),
+                          ),
+                        )
+                      ],
                     ),
-                    child: const Center(
-                        child: Icon(
-                      Icons.send,
-                      color: Colors.white,
-                    )),
                   ),
-                )
-              ]),
+                ),
+              ],
             ),
-          )
-        ],
+            Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                isLoading
+                    ? SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        width: MediaQuery.of(context).size.height * 0.1,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                          strokeWidth: 8.0,
+                        ),
+                      )
+                    : Container(),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
