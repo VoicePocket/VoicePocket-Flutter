@@ -21,7 +21,9 @@ class _ListScreenState extends State<ListScreen> {
     super.initState();
     SharedPreferences.getInstance().then((pref) {
       _pref = pref;
-      email = _pref.getString("email")!;
+      setState(() {
+        email = _pref.getString("email")!;
+      });
     });
   }
 
@@ -34,10 +36,10 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-  void _onVoicePocketTab(BuildContext context) {
+  void _onVoicePocketTab(BuildContext context, int index) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const SelectScreen(),
+        builder: (context) => SelectScreen(index: index),
       ),
     );
   }
@@ -81,47 +83,134 @@ class _ListScreenState extends State<ListScreen> {
                 ),
                 Gaps.v40,
                 GestureDetector(
-                    onTap: () => _onVoicePocketTab(context),
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: Sizes.size10),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(Sizes.size16),
+                  onTap: () => _onVoicePocketTab(context, 0),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: Sizes.size10),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(Sizes.size16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: Sizes.size16,
+                        horizontal: Sizes.size20,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: Sizes.size16,
-                          horizontal: Sizes.size20,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  email,
-                                  style: const TextStyle(
-                                    fontSize: Sizes.size36,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                email,
+                                style: const TextStyle(
+                                  fontSize: Sizes.size36,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
                                 ),
-                                Gaps.v16,
-                                const Text(
-                                  "2023.04.27",
-                                  style: TextStyle(
-                                    fontSize: Sizes.size20,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              ),
+                              Gaps.v16,
+                              const Text(
+                                "2023.04.27",
+                                style: TextStyle(
+                                  fontSize: Sizes.size20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ))
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => _onVoicePocketTab(context, 1),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: Sizes.size10),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(Sizes.size16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: Sizes.size16,
+                        horizontal: Sizes.size20,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                "man@gmail.com",
+                                style: TextStyle(
+                                  fontSize: Sizes.size36,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Gaps.v16,
+                              Text(
+                                "2023.04.27",
+                                style: TextStyle(
+                                  fontSize: Sizes.size20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => _onVoicePocketTab(context, 2),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: Sizes.size10),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(Sizes.size16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: Sizes.size16,
+                        horizontal: Sizes.size20,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                "woman@gmail.com",
+                                style: TextStyle(
+                                  fontSize: Sizes.size36,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Gaps.v16,
+                              Text(
+                                "2023.04.27",
+                                style: TextStyle(
+                                  fontSize: Sizes.size20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
