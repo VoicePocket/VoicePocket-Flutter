@@ -89,6 +89,9 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   @override
   void initState() {
     super.initState();
+    recent_song = 0;
+    past_song = -1;
+    print("initState");
     player = AudioPlayer();
     player.setLoopMode(_loopMode);
     _playerStateSubscription =
@@ -97,6 +100,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
         _playNext();
       }
     });
+    print("initState2");
   }
 
   void toHomeScreen(BuildContext context) {
@@ -179,7 +183,8 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   @override
   void dispose() {
     _playerStateSubscription.cancel();
-    player.dispose();
+    print("dispose");
+    //player.dispose();
     super.dispose();
   }
 
@@ -234,7 +239,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       itemBuilder: (BuildContext context,
                                           int itemIndex, int pageViewIndex) {
                                         return Container(
-                                            child: Stack(
+                                          child: Stack(
                                           alignment: Alignment.center,
                                           children: [
                                             ClipRRect(
