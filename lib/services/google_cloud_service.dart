@@ -23,12 +23,13 @@ Future<void> readWavFileFromBucket(TextModel response, String uuid) async {
   try {
     final storage = Storage(client, "VoicePocket");
     final bucket = storage.bucket("voicepocket");
-
     await bucket.read("${response.data.email}/${response.data.uuid}.wav").pipe(
-          File("${directory.path}/wav/${response.data.uuid}.wav").openWrite(),
+          File("${directory.path}/wav/${response.data.email}/${response.data.uuid}.wav")
+              .openWrite(),
         );
 
-    print("wav파일 받아온 저장 경로: ${directory.path}/wav/${response.data.uuid}.wav");
+    print(
+        "wav파일 받아온 저장 경로: ${directory.path}/wav/${response.data.email}/${response.data.uuid}.wav");
   } finally {
     client.close();
   }
