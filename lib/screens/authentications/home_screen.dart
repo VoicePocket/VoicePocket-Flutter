@@ -7,7 +7,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
-import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -47,14 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!(await wavDir.exists())) {
       wavDir.create();
     }
-  }
-
-  void _onVoiceTab(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const PostTextScreen(),
-      ),
-    );
   }
 
   void _onVoicePocketListTab(BuildContext context) {
@@ -152,67 +143,64 @@ class _HomeScreenState extends State<HomeScreen> {
             Gaps.v16,
             Flexible(
               fit: FlexFit.loose,
-              child: GestureDetector(
-                onTap: () => _onVoicePocketListTab(context),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0XFFBBD0FF),
-                    borderRadius: BorderRadius.circular(25),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0XFFBBD0FF),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 25,
+                    horizontal: 30,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 25,
-                      horizontal: 30,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Voice Pocket",
-                              style: TextStyle(
-                                fontSize: Sizes.size24,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Voice Pocket",
+                            style: TextStyle(
+                              fontSize: Sizes.size24,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(),
+                          ),
+                          GestureDetector(
+                            onTap: () => _onVoicePocketListTab(context),
+                            child: Container(
+                              decoration: BoxDecoration(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w900,
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                            ),
-                            Expanded(
-                              child: Container(),
-                            ),
-                            GestureDetector(
-                              onTap: () => _onVoiceTab(context),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: Sizes.size10,
+                                  horizontal: Sizes.size32,
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: Sizes.size10,
-                                    horizontal: Sizes.size32,
-                                  ),
-                                  child: Text(
-                                    "생성",
-                                    style: TextStyle(
-                                      fontSize: Sizes.size16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.grey.shade800,
-                                    ),
+                                child: Text(
+                                  "GO",
+                                  style: TextStyle(
+                                    fontSize: Sizes.size16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.grey.shade800,
                                   ),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                        Icon(
-                          Icons.equalizer,
-                          color: Colors.grey.shade800,
-                          size: Sizes.size96 + Sizes.size20,
-                        )
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                      Icon(
+                        Icons.equalizer,
+                        color: Colors.grey.shade800,
+                        size: Sizes.size96 + Sizes.size20,
+                      )
+                    ],
                   ),
                 ),
               ),

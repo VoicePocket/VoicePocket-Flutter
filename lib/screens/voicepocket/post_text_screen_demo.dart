@@ -4,14 +4,15 @@ import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
 
-class PostTextScreen extends StatefulWidget {
-  const PostTextScreen({super.key});
+class PostTextScreenDemo extends StatefulWidget {
+  final String email;
+  const PostTextScreenDemo({super.key, required this.email});
 
   @override
-  State<PostTextScreen> createState() => _PostTextScreenState();
+  State<PostTextScreenDemo> createState() => _PostTextScreenDemoState();
 }
 
-class _PostTextScreenState extends State<PostTextScreen> {
+class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
   final TextEditingController _textController = TextEditingController();
   TextModel? response;
   String inputText = "";
@@ -31,7 +32,7 @@ class _PostTextScreenState extends State<PostTextScreen> {
     setState(() {
       isLoading = true;
     });
-    var response = await postText(text);
+    var response = await postTextDemo(text, widget.email);
     if (!mounted) return;
     if (response.success) {
       setState(() {
