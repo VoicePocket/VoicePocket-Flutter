@@ -47,8 +47,10 @@ Future<TextModel> postText(String text) async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    await readWavFileFromBucket(model, uuid);
-    print("다운로드 완료");
+    if (model.success) {
+      await readWavFileFromBucket(model, uuid);
+      print("다운로드 완료");
+    }
     return model;
   } else {
     throw Exception('Failed to post');
