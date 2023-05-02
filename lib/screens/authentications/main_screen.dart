@@ -66,7 +66,7 @@ class _MainScreenState extends State<MainScreen> {
           Fluttertoast.showToast(
             msg: loginModel.message,
             toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
+            gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             textColor: Colors.white,
             backgroundColor: const Color(0xFFA594F9),
