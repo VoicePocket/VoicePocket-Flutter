@@ -1,17 +1,17 @@
-class TextModel {
+class TaskStatusModel {
   bool success;
   int code;
   String message;
   Data data;
 
-  TextModel(
+  TaskStatusModel(
       {required this.success,
       required this.code,
       required this.message,
       required this.data});
 
-  factory TextModel.fromJson(Map<String, dynamic> json) {
-    return TextModel(
+  factory TaskStatusModel.fromJson(Map<String, dynamic> json) {
+    return TaskStatusModel(
       success: json['success'],
       code: json['code'],
       message: json['message'],
