@@ -20,6 +20,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
 
   String _email = "";
   String _password = "";
+  bool _obsecureText = false;
 
   void _onScaffoldTab() => FocusScope.of(context).unfocus();
 
@@ -57,6 +58,12 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
         builder: (context) => const SubmitNicknameScreen(),
       ),
     );
+  }
+
+  void _obsecureVisible() {
+    setState(() {
+      _obsecureText = !_obsecureText;
+    });
   }
 
   @override
@@ -155,7 +162,8 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                 ),
               ),
               TextField(
-                //obscureText: _obsecureText,
+                obscureText: _obsecureText,
+                obscuringCharacter: '●',
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: Sizes.size16 + Sizes.size2,
@@ -182,6 +190,13 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                     borderRadius: BorderRadius.circular(
                       Sizes.size32,
                     ),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obsecureText ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.grey.shade300,
+                    ),
+                    onPressed: () => _obsecureVisible(),
                   ),
                 ),
               ),
