@@ -7,8 +7,8 @@ import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 
 class MediaPlayerScreen extends StatefulWidget {
-  final String path;
-  const MediaPlayerScreen({super.key, required this.path});
+  final String path, email;
+  const MediaPlayerScreen({super.key, required this.path, required this.email});
 
   @override
   State<MediaPlayerScreen> createState() => _MediaPlayerScreenState();
@@ -53,7 +53,7 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
     audioPlayer.setReleaseMode(ReleaseMode.stop);
 
     var directory = await getApplicationDocumentsDirectory();
-    final file = File("${directory.path}/wav/${widget.path}");
+    final file = File("${directory.path}/wav/${widget.email}/${widget.path}");
     audioPlayer.setSourceDeviceFile(file.path);
   }
 

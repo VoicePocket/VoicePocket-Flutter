@@ -74,7 +74,7 @@ class _ListScreenState extends State<ListScreen> {
             child: Column(
               children: [
                 Text(
-                  "Select Model",
+                  "친구 선택",
                   style: TextStyle(
                     fontSize: Sizes.size40,
                     color: Theme.of(context).primaryColor,
@@ -145,7 +145,7 @@ class _ListScreenState extends State<ListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
                               Text(
-                                "남자 모델",
+                                "샘플남",
                                 style: TextStyle(
                                   fontSize: Sizes.size36,
                                   color: Colors.white,
@@ -188,7 +188,7 @@ class _ListScreenState extends State<ListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
                               Text(
-                                "여자 모델",
+                                "샘플녀",
                                 style: TextStyle(
                                   fontSize: Sizes.size36,
                                   color: Colors.white,

@@ -42,6 +42,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
         MaterialPageRoute(
           builder: (context) => MediaPlayerScreen(
             path: "${response.data.uuid}.wav",
+            email: response.data.email,
           ),
         ),
       );
