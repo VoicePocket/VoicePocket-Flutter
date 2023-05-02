@@ -14,7 +14,7 @@ class ListScreen extends StatefulWidget {
 
 class _ListScreenState extends State<ListScreen> {
   late final SharedPreferences _pref;
-  String email = "";
+  String name = "";
 
   @override
   void initState() {
@@ -22,7 +22,7 @@ class _ListScreenState extends State<ListScreen> {
     SharedPreferences.getInstance().then((pref) {
       _pref = pref;
       setState(() {
-        email = _pref.getString("email")!;
+        name = _pref.getString("name")!;
       });
     });
   }
@@ -74,7 +74,7 @@ class _ListScreenState extends State<ListScreen> {
             child: Column(
               children: [
                 Text(
-                  "Select Model",
+                  "친구 선택",
                   style: TextStyle(
                     fontSize: Sizes.size40,
                     color: Theme.of(context).primaryColor,
@@ -102,7 +102,7 @@ class _ListScreenState extends State<ListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                email,
+                                name,
                                 style: const TextStyle(
                                   fontSize: Sizes.size36,
                                   color: Colors.white,
@@ -145,7 +145,7 @@ class _ListScreenState extends State<ListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
                               Text(
-                                "man@gmail.com",
+                                "샘플남",
                                 style: TextStyle(
                                   fontSize: Sizes.size36,
                                   color: Colors.white,
@@ -188,7 +188,7 @@ class _ListScreenState extends State<ListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
                               Text(
-                                "woman@gmail.com",
+                                "샘플녀",
                                 style: TextStyle(
                                   fontSize: Sizes.size36,
                                   color: Colors.white,

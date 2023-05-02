@@ -77,168 +77,164 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: GestureDetector(
-        onTap: _onScaffoldTab,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 50,
-              horizontal: 35,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '닉네임과 이름을\n입력해주세요',
-                  style: TextStyle(
-                    fontSize: Sizes.size32,
+    return GestureDetector(
+      onTap: _onScaffoldTab,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 50,
+            horizontal: 35,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '닉네임과 이름을\n입력해주세요',
+                style: TextStyle(
+                  fontSize: Sizes.size32,
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Gaps.v52,
+              const Text(
+                '이름',
+                style: TextStyle(
+                  fontSize: Sizes.size16,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0XFF929292),
+                ),
+              ),
+              TextField(
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: Sizes.size16 + Sizes.size2,
+                ),
+                controller: _nameController,
+                cursorColor: Theme.of(context).primaryColor,
+                decoration: InputDecoration(
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade300,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      Sizes.size32,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: _name.isEmpty ? Colors.red : Colors.grey.shade300,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      Sizes.size32,
+                    ),
+                  ),
+                ),
+              ),
+              Gaps.v10,
+              const Text(
+                '닉네임',
+                style: TextStyle(
+                  fontSize: Sizes.size16,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0XFF929292),
+                ),
+              ),
+              TextField(
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: Sizes.size16 + Sizes.size2,
+                ),
+                controller: _nickNameController,
+                cursorColor: Theme.of(context).primaryColor,
+                decoration: InputDecoration(
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade300,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      Sizes.size32,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color:
+                          _nickName.isEmpty ? Colors.red : Colors.grey.shade300,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      Sizes.size32,
+                    ),
+                  ),
+                ),
+              ),
+              const Text(
+                'Your nickname must have:',
+                style: TextStyle(
+                  fontSize: Sizes.size16,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0XFF929292),
+                ),
+              ),
+              Gaps.v10,
+              Row(
+                children: [
+                  FaIcon(
+                    _isNicknameValid()
+                        ? FontAwesomeIcons.circleCheck
+                        : FontAwesomeIcons.circleXmark,
+                    color: _isNicknameValid() ? Colors.green : Colors.red,
+                    size: Sizes.size20,
+                  ),
+                  Gaps.h5,
+                  const Text(
+                    '3 to 10 characters',
+                    style: TextStyle(
+                      fontSize: Sizes.size14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0XFF929292),
+                    ),
+                  ),
+                ],
+              ),
+              Gaps.v96,
+              Gaps.v96,
+              GestureDetector(
+                onTap: _onSubmit,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.w900,
+                    borderRadius: BorderRadius.circular(Sizes.size32),
                   ),
-                ),
-                Gaps.v52,
-                const Text(
-                  '이름',
-                  style: TextStyle(
-                    fontSize: Sizes.size16,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0XFF929292),
-                  ),
-                ),
-                TextField(
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: Sizes.size16 + Sizes.size2,
-                  ),
-                  controller: _nameController,
-                  cursorColor: Theme.of(context).primaryColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade300,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        Sizes.size32,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color:
-                            _name.isEmpty ? Colors.red : Colors.grey.shade300,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        Sizes.size32,
-                      ),
-                    ),
-                  ),
-                ),
-                Gaps.v10,
-                const Text(
-                  '닉네임',
-                  style: TextStyle(
-                    fontSize: Sizes.size16,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0XFF929292),
-                  ),
-                ),
-                TextField(
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: Sizes.size16 + Sizes.size2,
-                  ),
-                  controller: _nickNameController,
-                  cursorColor: Theme.of(context).primaryColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade300,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        Sizes.size32,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _nickName.isEmpty
-                            ? Colors.red
-                            : Colors.grey.shade300,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        Sizes.size32,
-                      ),
-                    ),
-                  ),
-                ),
-                const Text(
-                  'Your nickname must have:',
-                  style: TextStyle(
-                    fontSize: Sizes.size16,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0XFF929292),
-                  ),
-                ),
-                Gaps.v10,
-                Row(
-                  children: [
-                    FaIcon(
-                      _isNicknameValid()
-                          ? FontAwesomeIcons.circleCheck
-                          : FontAwesomeIcons.circleXmark,
-                      color: _isNicknameValid() ? Colors.green : Colors.red,
-                      size: Sizes.size20,
-                    ),
-                    Gaps.h5,
-                    const Text(
-                      '3 to 10 characters',
-                      style: TextStyle(
-                        fontSize: Sizes.size14,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0XFF929292),
-                      ),
-                    ),
-                  ],
-                ),
-                Gaps.v96,
-                Gaps.v96,
-                GestureDetector(
-                  onTap: _onSubmit,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(Sizes.size32),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text(
-                          "시작하기",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: Sizes.size20,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        "시작하기",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: Sizes.size20,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

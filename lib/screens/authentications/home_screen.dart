@@ -143,36 +143,36 @@ class _HomeScreenState extends State<HomeScreen> {
             Gaps.v16,
             Flexible(
               fit: FlexFit.loose,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0XFFBBD0FF),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 25,
-                    horizontal: 30,
+              child: GestureDetector(
+                onTap: () => _onVoicePocketListTab(context),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0XFFBBD0FF),
+                    borderRadius: BorderRadius.circular(25),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Voice Pocket",
-                            style: TextStyle(
-                              fontSize: Sizes.size24,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 25,
+                      horizontal: 30,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Voice Pocket",
+                              style: TextStyle(
+                                fontSize: Sizes.size24,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Container(),
-                          ),
-                          GestureDetector(
-                            onTap: () => _onVoicePocketListTab(context),
-                            child: Container(
+                            Expanded(
+                              child: Container(),
+                            ),
+                            Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
@@ -192,15 +192,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Icon(
-                        Icons.equalizer,
-                        color: Colors.grey.shade800,
-                        size: Sizes.size96 + Sizes.size20,
-                      )
-                    ],
+                          ],
+                        ),
+                        Icon(
+                          Icons.equalizer,
+                          color: Colors.grey.shade800,
+                          size: Sizes.size96 + Sizes.size20,
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

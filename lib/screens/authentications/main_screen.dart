@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
@@ -61,6 +62,19 @@ class _MainScreenState extends State<MainScreen> {
             ),
             (route) => false,
           );
+        } else {
+          Fluttertoast.showToast(
+            msg: loginModel.message,
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            textColor: Colors.white,
+            backgroundColor: const Color(0xFFA594F9),
+            fontSize: Sizes.size16,
+          );
+          _emailController.clear();
+          _passwordController.clear();
+          _onScaffoldTab();
         }
       }
     }
@@ -176,6 +190,9 @@ class _MainScreenState extends State<MainScreen> {
                   Gaps.v10,
                   TextFormField(
                     controller: _passwordController,
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: true,
+                    obscuringCharacter: '●',
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: Sizes.size16 + Sizes.size2,

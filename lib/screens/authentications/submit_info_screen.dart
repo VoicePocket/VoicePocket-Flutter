@@ -20,6 +20,7 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
 
   String _email = "";
   String _password = "";
+  bool _obsecureText = false;
 
   void _onScaffoldTab() => FocusScope.of(context).unfocus();
 
@@ -59,6 +60,12 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
     );
   }
 
+  void _obsecureVisible() {
+    setState(() {
+      _obsecureText = !_obsecureText;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -84,170 +91,174 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: GestureDetector(
-        onTap: _onScaffoldTab,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 50,
-              horizontal: 35,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '이메일과 비밀번호를\n입력해주세요.',
-                  style: TextStyle(
-                    fontSize: Sizes.size32,
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.w900,
-                  ),
+    return GestureDetector(
+      onTap: _onScaffoldTab,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 50,
+            horizontal: 35,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '이메일과 비밀번호를\n입력해주세요.',
+                style: TextStyle(
+                  fontSize: Sizes.size32,
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w900,
                 ),
-                Gaps.v52,
-                const Text(
-                  '이메일',
-                  style: TextStyle(
-                    fontSize: Sizes.size16,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0XFF929292),
-                  ),
+              ),
+              Gaps.v52,
+              const Text(
+                '이메일',
+                style: TextStyle(
+                  fontSize: Sizes.size16,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0XFF929292),
                 ),
-                TextField(
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: Sizes.size16 + Sizes.size2,
-                  ),
-                  controller: _emailController,
-                  cursorColor: Theme.of(context).primaryColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade300,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        Sizes.size32,
-                      ),
+              ),
+              TextField(
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: Sizes.size16 + Sizes.size2,
+                ),
+                controller: _emailController,
+                cursorColor: Theme.of(context).primaryColor,
+                decoration: InputDecoration(
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade300,
+                      width: 1,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _isEmailValid() != null
-                            ? Colors.red
-                            : Colors.grey.shade300,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        Sizes.size32,
-                      ),
+                    borderRadius: BorderRadius.circular(
+                      Sizes.size32,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: _isEmailValid() != null
+                          ? Colors.red
+                          : Colors.grey.shade300,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      Sizes.size32,
                     ),
                   ),
                 ),
-                Gaps.v16,
-                const Text(
-                  '비밀번호',
-                  style: TextStyle(
-                    fontSize: Sizes.size16,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0XFF929292),
-                  ),
+              ),
+              Gaps.v16,
+              const Text(
+                '비밀번호',
+                style: TextStyle(
+                  fontSize: Sizes.size16,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0XFF929292),
                 ),
-                TextField(
-                  //obscureText: _obsecureText,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: Sizes.size16 + Sizes.size2,
-                  ),
-                  controller: _passwordController,
-                  cursorColor: Theme.of(context).primaryColor,
-                  decoration: InputDecoration(
-                    filled: true,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade300,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        Sizes.size32,
-                      ),
+              ),
+              TextField(
+                obscureText: _obsecureText,
+                obscuringCharacter: '●',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: Sizes.size16 + Sizes.size2,
+                ),
+                controller: _passwordController,
+                cursorColor: Theme.of(context).primaryColor,
+                decoration: InputDecoration(
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade300,
+                      width: 1,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _password.isEmpty
-                            ? Colors.red
-                            : Colors.grey.shade300,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(
-                        Sizes.size32,
-                      ),
+                    borderRadius: BorderRadius.circular(
+                      Sizes.size32,
                     ),
                   ),
-                ),
-                const Text(
-                  'Your password must have:',
-                  style: TextStyle(
-                    fontSize: Sizes.size16,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0XFF929292),
-                  ),
-                ),
-                Gaps.v10,
-                Row(
-                  children: [
-                    FaIcon(
-                      _isPasswordLengthValid()
-                          ? FontAwesomeIcons.circleCheck
-                          : FontAwesomeIcons.circleXmark,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
                       color:
-                          _isPasswordLengthValid() ? Colors.green : Colors.red,
-                      size: Sizes.size20,
+                          _password.isEmpty ? Colors.red : Colors.grey.shade300,
+                      width: 2,
                     ),
-                    Gaps.h5,
-                    const Text(
-                      '8 to 20 characters',
-                      style: TextStyle(
-                        fontSize: Sizes.size14,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0XFF929292),
-                      ),
-                    ),
-                  ],
-                ),
-                Gaps.v96,
-                GestureDetector(
-                  onTap: _onSubmit,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(Sizes.size32),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text(
-                          "다음으로",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: Sizes.size20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                    borderRadius: BorderRadius.circular(
+                      Sizes.size32,
                     ),
                   ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obsecureText ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.grey.shade300,
+                    ),
+                    onPressed: () => _obsecureVisible(),
+                  ),
                 ),
-              ],
-            ),
+              ),
+              const Text(
+                'Your password must have:',
+                style: TextStyle(
+                  fontSize: Sizes.size16,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0XFF929292),
+                ),
+              ),
+              Gaps.v10,
+              Row(
+                children: [
+                  FaIcon(
+                    _isPasswordLengthValid()
+                        ? FontAwesomeIcons.circleCheck
+                        : FontAwesomeIcons.circleXmark,
+                    color: _isPasswordLengthValid() ? Colors.green : Colors.red,
+                    size: Sizes.size20,
+                  ),
+                  Gaps.h5,
+                  const Text(
+                    '8 to 20 characters',
+                    style: TextStyle(
+                      fontSize: Sizes.size14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0XFF929292),
+                    ),
+                  ),
+                ],
+              ),
+              Gaps.v96,
+              GestureDetector(
+                onTap: _onSubmit,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(Sizes.size32),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        "다음으로",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: Sizes.size20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

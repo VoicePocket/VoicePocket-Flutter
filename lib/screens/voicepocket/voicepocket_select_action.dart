@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen_demo.dart';
@@ -14,8 +19,37 @@ class SelectScreen extends StatefulWidget {
 }
 
 class _SelectScreenState extends State<SelectScreen> {
+  String defaultEmail = "";
   String manEmail = "man@gmail.com";
   String womanEmail = "woman@gmail.com";
+  @override
+  void initState() {
+    super.initState();
+    createFolder();
+  }
+
+  Future<void> createFolder() async {
+    final pref = await SharedPreferences.getInstance();
+    defaultEmail = pref.getString("email")!;
+    final routeDir = await getApplicationDocumentsDirectory();
+    final wavManDir = Directory('${routeDir.path}/wav/$manEmail');
+    final wavWomanDir = Directory('${routeDir.path}/wav/$womanEmail');
+    final defaultDir = Directory('${routeDir.path}/wav/$defaultEmail');
+
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+    if (!(await wavManDir.exists())) {
+      wavManDir.create();
+    }
+    if (!(await wavWomanDir.exists())) {
+      wavWomanDir.create();
+    }
+    if (!(await defaultDir.exists())) {
+      defaultDir.create();
+    }
+  }
 
   void toHomeScreen(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
@@ -27,11 +61,35 @@ class _SelectScreenState extends State<SelectScreen> {
   }
 
   void _onVoicePocketTab(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const VoicePocketPlayScreen(),
-      ),
-    );
+    switch (widget.index) {
+      case 0:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => VoicePocketPlayScreen(
+              email: defaultEmail,
+            ),
+          ),
+        );
+        break;
+      case 1:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => VoicePocketPlayScreen(
+              email: manEmail,
+            ),
+          ),
+        );
+        break;
+      case 2:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => VoicePocketPlayScreen(
+              email: womanEmail,
+            ),
+          ),
+        );
+        break;
+    }
   }
 
   void _onPostTab(BuildContext context) {
