@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/text_model.dart';
 import 'package:voicepocket/services/get_task.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
@@ -52,7 +55,21 @@ Future<TextModel> postText(String text) async {
     }
     return model;
   } else {
-    throw Exception('Failed to post');
+    TextModel model = TextModel.fromJson(
+      json.decode(
+        utf8.decode(response.bodyBytes),
+      ),
+    );
+    Fluttertoast.showToast(
+      msg: model.message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.white,
+      backgroundColor: const Color(0xFFA594F9),
+      fontSize: Sizes.size16,
+    );
+    return model;
   }
 }
 

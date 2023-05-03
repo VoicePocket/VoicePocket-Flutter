@@ -20,14 +20,9 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
 
   String _email = "";
   String _password = "";
-  bool _obsecureText = false;
+  bool _obsecureText = true;
 
   void _onScaffoldTab() => FocusScope.of(context).unfocus();
-
-  void setToken(String email, String password) async {
-    _pref.setString('email', email);
-    _pref.setString('password', password);
-  }
 
   bool _isPasswordLengthValid() {
     return _password.length >= 8 && _password.length <= 20;
@@ -37,25 +32,24 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
     return _password.isNotEmpty && _isPasswordLengthValid();
   }
 
-  String? _isEmailValid() {
-    if (_email.isEmpty) return null;
-    final regExp = RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-    if (!regExp.hasMatch(_email)) {
-      return "Email Not Valid";
-    }
-    return null;
+  bool _isEmailValid() {
+    if (_email.isEmpty) return false;
+    return RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(_email);
   }
 
   void _onSubmit() {
-    if (!_isPasswordValid() || _email.isEmpty || _isEmailValid() != null) {
+    if (!_isPasswordValid() || !_isEmailValid()) {
       return;
     }
-    setToken(_email, _password);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const SubmitNicknameScreen(),
+        builder: (context) => SubmitNicknameScreen(
+          email: _email,
+          password: _password,
+        ),
       ),
     );
   }
@@ -141,9 +135,8 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                      color: _isEmailValid() != null
-                          ? Colors.red
-                          : Colors.grey.shade300,
+                      color:
+                          !_isEmailValid() ? Colors.red : Colors.grey.shade300,
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(

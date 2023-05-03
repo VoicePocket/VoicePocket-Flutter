@@ -54,8 +54,15 @@ class _MainScreenState extends State<MainScreen> {
         final loginModel = await loginPost(_email, _password);
         if (!mounted) return;
         if (loginModel.success) {
-          _pref.setString("email", _email);
-          _pref.setString("password", _password);
+          Fluttertoast.showToast(
+            msg: "${_pref.getString("email")!}님 환영합니다!",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            textColor: Colors.white,
+            backgroundColor: const Color(0xFFA594F9),
+            fontSize: Sizes.size20,
+          );
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => const HomeScreen(),
@@ -63,15 +70,6 @@ class _MainScreenState extends State<MainScreen> {
             (route) => false,
           );
         } else {
-          Fluttertoast.showToast(
-            msg: loginModel.message,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            textColor: Colors.white,
-            backgroundColor: const Color(0xFFA594F9),
-            fontSize: Sizes.size16,
-          );
           _emailController.clear();
           _passwordController.clear();
           _onScaffoldTab();

@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/signup_model.dart';
 
 Future<SignUpModel> signUpPost(
@@ -23,15 +26,20 @@ Future<SignUpModel> signUpPost(
     SignUpModel signUpModel = SignUpModel.fromJson(
       json.decode(utf8.decode(response.bodyBytes)),
     );
-    print(signUpModel.code);
     return signUpModel;
-  } else if (response.statusCode == 400) {
+  } else {
     SignUpModel signUpModel = SignUpModel.fromJson(
       json.decode(utf8.decode(response.bodyBytes)),
     );
-    print(signUpModel.code);
+    Fluttertoast.showToast(
+      msg: signUpModel.message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.white,
+      backgroundColor: const Color(0xFFA594F9),
+      fontSize: Sizes.size16,
+    );
     return signUpModel;
-  } else {
-    throw Exception('Failed to post');
   }
 }

@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/login_model.dart';
 
 Future<LoginModel> loginPost(String email, String password) async {
@@ -24,17 +27,27 @@ Future<LoginModel> loginPost(String email, String password) async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    pref.setString("accessToken", loginModel.data!.accessToken);
-    pref.setString("refreshToken", loginModel.data!.refreshToken);
+    if (loginModel.success) {
+      pref.setString("email", email);
+      pref.setString("accessToken", loginModel.data!.accessToken);
+      pref.setString("refreshToken", loginModel.data!.refreshToken);
+    }
     return loginModel;
-  } else if (response.statusCode > 400) {
+  } else {
     LoginModel loginModel = LoginModel.fromJson(
       json.decode(
         utf8.decode(response.bodyBytes),
       ),
     );
+    Fluttertoast.showToast(
+      msg: loginModel.message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.white,
+      backgroundColor: const Color(0xFFA594F9),
+      fontSize: Sizes.size16,
+    );
     return loginModel;
-  } else {
-    throw Exception('Failed to post');
   }
 }

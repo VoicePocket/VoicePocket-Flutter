@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
+import 'package:voicepocket/screens/authentications/submit_info_screen.dart';
 import 'package:voicepocket/services/signup_post.dart';
 
 class SubmitNicknameScreen extends StatefulWidget {
+  final String email, password;
   const SubmitNicknameScreen({
     super.key,
+    required this.email,
+    required this.password,
   });
 
   @override
@@ -16,17 +20,10 @@ class SubmitNicknameScreen extends StatefulWidget {
 }
 
 class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
-  late final SharedPreferences _pref;
-
   final TextEditingController _nickNameController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
   String _nickName = "", _name = "";
-
-  void setToken(String name, String nickName) {
-    _pref.setString('name', name);
-    _pref.setString('nickName', nickName);
-  }
 
   void _onScaffoldTab() => FocusScope.of(context).unfocus();
 
@@ -40,16 +37,32 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
 
   void _onSubmit() async {
     if (!_isNicknameValid()) return;
-    setToken(_name, _nickName);
-    await signUpPost(_pref.getString("email")!, _pref.getString("password")!,
-        _pref.getString("name")!, _pref.getString("nickName")!);
+    final signUpModel =
+        await signUpPost(widget.email, widget.password, _name, _nickName);
     if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const MainScreen(),
-      ),
-      (route) => false,
-    );
+    if (signUpModel.success) {
+      Fluttertoast.showToast(
+        msg: "회원 가입 성공했습니다.",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        backgroundColor: const Color(0xFFA594F9),
+        fontSize: Sizes.size16,
+      );
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const MainScreen(),
+        ),
+        (route) => false,
+      );
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const SubmitInfoScreen(),
+        ),
+      );
+    }
   }
 
   @override
@@ -65,7 +78,6 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
         _nickName = _nickNameController.text;
       });
     });
-    SharedPreferences.getInstance().then((pref) => _pref = pref);
   }
 
   @override
