@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -12,13 +13,14 @@ import 'package:voicepocket/services/google_cloud_service.dart';
 Future<TextModel> postText(String text) async {
   final pref = await SharedPreferences.getInstance();
   final uuid = const Uuid().v1();
+  final uri = defaultTargetPlatform == TargetPlatform.iOS
+      ? 'http://localhost:8080/api/tts/send'
+      : 'http://10.0.2.2:8000/api/tts/send';
   await pref.setString("uuid", uuid);
   int count = 0;
 
   final http.Response response = await http.post(
-    Uri.parse('http://localhost:8080/api/tts/send'), // IOS
-    //'http://172.20.10.12:8080/send'), // Real-test
-    //Uri.parse('http://10.0.0.2:8000/api/texts/psg1478795@naver.com/make_wav'), // ANDROID
+    Uri.parse(uri),
     headers: <String, String>{
       //토큰 추가 (이메일, 패스워드 송신 필요)
       'Content-Type': 'application/json; charset=UTF-8',
@@ -76,13 +78,15 @@ Future<TextModel> postText(String text) async {
 Future<TextModel> postTextDemo(String text, String email) async {
   final pref = await SharedPreferences.getInstance();
   final uuid = const Uuid().v1();
+  final uri = defaultTargetPlatform == TargetPlatform.iOS
+      ? 'http://localhost:8080/api/tts/send'
+      : 'http://10.0.2.2:8000/api/tts/send';
+
   await pref.setString("uuid", uuid);
   int count = 0;
 
   final http.Response response = await http.post(
-    Uri.parse('http://localhost:8080/api/tts/send'), // IOS
-    //'http://172.20.10.12:8080/send'), // Real-test
-    //Uri.parse('http://10.0.0.2:8000/api/texts/psg1478795@naver.com/make_wav'), // ANDROID
+    Uri.parse(uri),
     headers: <String, String>{
       //토큰 추가 (이메일, 패스워드 송신 필요)
       'Content-Type': 'application/json; charset=UTF-8',
