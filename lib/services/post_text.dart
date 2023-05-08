@@ -53,7 +53,6 @@ Future<TextModel> postText(String text) async {
     );
     if (model.success) {
       await readWavFileFromBucket(model, uuid);
-      print("다운로드 완료");
     }
     return model;
   } else {

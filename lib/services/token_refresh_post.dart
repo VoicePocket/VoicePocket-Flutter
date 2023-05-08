@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/login_model.dart';
 
 Future<LoginModel> tokenRefreshPost() async {
@@ -34,6 +37,15 @@ Future<LoginModel> tokenRefreshPost() async {
       json.decode(
         utf8.decode(response.bodyBytes),
       ),
+    );
+    Fluttertoast.showToast(
+      msg: loginModel.message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.white,
+      backgroundColor: const Color(0xFFA594F9),
+      fontSize: Sizes.size16,
     );
     return loginModel;
   } else {
