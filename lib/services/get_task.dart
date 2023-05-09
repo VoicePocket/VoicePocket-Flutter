@@ -21,7 +21,11 @@ Future<TaskIdModel> requestTaskId() async {
 
     print('taskId 받아오는 중');
     if (response.statusCode == 200) {
-      model = TaskIdModel.fromJson(json.decode(response.body));
+      model = TaskIdModel.fromJson(
+        json.decode(
+          utf8.decode(response.bodyBytes),
+        ),
+      );
       break; // response가 성공적으로 올 경우 루프를 빠져나옴
     }
   }

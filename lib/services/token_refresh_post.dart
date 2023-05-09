@@ -29,8 +29,10 @@ Future<LoginModel> tokenRefreshPost() async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    pref.setString("accessToken", loginModel.data!.accessToken);
-    pref.setString("refreshToken", loginModel.data!.refreshToken);
+    if (loginModel.success) {
+      pref.setString("accessToken", loginModel.data!.accessToken);
+      pref.setString("refreshToken", loginModel.data!.refreshToken);
+    }
     return loginModel;
   } else if (response.statusCode > 400) {
     LoginModel loginModel = LoginModel.fromJson(
