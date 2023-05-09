@@ -1,44 +1,20 @@
 class TextModel {
-  bool success;
-  int code;
-  String message;
-  Data data;
+  final String text;
+  final String uuid;
 
-  TextModel(
-      {required this.success,
-      required this.code,
-      required this.message,
-      required this.data});
-
-  factory TextModel.fromJson(Map<String, dynamic> json) {
-    return TextModel(
-      success: json['success'],
-      code: json['code'],
-      message: json['message'],
-      data: Data.fromJson(json['data']),
-    );
-  }
-}
-
-class Data {
-  String type;
-  String uuid;
-  String email;
-  String text;
-
-  Data({
-    required this.type,
+  TextModel({
     required this.uuid,
-    required this.email,
     required this.text,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) {
-    return Data(
-      type: json['type'],
-      uuid: json['uuid'],
-      email: json['email'],
-      text: json['text'],
-    );
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["uuid"] = uuid;
+    data["text"] = text;
+    return data;
   }
+
+  TextModel.fromJson(Map<String, dynamic> json)
+      : uuid = json["uuid"],
+        text = json["text"];
 }
