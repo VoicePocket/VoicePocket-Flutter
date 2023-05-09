@@ -23,14 +23,37 @@ Future<void> readWavFileFromBucket(TextModel response, String uuid) async {
   try {
     final storage = Storage(client, "VoicePocket");
     final bucket = storage.bucket("voicepocket");
-
     await bucket.read("${response.data.email}/${response.data.uuid}.wav").pipe(
           File("${directory.path}/wav/${response.data.email}/${response.data.uuid}.wav")
               .openWrite(),
         );
-
     print(
         "wav파일 받아온 저장 경로: ${directory.path}/wav/${response.data.email}/${response.data.uuid}.wav");
+  } finally {
+    client.close();
+  }
+}
+
+Future<void> readAllWavFiles(String email) async {
+  // wav파일 bucket에서 받아오는 함수
+  final client = await getAuthClient();
+  final directory = await getApplicationDocumentsDirectory();
+  try {
+    final storage = Storage(client, "VoicePocket");
+    final bucket = storage.bucket("voicepocket");
+
+    final wavlist = bucket.list(
+      prefix: "$email/",
+    );
+    await for (var wav in wavlist) {
+      if (wav.name.endsWith(".wav") &&
+          !(await File("${directory.path}/wav/${wav.name}").exists())) {
+        await bucket.read(wav.name).pipe(
+              File("${directory.path}/wav/${wav.name}").openWrite(),
+            );
+      }
+    }
+    print("받아오기 완료");
   } finally {
     client.close();
   }
@@ -49,7 +72,7 @@ Future<void> uploadModelVoiceFileToBucket() async {
     await File("${directory.path}/$email.zip") // 로컬의 파일명
         .openRead()
         .pipe(bucket.write("$email/$email.zip")); // 버킷 내에 경로 및  파일명
-    print("upload complete");
+    print("버킷 업로드 완료");
   } finally {
     File("${directory.path}/$email.zip").delete();
     client.close();

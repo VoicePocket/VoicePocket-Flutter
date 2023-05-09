@@ -1,14 +1,19 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/login_model.dart';
 
 Future<LoginModel> tokenRefreshPost() async {
+  final uri = defaultTargetPlatform == TargetPlatform.iOS
+      ? 'http://localhost:8080/api/reissue'
+      : 'http://10.0.2.2:8000/api/reissue';
   final pref = await SharedPreferences.getInstance();
   final http.Response response = await http.post(
-    Uri.parse('http://localhost:8080/api/reissue'), // IOS
-    //'http://172.20.10.12:8080/api/reissue'), // Real-test
-    //Uri.parse('http://10.0.0.2:8000//api/reissue'), // ANDROID
+    Uri.parse(uri),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -32,6 +37,15 @@ Future<LoginModel> tokenRefreshPost() async {
       json.decode(
         utf8.decode(response.bodyBytes),
       ),
+    );
+    Fluttertoast.showToast(
+      msg: loginModel.message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.white,
+      backgroundColor: const Color(0xFFA594F9),
+      fontSize: Sizes.size16,
     );
     return loginModel;
   } else {

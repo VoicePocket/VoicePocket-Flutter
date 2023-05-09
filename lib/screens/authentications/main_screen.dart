@@ -48,34 +48,30 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onLoginTab(BuildContext context) async {
-    if (_formKey.currentState != null) {
-      if (_formKey.currentState!.validate()) {
-        _formKey.currentState!.save();
-        final loginModel = await loginPost(_email, _password);
-        if (!mounted) return;
-        if (loginModel.success) {
-          _pref.setString("email", _email);
-          _pref.setString("password", _password);
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
-            ),
-            (route) => false,
-          );
-        } else {
-          Fluttertoast.showToast(
-            msg: loginModel.message,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            textColor: Colors.white,
-            backgroundColor: const Color(0xFFA594F9),
-            fontSize: Sizes.size16,
-          );
-          _emailController.clear();
-          _passwordController.clear();
-          _onScaffoldTab();
-        }
+    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      final loginModel = await loginPost(_email, _password);
+      if (!mounted) return;
+      if (loginModel.success) {
+        Fluttertoast.showToast(
+          msg: "${_pref.getString("email")!}님 환영합니다!",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.white,
+          backgroundColor: const Color(0xFFA594F9),
+          fontSize: Sizes.size20,
+        );
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+          (route) => false,
+        );
+      } else {
+        _emailController.clear();
+        _passwordController.clear();
+        _onScaffoldTab();
       }
     }
   }
@@ -136,7 +132,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     validator: (value) {
                       if (value != null && value.isEmpty) {
-                        return "Please write your email";
+                        return "이메일을 입력 하시오";
                       }
                       return null;
                     },
@@ -199,7 +195,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     validator: (value) {
                       if (value != null && value.isEmpty) {
-                        return "Password";
+                        return "비밀번호를 입력 하시오";
                       }
                       return null;
                     },

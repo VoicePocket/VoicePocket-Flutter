@@ -185,10 +185,11 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     zipEncoder(modelDir, "${modelDir.parent.path}/$email.zip");
     await uploadModelVoiceFileToBucket();
     if (!mounted) return;
-    Navigator.of(context).push(
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const RecordroomMainScreen(),
       ),
+      (route) => false,
     );
   }
 
