@@ -1,42 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
+import 'package:voicepocket/screens/create_model.dart';
 
-import '../authentications/home_screen.dart';
-
-class RecordroomMainScreen extends StatelessWidget {
-  const RecordroomMainScreen({super.key});
+class RecordRoomScreen extends StatelessWidget {
+  const RecordRoomScreen({super.key});
 
   void _onCreateModelTab(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const RecordroomStudioScreen(),
-      ),
-    );
-  }
-
-  void toHomeScreen(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-      (route) => false,
+      MaterialPageRoute(builder: (context) => const CreateModelScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const Drawer(),
       appBar: AppBar(
         title: Image.asset(
           "assets/images/logo.png",
           width: 55,
           height: 55,
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.house),
-          onPressed: () => toHomeScreen(context),
         ),
         actions: <Widget>[
           IconButton(
