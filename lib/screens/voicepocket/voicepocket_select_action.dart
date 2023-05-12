@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,6 +8,8 @@ import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen_demo.dart';
 import '../authentications/home_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
+import 'package:voicepocket/models/database_service.dart';
+
 
 class SelectScreen extends StatefulWidget {
   final int index;
@@ -20,12 +21,28 @@ class SelectScreen extends StatefulWidget {
 
 class _SelectScreenState extends State<SelectScreen> {
   String defaultEmail = "";
+  String defaultName = "";
   String manEmail = "man@gmail.com";
   String womanEmail = "woman@gmail.com";
   @override
   void initState() {
     super.initState();
     createFolder();
+    createFireStore();
+  }
+
+  Future<void> createFireStore() async {
+    final pref = await SharedPreferences.getInstance();
+    defaultEmail = pref.getString("email")!;
+    defaultName = pref.getString("name")!;
+    
+    DatabaseService().savingUserData(defaultName, defaultEmail);
+
+    /* if(DatabaseService().gettingUserData(defaultEmail) == "") {
+      DatabaseService().savingUserData(defaultName, defaultEmail);
+      print('firestore create');
+    } */
+
   }
 
   Future<void> createFolder() async {
@@ -97,7 +114,9 @@ class _SelectScreenState extends State<SelectScreen> {
       case 0:
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const PostTextScreen(),
+            builder: (context) => PostTextScreenDemo(
+              email: defaultEmail,
+            ),
           ),
         );
         break;
@@ -240,5 +259,5 @@ class _SelectScreenState extends State<SelectScreen> {
         ),
       ),
     );
-  }
+  }  
 }

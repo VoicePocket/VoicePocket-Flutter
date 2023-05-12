@@ -24,7 +24,7 @@ class _MessageTileState extends State<MessageTile> {
           top: 4,
           bottom: 4,
           left: widget.sentByMe ? 0 : 24,
-          right: widget.sentByMe ? 24 : 0),
+          right: widget.sentByMe ? 12 : 0),
       alignment: widget.sentByMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: widget.sentByMe

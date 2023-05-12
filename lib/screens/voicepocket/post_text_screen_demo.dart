@@ -1,25 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/models/text_model.dart';
 import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
-import 'package:voicepocket/services/group_info.dart';
-import 'package:voicepocket/services/message_tile.dart';
-import 'package:voicepocket/services/widgets.dart';
 import 'package:voicepocket/models/database_service.dart';
+import 'package:voicepocket/services/message_tile.dart';
+
 
 
 class PostTextScreenDemo extends StatefulWidget {
-  final String groupId;
-  final String groupName;
-  final String userName;
-  const PostTextScreenDemo(
-      {Key? key,
-      required this.groupId,
-      required this.groupName,
-      required this.userName})
-      : super(key: key);
+  final String email;
+  const PostTextScreenDemo({super.key, required this.email});
 
   @override
   State<PostTextScreenDemo> createState() => _PostTextScreenDemoState();
@@ -27,53 +20,81 @@ class PostTextScreenDemo extends StatefulWidget {
 
 class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
   Stream<QuerySnapshot>? chats;
-  TextEditingController messageController = TextEditingController();
-  String admin = "";
+  final TextEditingController _textController = TextEditingController();
+  TextModel? response;
+  String inputText = "";
+  bool isLoading = false;
+  String defaultEmail = "";
 
   @override
   void initState() {
-    getChatandAdmin();
+    getChat();
     super.initState();
+    _textController.addListener(() {
+      setState(() {
+        inputText = _textController.text;
+      });
+    });
   }
 
-  getChatandAdmin() {
-    DatabaseService().getChats(widget.groupId).then((val) {
+  getChat() {
+    DatabaseService().getChats(widget.email).then((val) {
       setState(() {
         chats = val;
       });
     });
-    DatabaseService().getGroupAdmin(widget.groupId).then((val) {
-      setState(() {
-        admin = val;
-      });
+  }
+
+  void _postTextTab(String text) async {
+    setState(() {
+      isLoading = true;
     });
+    var response = await postTextDemo(text, widget.email);
+    if (!mounted) return;
+    if (response.success) {
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => MediaPlayerScreen(
+            path: "${response.data.uuid}.wav",
+            email: response.data.email,
+          ),
+        ),
+      );
+    } else if (response.code == -1006) {
+      await tokenRefreshPost();
+    } else {
+      return;
+    }
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const Drawer(),
       appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        title: Text(widget.groupName),
-        backgroundColor: Theme.of(context).primaryColor,
-        actions: [
+        title: Image.asset(
+          "assets/images/logo.png",
+          width: MediaQuery.of(context).size.height * 0.1,
+          height: 55,
+        ),
+        actions: <Widget>[
           IconButton(
-              onPressed: () {
-                nextScreen(
-                    context,
-                    GroupInfo(
-                      groupId: widget.groupId,
-                      groupName: widget.groupName,
-                      adminName: admin,
-                    ));
-              },
-              icon: const Icon(Icons.info))
+            icon: const Icon(Icons.account_circle_rounded),
+            onPressed: () {},
+          ),
         ],
       ),
       body: Stack(
         children: <Widget>[
-          // chat messages here
           chatMessages(),
           Container(
             alignment: Alignment.bottomCenter,
@@ -81,48 +102,83 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               width: MediaQuery.of(context).size.width,
-              color: Colors.grey[700],
-              child: Row(children: [
-                Expanded(
-                    child: TextFormField(
-                  controller: messageController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    hintText: "Send a message...",
-                    hintStyle: TextStyle(color: Colors.white, fontSize: 16),
-                    border: InputBorder.none,
-                  ),
-                )),
-                const SizedBox(
-                  width: 12,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    sendMessage();
-                  },
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(30),
+              color: const Color.fromRGBO(243, 230, 255, 0.816),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: TextFormField(
+                    controller: _textController,
+                    style: const TextStyle(color: Colors.black),
+                    decoration: const InputDecoration(
+                      hintText: "메시지를 입력하세요.",
+                      hintStyle: TextStyle(color: Colors.black, fontSize: 16),
+                      border: InputBorder.none,
                     ),
-                    child: const Center(
+                  )),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      sendMessage(inputText);
+                      _postTextTab(inputText);
+                    },
+                    child:Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: const Center(
                         child: Icon(
-                      Icons.send,
-                      color: Colors.white,
-                    )),
+                          Icons.send,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          isLoading
+              ? Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    width: MediaQuery.of(context).size.height * 0.1,
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).primaryColor,
+                      strokeWidth: 8.0,
+                    ),
                   ),
                 )
-              ]),
-            ),
-          )
+              : Container(),
         ],
       ),
     );
   }
+  sendMessage(String text) async{
+    final pref = await SharedPreferences.getInstance();
+    defaultEmail = pref.getString("email")!;
+    if (text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": text,
+        "sender": defaultEmail,
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
 
-  chatMessages() {
+      print('DB에 메시지 저장');
+
+      DatabaseService().sendMessage(widget.email, chatMessageMap);
+      setState(() {
+        _textController.clear();
+      });
+    }
+  }
+
+    chatMessages() {
     return StreamBuilder(
       stream: chats,
       builder: (context, AsyncSnapshot snapshot) {
@@ -133,27 +189,12 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                   return MessageTile(
                       message: snapshot.data.docs[index]['message'],
                       sender: snapshot.data.docs[index]['sender'],
-                      sentByMe: widget.userName ==
+                      sentByMe: widget.email ==
                           snapshot.data.docs[index]['sender']);
                 },
               )
             : Container();
       },
     );
-  }
-
-  sendMessage() {
-    if (messageController.text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": messageController.text,
-        "sender": widget.userName,
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
-
-      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
-      setState(() {
-        messageController.clear();
-      });
-    }
   }
 }
