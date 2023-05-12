@@ -1,198 +1,159 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/models/text_model.dart';
 import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
+import 'package:voicepocket/services/group_info.dart';
+import 'package:voicepocket/services/message_tile.dart';
+import 'package:voicepocket/services/widgets.dart';
+import 'package:voicepocket/models/database_service.dart';
+
 
 class PostTextScreenDemo extends StatefulWidget {
-  final String email;
-  const PostTextScreenDemo({super.key, required this.email});
+  final String groupId;
+  final String groupName;
+  final String userName;
+  const PostTextScreenDemo(
+      {Key? key,
+      required this.groupId,
+      required this.groupName,
+      required this.userName})
+      : super(key: key);
 
   @override
   State<PostTextScreenDemo> createState() => _PostTextScreenDemoState();
 }
 
 class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
-  final TextEditingController _textController = TextEditingController();
-  TextModel? response;
-  String inputText = "";
-  bool isLoading = false;
+  Stream<QuerySnapshot>? chats;
+  TextEditingController messageController = TextEditingController();
+  String admin = "";
 
   @override
   void initState() {
+    getChatandAdmin();
     super.initState();
-    _textController.addListener(() {
+  }
+
+  getChatandAdmin() {
+    DatabaseService().getChats(widget.groupId).then((val) {
       setState(() {
-        inputText = _textController.text;
+        chats = val;
       });
     });
-  }
-
-  void _postTextTab(String text) async {
-    setState(() {
-      isLoading = true;
-    });
-    var response = await postTextDemo(text, widget.email);
-    if (!mounted) return;
-    if (response.success) {
+    DatabaseService().getGroupAdmin(widget.groupId).then((val) {
       setState(() {
-        isLoading = false;
+        admin = val;
       });
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => MediaPlayerScreen(
-            path: "${response.data.uuid}.wav",
-            email: response.data.email,
-          ),
-        ),
-      );
-    } else if (response.code == -1006) {
-      await tokenRefreshPost();
-    } else {
-      return;
-    }
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-
-  Widget chatMessages() {
-    return ListView(
-      shrinkWrap: true,
-      children: [
-        Container(
-          padding: const EdgeInsets.only(
-            top: 8,
-            bottom: 4,
-          ),
-          alignment: Alignment.centerRight,
-          child: Container(
-            margin: const EdgeInsets.only(left: 30),
-            padding:
-                const EdgeInsets.only(top: 17, bottom: 17, left: 20, right: 20),
-            decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-                color: Theme.of(context).primaryColor),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "User",
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: -0.5),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  inputText,
-                  textAlign: TextAlign.start,
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        )
-      ],
-    );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawer(),
       appBar: AppBar(
-        title: Image.asset(
-          "assets/images/logo.png",
-          width: MediaQuery.of(context).size.height * 0.1,
-          height: 55,
-        ),
-        actions: <Widget>[
+        centerTitle: true,
+        elevation: 0,
+        title: Text(widget.groupName),
+        backgroundColor: Theme.of(context).primaryColor,
+        actions: [
           IconButton(
-            icon: const Icon(Icons.account_circle_rounded),
-            onPressed: () {},
-          ),
+              onPressed: () {
+                nextScreen(
+                    context,
+                    GroupInfo(
+                      groupId: widget.groupId,
+                      groupName: widget.groupName,
+                      adminName: admin,
+                    ));
+              },
+              icon: const Icon(Icons.info))
         ],
       ),
       body: Stack(
         children: <Widget>[
-          if (inputText != "") chatMessages(),
+          // chat messages here
+          chatMessages(),
           Container(
             alignment: Alignment.bottomCenter,
             width: MediaQuery.of(context).size.width,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               width: MediaQuery.of(context).size.width,
-              color: const Color.fromRGBO(243, 230, 255, 0.816),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: TextFormField(
-                    controller: _textController,
-                    style: const TextStyle(color: Colors.black),
-                    decoration: const InputDecoration(
-                      hintText: "메시지를 입력하세요.",
-                      hintStyle: TextStyle(color: Colors.black, fontSize: 16),
-                      border: InputBorder.none,
-                    ),
-                  )),
-                  const SizedBox(
-                    width: 12,
+              color: Colors.grey[700],
+              child: Row(children: [
+                Expanded(
+                    child: TextFormField(
+                  controller: messageController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    hintText: "Send a message...",
+                    hintStyle: TextStyle(color: Colors.white, fontSize: 16),
+                    border: InputBorder.none,
                   ),
-                  /* IconButton(
-                  color: Theme.of(context).primaryColor,
-                  onPressed: () => {chatMessages(),_postTextTab(inputText)}, 
-                  icon: const Icon(Icons.send),
-                ), */
-                  InkWell(
-                    onTap: () {
-                      _postTextTab(inputText);
-                    },
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.send,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          isLoading
-              ? Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.height * 0.1,
-                    child: CircularProgressIndicator(
+                )),
+                const SizedBox(
+                  width: 12,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    sendMessage();
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
-                      strokeWidth: 8.0,
+                      borderRadius: BorderRadius.circular(30),
                     ),
+                    child: const Center(
+                        child: Icon(
+                      Icons.send,
+                      color: Colors.white,
+                    )),
                   ),
                 )
-              : Container(),
+              ]),
+            ),
+          )
         ],
       ),
     );
+  }
+
+  chatMessages() {
+    return StreamBuilder(
+      stream: chats,
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, index) {
+                  return MessageTile(
+                      message: snapshot.data.docs[index]['message'],
+                      sender: snapshot.data.docs[index]['sender'],
+                      sentByMe: widget.userName ==
+                          snapshot.data.docs[index]['sender']);
+                },
+              )
+            : Container();
+      },
+    );
+  }
+
+  sendMessage() {
+    if (messageController.text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": messageController.text,
+        "sender": widget.userName,
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+
+      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+      setState(() {
+        messageController.clear();
+      });
+    }
   }
 }

@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "929399541852",
+    "project_id": "voicepocket-5346f",
+    "storage_bucket": "voicepocket-5346f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:929399541852:android:2a5d14b5aa6fb5e4ab9699",
+        "android_client_info": {
+          "package_name": "com.example.voicepocket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "929399541852-liavkerdsh32rdlrpom7umt1klkat6ki.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.voicepocket",
+            "certificate_hash": "5a3aecd306dbc79493fd2426da2b940ea33be0f3"
+          }
+        },
+        {
+          "client_id": "929399541852-l3h99l9m5q6mfo9sdc15bg2gbq4jq3jo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW0p6I_Iq9coeHRUY0sBH84-zX_HnyEts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "929399541852-l3h99l9m5q6mfo9sdc15bg2gbq4jq3jo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "929399541852-hfis69sbvvadv79mro6635tuv5sciic4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.voicepocket"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
