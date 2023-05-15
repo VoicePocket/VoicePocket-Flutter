@@ -1,8 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/models/text_model.dart';
 import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
+import 'package:voicepocket/models/database_service.dart';
+import 'package:voicepocket/services/message_tile.dart';
+
+
 
 class PostTextScreenDemo extends StatefulWidget {
   final String email;
@@ -13,17 +19,28 @@ class PostTextScreenDemo extends StatefulWidget {
 }
 
 class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
+  Stream<QuerySnapshot>? chats;
   final TextEditingController _textController = TextEditingController();
   TextModel? response;
   String inputText = "";
   bool isLoading = false;
+  String defaultEmail = "";
 
   @override
   void initState() {
+    getChat();
     super.initState();
     _textController.addListener(() {
       setState(() {
         inputText = _textController.text;
+      });
+    });
+  }
+
+  getChat() {
+    DatabaseService().getChats(widget.email).then((val) {
+      setState(() {
+        chats = val;
       });
     });
   }
@@ -59,55 +76,6 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
     super.dispose();
   }
 
-  Widget chatMessages() {
-    return ListView(
-      shrinkWrap: true,
-      children: [
-        Container(
-          padding: const EdgeInsets.only(
-            top: 8,
-            bottom: 4,
-          ),
-          alignment: Alignment.centerRight,
-          child: Container(
-            margin: const EdgeInsets.only(left: 30),
-            padding:
-                const EdgeInsets.only(top: 17, bottom: 17, left: 20, right: 20),
-            decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-                color: Theme.of(context).primaryColor),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "User",
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: -0.5),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  inputText,
-                  textAlign: TextAlign.start,
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +95,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
       ),
       body: Stack(
         children: <Widget>[
-          if (inputText != "") chatMessages(),
+          chatMessages(),
           Container(
             alignment: Alignment.bottomCenter,
             width: MediaQuery.of(context).size.width,
@@ -150,16 +118,12 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                   const SizedBox(
                     width: 12,
                   ),
-                  /* IconButton(
-                  color: Theme.of(context).primaryColor,
-                  onPressed: () => {chatMessages(),_postTextTab(inputText)}, 
-                  icon: const Icon(Icons.send),
-                ), */
                   InkWell(
                     onTap: () {
+                      sendMessage(inputText);
                       _postTextTab(inputText);
                     },
-                    child: Container(
+                    child:Container(
                       height: 50,
                       width: 50,
                       decoration: BoxDecoration(
@@ -193,6 +157,44 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
               : Container(),
         ],
       ),
+    );
+  }
+  sendMessage(String text) async{
+    final pref = await SharedPreferences.getInstance();
+    defaultEmail = pref.getString("email")!;
+    if (text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": text,
+        "sender": defaultEmail,
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+
+      print('DB에 메시지 저장');
+
+      DatabaseService().sendMessage(widget.email, chatMessageMap);
+      setState(() {
+        _textController.clear();
+      });
+    }
+  }
+
+    chatMessages() {
+    return StreamBuilder(
+      stream: chats,
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, index) {
+                  return MessageTile(
+                      message: snapshot.data.docs[index]['message'],
+                      sender: snapshot.data.docs[index]['sender'],
+                      sentByMe: widget.email ==
+                          snapshot.data.docs[index]['sender']);
+                },
+              )
+            : Container();
+      },
     );
   }
 }

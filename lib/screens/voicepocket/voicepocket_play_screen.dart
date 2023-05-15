@@ -85,7 +85,14 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   late AudioPlayer player;
   final CarouselController _carouselController = CarouselController();
   LoopMode _loopMode = LoopMode.off;
-  late StreamSubscription<PlayerState> _playerStateSubscription;
+  late final StreamSubscription<PlayerState> _playerStateSubscription =
+        player.playerStateStream.listen((PlayerState playerState) {
+      if (playerState.processingState == ProcessingState.completed) {
+        if(_loopMode == LoopMode.all){
+          _playNext();
+        }
+      }
+    });
 
   @override
   void initState() {
@@ -94,13 +101,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
     past_song = -1;
     print("initState");
     player = AudioPlayer();
-    player.setLoopMode(_loopMode);
-    _playerStateSubscription =
-        player.playerStateStream.listen((PlayerState playerState) {
-      if (playerState.processingState == ProcessingState.completed) {
-        _playNext();
-      }
-    });
+    //player.setLoopMode(_loopMode);
     print("initState2");
   }
 
@@ -129,12 +130,16 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
     switch (_loopMode) {
       case LoopMode.off:
         _loopMode = LoopMode.one;
+        print('one');
         break;
       case LoopMode.one:
         _loopMode = LoopMode.all;
+        print('all');
+        print(_loopMode);
         break;
       case LoopMode.all:
         _loopMode = LoopMode.off;
+        print('off');
         break;
     }
     player.setLoopMode(_loopMode);
