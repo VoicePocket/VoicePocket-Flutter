@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
 
@@ -28,6 +31,27 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder: (context) => const RecordroomMainScreen(),
       ),
+    );
+  }
+
+  void _onLogoutTab(BuildContext context) async {
+    final pref = await SharedPreferences.getInstance();
+    pref.clear();
+    Fluttertoast.showToast(
+      msg: "로그아웃",
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.white,
+      backgroundColor: const Color(0xFFA594F9),
+      fontSize: Sizes.size16,
+    );
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const MainScreen(),
+      ),
+      (route) => false,
     );
   }
 
@@ -68,12 +92,27 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Gaps.v32,
-            const Text(
-              'HOME',
-              style: TextStyle(
-                fontSize: Sizes.size48,
-                fontWeight: FontWeight.w700,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'HOME',
+                  style: TextStyle(
+                    fontSize: Sizes.size48,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const Spacer(),
+                IconButton(
+                  onPressed: () {
+                    _onLogoutTab(context);
+                  },
+                  icon: const Icon(
+                    Icons.logout_sharp,
+                    size: Sizes.size48,
+                  ),
+                ),
+              ],
             ),
             Gaps.v64,
             Flexible(
