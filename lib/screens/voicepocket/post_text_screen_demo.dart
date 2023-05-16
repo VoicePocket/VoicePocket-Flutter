@@ -8,8 +8,6 @@ import 'package:voicepocket/services/token_refresh_post.dart';
 import 'package:voicepocket/models/database_service.dart';
 import 'package:voicepocket/services/message_tile.dart';
 
-
-
 class PostTextScreenDemo extends StatefulWidget {
   final String email;
   const PostTextScreenDemo({super.key, required this.email});
@@ -142,19 +140,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
               ),
             ),
           ),
-          isLoading
-              ? Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.height * 0.1,
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).primaryColor,
-                      strokeWidth: 8.0,
-                    ),
-                  ),
-                )
-              : Container(),
+          
         ],
       ),
     );
@@ -168,9 +154,6 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
         "sender": defaultEmail,
         "time": DateTime.now().millisecondsSinceEpoch,
       };
-
-      print('DB에 메시지 저장');
-
       DatabaseService().sendMessage(widget.email, chatMessageMap);
       setState(() {
         _textController.clear();
@@ -178,23 +161,38 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
     }
   }
 
-    chatMessages() {
-    return StreamBuilder(
-      stream: chats,
-      builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return MessageTile(
+chatMessages() {
+  return StreamBuilder(
+    stream: chats,
+    builder: (context, AsyncSnapshot snapshot) {
+      return snapshot.hasData
+          ? ListView.builder(
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                return Stack(
+                  children: [
+                    MessageTile(
                       message: snapshot.data.docs[index]['message'],
                       sender: snapshot.data.docs[index]['sender'],
                       sentByMe: widget.email ==
-                          snapshot.data.docs[index]['sender']);
-                },
-              )
-            : Container();
-      },
-    );
-  }
+                          snapshot.data.docs[index]['sender'],
+                    ),
+                    if (isLoading && index == snapshot.data.docs.length - 1)
+                      Positioned.fill(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColor,
+                            strokeWidth: 8.0,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            )
+          : Container();
+    },
+  );
+}
 }

@@ -5,12 +5,27 @@ import 'package:uuid/uuid.dart';
 import 'package:voicepocket/models/text_model.dart';
 import 'package:voicepocket/services/get_task.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
+import 'package:voicepocket/models/database_service.dart';
+
 
 Future<TextModel> postText(String text) async {
   final pref = await SharedPreferences.getInstance();
   final uuid = const Uuid().v1();
   await pref.setString("uuid", uuid);
   int count = 0;
+  String defaultEmail = "";
+
+  sendMessage(String text) async{
+    defaultEmail = pref.getString("email")!;
+    if (text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": text,
+        "sender": 'SERVER',
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+      DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+    }
+  }
 
   final http.Response response = await http.post(
     Uri.parse('http://localhost:8080/api/tts/send'), // IOS
@@ -49,6 +64,7 @@ Future<TextModel> postText(String text) async {
     if (model.success) {
       await readWavFileFromBucket(model, uuid);
       print("다운로드 완료");
+      sendMessage("$uuid.wav 음성합성 진행완료");
     }
     return model;
   } else {
@@ -61,6 +77,19 @@ Future<TextModel> postTextDemo(String text, String email) async {
   final uuid = const Uuid().v1();
   await pref.setString("uuid", uuid);
   int count = 0;
+  String defaultEmail = "";
+
+  sendMessage(String text) async{
+    defaultEmail = pref.getString("email")!;
+    if (text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": text,
+        "sender": 'SERVER',
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+      DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+    }
+  }
 
   final http.Response response = await http.post(
     Uri.parse('http://localhost:8080/api/tts/send'), // IOS
@@ -99,6 +128,7 @@ Future<TextModel> postTextDemo(String text, String email) async {
     );
     await readWavFileFromBucket(model, uuid);
     print("다운로드 완료");
+    sendMessage("$uuid.wav 음성합성 진행완료");
     return model;
   } else {
     throw Exception('Failed to post');
