@@ -6,9 +6,7 @@ import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
 import 'package:voicepocket/models/database_service.dart';
-import 'package:voicepocket/services/message_tile.dart';
-
-
+import 'package:voicepocket/widgets/message_tile.dart';
 
 class PostTextScreenDemo extends StatefulWidget {
   final String email;
@@ -123,7 +121,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                       sendMessage(inputText);
                       _postTextTab(inputText);
                     },
-                    child:Container(
+                    child: Container(
                       height: 50,
                       width: 50,
                       decoration: BoxDecoration(
@@ -159,7 +157,8 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
       ),
     );
   }
-  sendMessage(String text) async{
+
+  sendMessage(String text) async {
     final pref = await SharedPreferences.getInstance();
     defaultEmail = pref.getString("email")!;
     if (text.isNotEmpty) {
@@ -178,7 +177,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
     }
   }
 
-    chatMessages() {
+  chatMessages() {
     return StreamBuilder(
       stream: chats,
       builder: (context, AsyncSnapshot snapshot) {
@@ -189,8 +188,8 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                   return MessageTile(
                       message: snapshot.data.docs[index]['message'],
                       sender: snapshot.data.docs[index]['sender'],
-                      sentByMe: widget.email ==
-                          snapshot.data.docs[index]['sender']);
+                      sentByMe:
+                          widget.email == snapshot.data.docs[index]['sender']);
                 },
               )
             : Container();
