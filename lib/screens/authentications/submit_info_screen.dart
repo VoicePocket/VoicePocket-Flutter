@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/submit_nickname_screen.dart';
@@ -13,8 +12,6 @@ class SubmitInfoScreen extends StatefulWidget {
 }
 
 class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
-  late final SharedPreferences _pref;
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -73,7 +70,6 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
         _password = _passwordController.text;
       });
     });
-    SharedPreferences.getInstance().then((pref) => _pref = pref);
   }
 
   @override

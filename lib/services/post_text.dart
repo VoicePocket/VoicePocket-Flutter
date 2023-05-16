@@ -22,7 +22,6 @@ Future<TextModel> postText(String text) async {
   final http.Response response = await http.post(
     Uri.parse(uri),
     headers: <String, String>{
-      //토큰 추가 (이메일, 패스워드 송신 필요)
       'Content-Type': 'application/json; charset=UTF-8',
       'X-AUTH-TOKEN': pref.getString("accessToken")!,
     },

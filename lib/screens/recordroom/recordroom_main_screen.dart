@@ -5,8 +5,15 @@ import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 
 import '../authentications/home_screen.dart';
 
-class RecordroomMainScreen extends StatelessWidget {
+class RecordroomMainScreen extends StatefulWidget {
   const RecordroomMainScreen({super.key});
+
+  @override
+  State<RecordroomMainScreen> createState() => _RecordroomMainScreenState();
+}
+
+class _RecordroomMainScreenState extends State<RecordroomMainScreen> {
+  var containers = <Container>[];
 
   void _onCreateModelTab(BuildContext context) {
     Navigator.of(context).push(
@@ -45,66 +52,62 @@ class RecordroomMainScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: Sizes.size40,
-              horizontal: Sizes.size16,
-            ),
-            child: Column(
-              children: [
-                Text(
-                  "Record Room",
-                  style: TextStyle(
-                    fontSize: Sizes.size40,
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.w900,
-                  ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: Sizes.size40,
+            horizontal: Sizes.size16,
+          ),
+          child: Column(
+            children: [
+              Text(
+                "Record Room",
+                style: TextStyle(
+                  fontSize: Sizes.size40,
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w900,
                 ),
-                Gaps.v40,
-                Container(
-                  margin: const EdgeInsets.only(bottom: Sizes.size10),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.circular(Sizes.size16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: Sizes.size16,
-                      horizontal: Sizes.size20,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              "모델 파일 이름",
-                              style: TextStyle(
-                                fontSize: Sizes.size36,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            Gaps.v16,
-                            Text(
-                              "2022.01.29",
-                              style: TextStyle(
-                                fontSize: Sizes.size20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+              ),
+              Gaps.v40,
+              Expanded(
+                child: ListView.builder(
+                  itemCount: containers.length,
+                  itemBuilder: (context, index) => containers[index],
+                ),
+              ),
+              Row(
+                children: [
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.minimize,
+                        size: Sizes.size40,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          containers.remove(containers.last);
+                        });
+                      },
                     ),
                   ),
-                ),
-              ],
-            ),
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.add,
+                        size: Sizes.size40,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          containers.add(modelcontainer());
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -118,6 +121,49 @@ class RecordroomMainScreen extends StatelessWidget {
             Icons.add_circle_outline_outlined,
             size: Sizes.size44,
           ),
+        ),
+      ),
+    );
+  }
+
+  Container modelcontainer() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: Sizes.size10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.circular(Sizes.size16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: Sizes.size16,
+          horizontal: Sizes.size20,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "모델 파일 이름",
+                  style: TextStyle(
+                    fontSize: Sizes.size36,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Gaps.v16,
+                Text(
+                  "2022.01.29",
+                  style: TextStyle(
+                    fontSize: Sizes.size20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

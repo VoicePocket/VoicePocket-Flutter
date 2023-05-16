@@ -54,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
       if (!mounted) return;
       if (loginModel.success) {
         Fluttertoast.showToast(
-          msg: "${_pref.getString("email")!}님 환영합니다!",
+          msg: "${_pref.getString("name")!}님 환영합니다!",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,

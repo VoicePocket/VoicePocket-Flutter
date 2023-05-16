@@ -6,9 +6,11 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/login_model.dart';
+import 'package:voicepocket/services/get_user_info.dart';
 
 Future<LoginModel> loginPost(String email, String password) async {
   final pref = await SharedPreferences.getInstance();
+  await pref.clear();
   final uri = defaultTargetPlatform == TargetPlatform.iOS
       ? 'http://localhost:8080/api/login'
       : 'http://10.0.2.2:8000/api/login';
@@ -22,7 +24,6 @@ Future<LoginModel> loginPost(String email, String password) async {
       "password": password,
     }),
   );
-  //sleep(Duration(seconds: 10));
   if (response.statusCode == 200) {
     LoginModel loginModel = LoginModel.fromJson(
       json.decode(
@@ -30,9 +31,9 @@ Future<LoginModel> loginPost(String email, String password) async {
       ),
     );
     if (loginModel.success) {
-      pref.setString("email", email);
       pref.setString("accessToken", loginModel.data!.accessToken);
       pref.setString("refreshToken", loginModel.data!.refreshToken);
+      await requestUserInfo(email);
     }
     return loginModel;
   } else {
