@@ -138,6 +138,8 @@ class _MainScreenState extends State<MainScreen> {
                     },
                     cursorColor: Theme.of(context).primaryColor,
                     decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.person_outline),
+                      prefixIconColor: Colors.grey.shade400,
                       filled: true,
                       fillColor: Colors.white,
                       focusedErrorBorder: OutlineInputBorder(
@@ -177,9 +179,10 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       hintText: '이메일',
-                      hintStyle: const TextStyle(
+                      hintStyle: TextStyle(
                         fontSize: Sizes.size16 + Sizes.size2,
-                        color: Color(0XFF929292),
+                        color: Colors.grey.shade400,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -201,6 +204,8 @@ class _MainScreenState extends State<MainScreen> {
                     },
                     cursorColor: Theme.of(context).primaryColor,
                     decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      prefixIconColor: Colors.grey.shade400,
                       filled: true,
                       fillColor: Colors.white,
                       focusedErrorBorder: OutlineInputBorder(
@@ -240,9 +245,10 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       hintText: '비밀번호',
-                      hintStyle: const TextStyle(
+                      hintStyle: TextStyle(
                         fontSize: Sizes.size16 + Sizes.size2,
-                        color: Color(0XFF929292),
+                        color: Colors.grey.shade400,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),

@@ -105,7 +105,7 @@ Future<TextModel> postTextDemo(String text, String email) async {
     // 다시 요청합니다.
     //taskStatus;
     count += 1;
-    if (count == 15) {
+    if (count == 30) {
       throw Exception('Failed to post');
     }
   }

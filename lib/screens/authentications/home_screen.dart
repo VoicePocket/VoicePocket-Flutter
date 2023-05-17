@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
-import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
+import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onRecordTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const RecordroomMainScreen(),
+        builder: (context) => const RecordroomStudioScreen(),
       ),
     );
   }
@@ -143,9 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
-                            Expanded(
-                              child: Container(),
-                            ),
+                            const Spacer(),
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -208,9 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
-                            Expanded(
-                              child: Container(),
-                            ),
+                            const Spacer(),
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
