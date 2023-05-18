@@ -240,7 +240,6 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   @override
   void dispose() {
     _recordingState = RecordingState.unready;
-    audioPlayer.dispose();
     super.dispose();
   }
 

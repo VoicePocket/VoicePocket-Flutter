@@ -25,6 +25,7 @@ Future<UserInfoModel> requestUserInfo(String email) async {
     );
     if (model.success) {
       pref.setString("email", model.data.email);
+      pref.setString("nickname", model.data.nickName);
       pref.setString("name", model.data.name);
     }
     return model;

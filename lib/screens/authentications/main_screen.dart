@@ -30,6 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    //FlutterNativeSplash.remove();
     _emailController.addListener(() {
       setState(() {
         _email = _emailController.text;
@@ -138,6 +139,8 @@ class _MainScreenState extends State<MainScreen> {
                     },
                     cursorColor: Theme.of(context).primaryColor,
                     decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.person_outline),
+                      prefixIconColor: Colors.grey.shade400,
                       filled: true,
                       fillColor: Colors.white,
                       focusedErrorBorder: OutlineInputBorder(
@@ -177,9 +180,10 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       hintText: '이메일',
-                      hintStyle: const TextStyle(
+                      hintStyle: TextStyle(
                         fontSize: Sizes.size16 + Sizes.size2,
-                        color: Color(0XFF929292),
+                        color: Colors.grey.shade400,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -201,6 +205,8 @@ class _MainScreenState extends State<MainScreen> {
                     },
                     cursorColor: Theme.of(context).primaryColor,
                     decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      prefixIconColor: Colors.grey.shade400,
                       filled: true,
                       fillColor: Colors.white,
                       focusedErrorBorder: OutlineInputBorder(
@@ -240,9 +246,10 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                       hintText: '비밀번호',
-                      hintStyle: const TextStyle(
+                      hintStyle: TextStyle(
                         fontSize: Sizes.size16 + Sizes.size2,
-                        color: Color(0XFF929292),
+                        color: Colors.grey.shade400,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -254,24 +261,6 @@ class _MainScreenState extends State<MainScreen> {
                   GestureDetector(
                       onTap: () => _onSubmitTab(context),
                       child: const MembershipButton()),
-                  Gaps.v11,
-                  Text(
-                    '아이디 / 비밀번호 찾기',
-                    style: TextStyle(
-                      fontSize: Sizes.size16,
-                      color: Colors.black.withOpacity(0.5),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Gaps.v28,
-                  Text(
-                    'SNS 계정으로 시작하기',
-                    style: TextStyle(
-                      fontSize: Sizes.size16 + Sizes.size1,
-                      color: Colors.black.withOpacity(0.5),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
                 ],
               ),
             ),
