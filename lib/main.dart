@@ -4,8 +4,10 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
 
 void main() async {
+  //WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  //FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const App());
 }
 

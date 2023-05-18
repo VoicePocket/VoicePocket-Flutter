@@ -40,6 +40,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_audio_recorder2: ^0.0.2
+  flutter_native_splash: ^2.2.19
   flutter_sound: ^9.2.13
   fluttertoast: ^8.2.1
   font_awesome_flutter: ^10.3.0
@@ -55,7 +56,6 @@ dependencies:
   uuid: ^3.0.6
 
 dev_dependencies:
-
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
