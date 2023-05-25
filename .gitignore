@@ -56,3 +56,7 @@ ios/Podfile.lock
 macos/Flutter/GeneratedPluginRegistrant.swift
 macos/Runner.xcodeproj/project.pbxproj
 .vscode/settings.json
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Runner/Release.entitlements
+ios/Runner/Runner.entitlements
+ios/Runner.xcodeproj/project.pbxproj

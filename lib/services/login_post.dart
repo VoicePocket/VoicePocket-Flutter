@@ -13,7 +13,7 @@ Future<LoginModel> loginPost(String email, String password) async {
   await pref.clear();
   final uri = defaultTargetPlatform == TargetPlatform.iOS
       ? 'http://localhost:8080/api/login'
-      : 'http://10.0.2.2:8000/api/login';
+      : 'http://10.0.2.2:8080/api/login';
   final http.Response response = await http.post(
     Uri.parse(uri),
     headers: <String, String>{

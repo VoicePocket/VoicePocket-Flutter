@@ -10,7 +10,7 @@ import 'package:voicepocket/models/login_model.dart';
 Future<LoginModel> tokenRefreshPost() async {
   final uri = defaultTargetPlatform == TargetPlatform.iOS
       ? 'http://localhost:8080/api/reissue'
-      : 'http://10.0.2.2:8000/api/reissue';
+      : 'http://10.0.2.2:8080/api/reissue';
   final pref = await SharedPreferences.getInstance();
   final http.Response response = await http.post(
     Uri.parse(uri),

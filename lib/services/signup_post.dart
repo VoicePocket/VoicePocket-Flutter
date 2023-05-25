@@ -10,7 +10,7 @@ Future<SignUpModel> signUpPost(
     String email, String password, String name, String nickName) async {
   final uri = defaultTargetPlatform == TargetPlatform.iOS
       ? 'http://localhost:8080/api/signup'
-      : 'http://10.0.2.2:8000/api/signup';
+      : 'http://10.0.2.2:8080/api/signup';
   final http.Response response = await http.post(
     Uri.parse(uri), // IOS
     headers: <String, String>{

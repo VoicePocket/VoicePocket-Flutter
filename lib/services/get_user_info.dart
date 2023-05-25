@@ -11,7 +11,7 @@ Future<UserInfoModel> requestUserInfo(String email) async {
   final pref = await SharedPreferences.getInstance();
   final uri = defaultTargetPlatform == TargetPlatform.iOS
       ? 'http://localhost:8080/api/user/email/${email.split('@')[0]}%40${email.split('@')[1]}?lang=ko'
-      : 'http://10.0.2.2:8000/api/user/email/${email.split('@')[0]}%40${email.split('@')[1]}?lang=ko';
+      : 'http://10.0.2.2:8080/api/user/email/${email.split('@')[0]}%40${email.split('@')[1]}?lang=ko';
   UserInfoModel model;
   final http.Response response = await http.get(
     Uri.parse(uri),

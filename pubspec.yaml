@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_auth: ^4.5.0
   firebase_core: ^2.11.0
+  firebase_messaging: any
+  flutter_local_notifications: ^9.2.0
   flutter:
     sdk: flutter
   flutter_audio_recorder2: ^0.0.2
