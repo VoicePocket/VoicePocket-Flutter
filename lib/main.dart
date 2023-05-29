@@ -6,16 +6,17 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Handling a background message ${message.messageId}');
+  //백그라운드에서 메시지를 받은 경우
+  print('Handling a background message ${message.notification!.body}');
 }
 
 late AndroidNotificationChannel channel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 void main() async {
-  //WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(
+      _firebaseMessagingBackgroundHandler); // 백그라운드에서 메시지 받은 경우 등록
 
   channel = const AndroidNotificationChannel(
     'high_importance_channel', // id
@@ -67,7 +68,6 @@ class _AppState extends State<App> {
   void initState() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
       var androidNotiDetails = AndroidNotificationDetails(
         channel.id,
         channel.name,
@@ -85,7 +85,13 @@ class _AppState extends State<App> {
         );
       }
     });
+    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
+      //포그라운드 메시지를 받은 경우
+      print("message recieved");
+      print(event.notification!.body);
+    });
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      //메시지가 클릭 되었을 때(Fore & Back)
       print("message: $message");
     });
     super.initState();
