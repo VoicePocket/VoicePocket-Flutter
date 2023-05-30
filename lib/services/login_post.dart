@@ -8,12 +8,34 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/login_model.dart';
 import 'package:voicepocket/services/get_user_info.dart';
 
+import 'dart:io'; //Platform 사용을 위한 패키지
+import 'package:flutter/services.dart'; //PlatformException 사용을 위한 패키지
+import 'package:device_info/device_info.dart'; // 디바이스 정보 사용 패키지
+
+Future<String> getMobileId() async {
+  final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  String id = '';
+  try {
+    if (Platform.isAndroid) {
+      final AndroidDeviceInfo androidData = await deviceInfoPlugin.androidInfo;
+      id = androidData.androidId;
+    } else if (Platform.isIOS) {
+      final IosDeviceInfo iosData = await deviceInfoPlugin.iosInfo;
+      id = iosData.identifierForVendor;
+    }
+  } on PlatformException {
+    id = '';
+  }
+  return id;
+}
+
 Future<LoginModel> loginPost(String email, String password) async {
   final pref = await SharedPreferences.getInstance();
   await pref.clear();
   final uri = defaultTargetPlatform == TargetPlatform.iOS
       ? 'http://localhost:8080/api/login'
       : 'http://10.0.2.2:8080/api/login';
+  final String mobileId = await getMobileId();
   final http.Response response = await http.post(
     Uri.parse(uri),
     headers: <String, String>{
@@ -31,6 +53,7 @@ Future<LoginModel> loginPost(String email, String password) async {
       ),
     );
     if (loginModel.success) {
+      print("id = $mobileId");
       pref.setString("accessToken", loginModel.data!.accessToken);
       pref.setString("refreshToken", loginModel.data!.refreshToken);
       await requestUserInfo(email);
