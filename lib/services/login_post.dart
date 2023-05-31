@@ -8,7 +8,7 @@ Future<LoginModel> loginPost(String email, String password) async {
   final http.Response response = await http.post(
     Uri.parse('http://localhost:8080/api/login'), // IOS
     //'http://172.20.10.12:8080/send'), // Real-test
-    //Uri.parse('http://10.0.0.2:8000/api/texts/psg1478795@naver.com/make_wav'), // ANDROID
+    //Uri.parse('http://10.0.2.2:8080/api/login'), // ANDROID
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },

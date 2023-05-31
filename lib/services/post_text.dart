@@ -128,7 +128,7 @@ Future<TextModel> postTextDemo(String text, String email) async {
     );
     await readWavFileFromBucket(model, uuid);
     print("다운로드 완료");
-    sendMessage("$uuid.wav 음성합성 진행완료");
+    sendMessage("https://storage.googleapis.com/voicepocket/$email/$uuid.wav");
     return model;
   } else {
     throw Exception('Failed to post');

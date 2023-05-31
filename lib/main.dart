@@ -4,6 +4,7 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
+import 'package:voicepocket/screens/voicepocket/url_player_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();

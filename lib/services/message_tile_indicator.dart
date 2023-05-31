@@ -31,7 +31,7 @@ class _MessageTileIndicatorState extends State<MessageTileIndicator> {
                   ),
             color: Colors.grey[700]),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
               "SERVER",
@@ -42,9 +42,10 @@ class _MessageTileIndicatorState extends State<MessageTileIndicator> {
                   color: Colors.white,
                   letterSpacing: -0.5),
             ),
+            const Padding(padding: EdgeInsets.only(bottom: 10),),
             CircularProgressIndicator(
                       color: Theme.of(context).primaryColor,
-                      strokeWidth: 8.0,
+                      strokeWidth: 6.0,
             ),
             const SizedBox(
               height: 8,
