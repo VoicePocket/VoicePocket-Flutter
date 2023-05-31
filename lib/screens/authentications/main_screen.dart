@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,11 +30,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    FirebaseMessaging.instance
-        .getToken(
-            vapidKey:
-                "BJp1eeS3gUO6OnjKr8V7T30YIYh_dPPGbaIwOJLA02TDWwlkcumQAI4Uym595EekS7EE2NH6osyTHh8vIagv9AU")
-        .then((value) => print("token: $value"));
     _emailController.addListener(() {
       setState(() {
         _email = _emailController.text;
