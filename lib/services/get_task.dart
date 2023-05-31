@@ -8,7 +8,7 @@ Future<TaskIdModel> requestTaskId() async {
   final pref = await SharedPreferences.getInstance();
   final uri = defaultTargetPlatform == TargetPlatform.iOS
       ? 'http://localhost:8080/api/tts/status/uuid'
-      : 'http://10.0.2.2:8000/api/tts/status/uuid';
+      : 'http://10.0.2.2:8080/api/tts/status/uuid';
   TaskIdModel model;
   final uuid2 = pref.getString("uuid");
   while (true) {

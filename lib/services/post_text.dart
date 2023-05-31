@@ -15,7 +15,7 @@ Future<TextModel> postText(String text) async {
   final uuid = const Uuid().v1();
   final uri = defaultTargetPlatform == TargetPlatform.iOS
       ? 'http://localhost:8080/api/tts/send'
-      : 'http://10.0.2.2:8000/api/tts/send';
+      : 'http://10.0.2.2:8080/api/tts/send';
   await pref.setString("uuid", uuid);
   int count = 0;
 
@@ -78,7 +78,7 @@ Future<TextModel> postTextDemo(String text, String email) async {
   final uuid = const Uuid().v1();
   final uri = defaultTargetPlatform == TargetPlatform.iOS
       ? 'http://localhost:8080/api/tts/send'
-      : 'http://10.0.2.2:8000/api/tts/send';
+      : 'http://10.0.2.2:8080/api/tts/send';
 
   await pref.setString("uuid", uuid);
   int count = 0;
