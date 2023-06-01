@@ -4,13 +4,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen_demo.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
 import '../authentications/home_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
 import 'package:voicepocket/models/database_service.dart';
-
 
 class SelectScreen extends StatefulWidget {
   final int index;
@@ -38,14 +36,13 @@ class _SelectScreenState extends State<SelectScreen> {
     final pref = await SharedPreferences.getInstance();
     defaultEmail = pref.getString("email")!;
     defaultName = pref.getString("name")!;
-    
+
     DatabaseService().savingUserData(defaultName, defaultEmail);
 
     /* if(DatabaseService().gettingUserData(defaultEmail) == "") {
       DatabaseService().savingUserData(defaultName, defaultEmail);
       print('firestore create');
     } */
-
   }
 
   Future<void> createFolder() async {
@@ -278,5 +275,5 @@ class _SelectScreenState extends State<SelectScreen> {
               ),
       ),
     );
-  }  
+  }
 }

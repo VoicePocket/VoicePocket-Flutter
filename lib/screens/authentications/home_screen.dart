@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
+import 'package:voicepocket/screens/friend/friend_main_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
 
@@ -30,6 +31,14 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const RecordroomStudioScreen(),
+      ),
+    );
+  }
+
+  void _onFriendTab(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const FriendMainScreen(),
       ),
     );
   }
@@ -247,43 +256,46 @@ class _HomeScreenState extends State<HomeScreen> {
                 Flexible(
                   fit: FlexFit.tight,
                   flex: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0XFFD8BBFF),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 15,
+                  child: GestureDetector(
+                    onTap: () => _onFriendTab(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0XFFD8BBFF),
+                        borderRadius: BorderRadius.circular(25),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "친구에게",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 15,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "친구에게",
+                              style: TextStyle(
+                                fontSize: Sizes.size16 + Sizes.size2,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
-                          ),
-                          Gaps.v8,
-                          const Text(
-                            "요청해보세요!",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
+                            Gaps.v8,
+                            const Text(
+                              "요청해보세요!",
+                              style: TextStyle(
+                                fontSize: Sizes.size16 + Sizes.size2,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
-                          ),
-                          Gaps.v5,
-                          Icon(
-                            Icons.people_alt,
-                            size: Sizes.size28,
-                            color: Colors.grey.shade800,
-                          )
-                        ],
+                            Gaps.v5,
+                            Icon(
+                              Icons.people_alt,
+                              size: Sizes.size28,
+                              color: Colors.grey.shade800,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
