@@ -125,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Gaps.v64,
             Flexible(
+              flex: 3,
               fit: FlexFit.loose,
               child: GestureDetector(
                 onTap: () => _onRecordTab(context),
@@ -189,6 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Gaps.v16,
             Flexible(
               fit: FlexFit.loose,
+              flex: 3,
               child: GestureDetector(
                 onTap: () => _onVoicePocketListTab(context),
                 child: Container(
@@ -250,102 +252,68 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Gaps.v16,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Flexible(
-                  fit: FlexFit.tight,
-                  flex: 1,
-                  child: GestureDetector(
-                    onTap: () => _onFriendTab(context),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0XFFD8BBFF),
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 20,
-                          horizontal: 15,
-                        ),
-                        child: Column(
+            Flexible(
+              fit: FlexFit.loose,
+              flex: 2,
+              child: GestureDetector(
+                onTap: () => _onFriendTab(context),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0XFFD8BBFF),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 25,
+                      horizontal: 30,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              "친구에게",
+                              "친구에게\n내 목소리를\n전달해보세요.",
                               style: TextStyle(
-                                fontSize: Sizes.size16 + Sizes.size2,
+                                fontSize: Sizes.size16,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
-                            Gaps.v8,
-                            const Text(
-                              "요청해보세요!",
-                              style: TextStyle(
-                                fontSize: Sizes.size16 + Sizes.size2,
+                            const Spacer(),
+                            Container(
+                              decoration: BoxDecoration(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w900,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: Sizes.size10,
+                                  horizontal: Sizes.size32,
+                                ),
+                                child: Text(
+                                  "만나러 가기",
+                                  style: TextStyle(
+                                    fontSize: Sizes.size16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
                               ),
                             ),
-                            Gaps.v5,
-                            Icon(
-                              Icons.people_alt,
-                              size: Sizes.size28,
-                              color: Colors.grey.shade800,
-                            )
                           ],
                         ),
-                      ),
+                        Icon(
+                          Icons.people_alt,
+                          color: Colors.grey.shade800,
+                          size: Sizes.size96 + Sizes.size20,
+                        )
+                      ],
                     ),
                   ),
                 ),
-                Gaps.h16,
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0XFFD8BBFF),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 15,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "친구에게",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          Gaps.v8,
-                          const Text(
-                            "요청해보세요!",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          Gaps.v5,
-                          Icon(
-                            Icons.people_alt,
-                            size: Sizes.size28,
-                            color: Colors.grey.shade800,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),

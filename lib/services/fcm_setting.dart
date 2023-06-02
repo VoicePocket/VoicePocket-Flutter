@@ -1,9 +1,25 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+//FCM 상태는 3가지(Back / Fore / Terminated)
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   //백그라운드에서 메시지를 받은 경우
   print('Handling a background message ${message.notification!.body}');
+}
+
+Future<NotificationSettings?> initListener(FirebaseMessaging messaging) async {
+  final permission = await messaging.requestPermission(
+    alert: true,
+    announcement: true,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  if (permission.authorizationStatus == AuthorizationStatus.denied) return null;
+  return null;
 }
 
 Future<String?> fcmSetting() async {
@@ -16,17 +32,9 @@ Future<String?> fcmSetting() async {
     sound: true,
   );
 
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    announcement: true,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
+  final permission = await initListener(messaging);
 
-  print("User granted permission: ${settings.authorizationStatus}");
+  print("User granted permission: ${permission?.authorizationStatus}");
 
   AndroidNotificationChannel channel = const AndroidNotificationChannel(
     'VoicePocketNotificationId', // id
@@ -67,7 +75,17 @@ Future<String?> fcmSetting() async {
     }
   });
 
+  final notification = await messaging.getInitialMessage();
+
   String? firebaseToken = await messaging.getToken();
+  if (firebaseToken == null) {
+    return "null";
+  }
+  messaging.onTokenRefresh.listen(
+    (newToken) {
+      firebaseToken = newToken;
+    },
+  );
   print("firebaseToken: $firebaseToken");
   return firebaseToken;
 }
