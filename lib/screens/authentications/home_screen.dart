@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
@@ -12,6 +11,8 @@ import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/screens/friend/friend_main_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
+
+import '../../services/google_cloud_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,7 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    createFolder();
+    SharedPreferences.getInstance().then(
+      (value) => createFolder(value.getString("email")!),
+    );
   }
 
   void _onRecordTab(BuildContext context) {
@@ -64,11 +67,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> createFolder() async {
-    final routeDir = await getApplicationDocumentsDirectory();
+  Future<void> createFolder(String email) async {
+    final routeDir = await getPublicDownloadFolderPath();
     print("default 저장 경로: ${routeDir.path}");
     final modelDir = Directory('${routeDir.path}/model');
-    final wavDir = Directory('${routeDir.path}/wav');
+    final wavDir = Directory('${routeDir.path}/wav/$email');
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();

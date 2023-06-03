@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:external_path/external_path.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:gcloud/storage.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
@@ -29,6 +31,26 @@ Future<void> readWavFileFromBucket(TextModel response, String uuid) async {
         );
     print(
         "wav파일 받아온 저장 경로: ${directory.path}/wav/${response.data.email}/${response.data.uuid}.wav");
+  } finally {
+    client.close();
+  }
+}
+
+Future<void> readWavFileFromNotification(String wavUrl) async {
+  // wav파일 bucket에서 받아오는 함수
+  final client = await getAuthClient();
+  final directory = await getPublicDownloadFolderPath();
+  try {
+    final storage = Storage(client, "VoicePocket");
+    final bucket = storage.bucket("voicepocket");
+
+    await bucket.read(wavUrl).pipe(
+          File("${directory.path}/wav/$wavUrl").openWrite(),
+        );
+    print("wav파일 받아온 저장 경로: ${directory.path}/wav/$wavUrl");
+  } on FirebaseException catch (e) {
+    // Caught an exception from Firebase.
+    print("Failed with error '${e.code}': ${e.message}");
   } finally {
     client.close();
   }
@@ -77,4 +99,23 @@ Future<void> uploadModelVoiceFileToBucket() async {
     File("${directory.path}/$email.zip").delete();
     client.close();
   }
+}
+
+Future<Directory> getPublicDownloadFolderPath() async {
+  String? downloadDirPath;
+
+  // 만약 다운로드 폴더가 존재하지 않는다면 앱내 파일 패스를 대신 주도록한다.
+  if (Platform.isAndroid) {
+    downloadDirPath = await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DOWNLOADS);
+    Directory dir = Directory(downloadDirPath);
+
+    if (!dir.existsSync()) {
+      downloadDirPath = (await getExternalStorageDirectory())!.path;
+    }
+  } else if (Platform.isIOS) {
+    // downloadDirPath = (await getApplicationSupportDirectory())!.path;
+    downloadDirPath = (await getApplicationDocumentsDirectory()).path;
+  }
+  return Directory(downloadDirPath!);
 }

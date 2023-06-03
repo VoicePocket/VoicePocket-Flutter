@@ -5,6 +5,8 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/services/notification_provider.dart';
 
+import 'models/global_var.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -21,8 +23,9 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(notificationProvider(context));
+    ref.watch(notificationProvider);
     return MaterialApp(
+      navigatorKey: GlobalVariable.navState,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: "contents_font",
