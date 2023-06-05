@@ -11,6 +11,7 @@ import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/screens/friend/friend_main_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
+import 'package:voicepocket/services/load_csv.dart';
 
 import '../../services/google_cloud_service.dart';
 
@@ -22,18 +23,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Map<String, List<String>> metaData;
   @override
   void initState() {
     super.initState();
     SharedPreferences.getInstance().then(
       (value) => createFolder(value.getString("email")!),
     );
+    loadCSV().then((value) => metaData = value);
   }
 
   void _onRecordTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const RecordroomStudioScreen(),
+        builder: (context) => RecordroomStudioScreen(
+          metaData: metaData,
+        ),
       ),
     );
   }

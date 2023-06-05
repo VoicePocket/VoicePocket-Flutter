@@ -12,22 +12,9 @@ import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
+import 'package:voicepocket/services/load_csv.dart';
 
 import '../../services/google_cloud_service.dart';
-
-const sentences = [
-  "Daily Life",
-  "Comedy",
-  "Entertainment",
-  "Animals",
-  "Food",
-  "Beauty & Style",
-  "Drama",
-  "Learning",
-  "Talent",
-  "Sports",
-  "Auto",
-];
 
 enum RecordingState {
   unready,
@@ -37,13 +24,15 @@ enum RecordingState {
 }
 
 class RecordroomStudioScreen extends StatefulWidget {
-  const RecordroomStudioScreen({Key? key}) : super(key: key);
+  final Map<String, List<String>> metaData;
+  const RecordroomStudioScreen({super.key, required this.metaData});
 
   @override
   State<RecordroomStudioScreen> createState() => _RecordroomStudioScreenState();
 }
 
 class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
+  List<String> name = [], content = [];
   Directory modelDir = Directory("");
   late AudioPlayer audioPlayer;
   bool isPlaying = false;
@@ -61,7 +50,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   late FlutterAudioRecorder2 audioRecorder;
 
   int _index = 1;
-  final int _maxLine = sentences.length;
+  final int _maxLine = 315;
 
   @override
   void initState() {
@@ -76,7 +65,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     getApplicationDocumentsDirectory().then((dir) {
       modelDir = Directory("${dir.path}/model");
     });
-    //createModelFolder().then((dir) => modelDir = dir);
+    loadList();
   }
 
   void toNextPage() async {
@@ -122,7 +111,8 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   }
 
   _initRecorder() async {
-    String filePath = "${modelDir.path}/model_create$_index.wav";
+    String filePath =
+        "${modelDir.path}/${widget.metaData['name']![_index - 1]}.wav";
     if (await File(filePath).exists()) {
       await File(filePath).delete();
     }
@@ -204,8 +194,8 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
 
   Future<void> setAudio() async {
     audioPlayer = AudioPlayer();
-    await audioPlayer
-        .setSourceDeviceFile("${modelDir.path}/model_create$_index.wav");
+    await audioPlayer.setSourceDeviceFile(
+        "${modelDir.path}/${widget.metaData['name']![_index - 1]}.wav");
     await audioPlayer.setReleaseMode(ReleaseMode.release);
     isPlaying = audioPlayer.state == PlayerState.playing;
     audioPlayer.onPlayerStateChanged.listen((state) {
@@ -235,6 +225,12 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
       });
     }
     setState(() {});
+  }
+
+  loadList() async {
+    final list = await loadCSV();
+    name = list['name']!;
+    content = list['content']!;
   }
 
   @override
@@ -327,14 +323,18 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                   borderRadius: BorderRadius.circular(Sizes.size24),
                   shape: BoxShape.rectangle,
                 ),
+                padding: const EdgeInsets.symmetric(
+                  vertical: Sizes.size20,
+                ),
                 child: Center(
                   child: Text(
-                    sentences.elementAt(_index - 1),
+                    widget.metaData["content"]![_index - 1],
                     style: TextStyle(
                       color: Colors.grey.shade700,
-                      fontSize: Sizes.size44,
+                      fontSize: Sizes.size20,
                       fontWeight: FontWeight.bold,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
