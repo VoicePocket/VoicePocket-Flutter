@@ -48,9 +48,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onLoginTab(BuildContext context) async {
+    String fcmKey = _pref.getString("fcmKey") ?? "";
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      final loginModel = await loginPost(_email, _password);
+      final loginModel = await loginPost(_email, _password, fcmKey);
 
       if (!mounted) return;
       if (loginModel.success) {

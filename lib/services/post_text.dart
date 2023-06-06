@@ -7,8 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/text_model.dart';
-import 'package:voicepocket/services/get_task.dart';
-import 'package:voicepocket/services/google_cloud_service.dart';
 
 Future<TextModel> postText(String text) async {
   final pref = await SharedPreferences.getInstance();
@@ -28,22 +26,10 @@ Future<TextModel> postText(String text) async {
     body: jsonEncode(<String, String>{
       "type": "ETL",
       "uuid": uuid,
-      "email": pref.getString("email")!,
+      "requestTo": pref.getString("email")!,
       "text": text
     }),
   );
-  while (await taskStatus() != 200) {
-    // 2초 동안 기다립니다.
-    print("response 없는 상태, 2초 딜레이 $count");
-    await Future.delayed(const Duration(seconds: 1));
-    // 다시 요청합니다.
-    //taskStatus;
-    count += 1;
-    if (count == 30) {
-      throw Exception('Failed to post');
-    }
-  }
-
   if (response.statusCode == 200) {
     TextModel model = TextModel.fromJson(
       json.decode(
@@ -51,7 +37,7 @@ Future<TextModel> postText(String text) async {
       ),
     );
     if (model.success) {
-      await readWavFileFromBucket(model, uuid);
+      print(model.message);
     }
     return model;
   } else {
@@ -93,22 +79,22 @@ Future<TextModel> postTextDemo(String text, String email) async {
     body: jsonEncode(<String, String>{
       "type": "ETL",
       "uuid": uuid,
-      "email": email,
+      "requestTo": email,
       "text": text
     }),
   );
-  while (await taskStatus() != 200) {
-    // 2초 동안 기다립니다.
-    print('post text창 $taskStatus');
-    print("response 없는 상태, 2초 딜레이 $count");
-    await Future.delayed(const Duration(milliseconds: 500));
-    // 다시 요청합니다.
-    //taskStatus;
-    count += 1;
-    if (count == 30) {
-      throw Exception('Failed to post');
-    }
-  }
+  // while (await taskStatus() != 200) {
+  //   // 2초 동안 기다립니다.
+  //   print('post text창 $taskStatus');
+  //   print("response 없는 상태, 2초 딜레이 $count");
+  //   await Future.delayed(const Duration(milliseconds: 500));
+  //   // 다시 요청합니다.
+  //   //taskStatus;
+  //   count += 1;
+  //   if (count == 30) {
+  //     throw Exception('Failed to post');
+  //   }
+  // }
 
   if (response.statusCode == 200) {
     TextModel model = TextModel.fromJson(
@@ -116,8 +102,7 @@ Future<TextModel> postTextDemo(String text, String email) async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    await readWavFileFromBucket(model, uuid);
-    print("다운로드 완료");
+    print(model.message);
     return model;
   } else {
     throw Exception('Failed to post');

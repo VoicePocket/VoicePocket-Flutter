@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
 
@@ -60,12 +61,14 @@ class NotificationProvider extends AsyncNotifier {
 
   @override
   FutureOr build() async {
-    String? token = await _messaging.getToken();
+    String token = await _messaging.getToken() ?? "";
+    SharedPreferences pref = await SharedPreferences.getInstance();
     if (token == null) return;
     await initListener();
     _messaging.onTokenRefresh.listen((newToken) {
       token = newToken;
     });
+    pref.setString("fcmKey", token);
     print(token);
   }
 }

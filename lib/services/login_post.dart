@@ -29,7 +29,8 @@ Future<String> getMobileId() async {
   return id;
 }
 
-Future<LoginModel> loginPost(String email, String password) async {
+Future<LoginModel> loginPost(
+    String email, String password, String fcmKey) async {
   final pref = await SharedPreferences.getInstance();
   await pref.clear();
   final uri = defaultTargetPlatform == TargetPlatform.iOS
@@ -40,6 +41,7 @@ Future<LoginModel> loginPost(String email, String password) async {
     Uri.parse(uri),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
+      'FCM-TOKEN': fcmKey,
     },
     body: jsonEncode(<String, String>{
       "email": email,

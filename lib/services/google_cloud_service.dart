@@ -7,7 +7,6 @@ import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:googleapis_auth/googleapis_auth.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voicepocket/models/text_model.dart';
 
 Future<AutoRefreshingAuthClient> getAuthClient() async {
   final jsonCredentials = await rootBundle
@@ -18,23 +17,23 @@ Future<AutoRefreshingAuthClient> getAuthClient() async {
   return client;
 }
 
-Future<void> readWavFileFromBucket(TextModel response, String uuid) async {
-  // wav파일 bucket에서 받아오는 함수
-  final client = await getAuthClient();
-  final directory = await getApplicationDocumentsDirectory();
-  try {
-    final storage = Storage(client, "VoicePocket");
-    final bucket = storage.bucket("voicepocket");
-    await bucket.read("${response.data.email}/${response.data.uuid}.wav").pipe(
-          File("${directory.path}/wav/${response.data.email}/${response.data.uuid}.wav")
-              .openWrite(),
-        );
-    print(
-        "wav파일 받아온 저장 경로: ${directory.path}/wav/${response.data.email}/${response.data.uuid}.wav");
-  } finally {
-    client.close();
-  }
-}
+// Future<void> readWavFileFromBucket(TextModel response, String uuid) async {
+//   // wav파일 bucket에서 받아오는 함수
+//   final client = await getAuthClient();
+//   final directory = await getApplicationDocumentsDirectory();
+//   try {
+//     final storage = Storage(client, "VoicePocket");
+//     final bucket = storage.bucket("voicepocket");
+//     await bucket.read("${response.data.email}/${response.data.uuid}.wav").pipe(
+//           File("${directory.path}/wav/${response.data.email}/${response.data.uuid}.wav")
+//               .openWrite(),
+//         );
+//     print(
+//         "wav파일 받아온 저장 경로: ${directory.path}/wav/${response.data.email}/${response.data.uuid}.wav");
+//   } finally {
+//     client.close();
+//   }
+// }
 
 Future<void> readWavFileFromNotification(String wavUrl) async {
   // wav파일 bucket에서 받아오는 함수

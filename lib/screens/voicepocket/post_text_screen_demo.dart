@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/models/text_model.dart';
-import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
 import 'package:voicepocket/models/database_service.dart';
@@ -53,14 +52,14 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
       setState(() {
         isLoading = false;
       });
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => MediaPlayerScreen(
-            path: "${response.data.uuid}.wav",
-            email: response.data.email,
-          ),
-        ),
-      );
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) => MediaPlayerScreen(
+      //       path: "${response.data.uuid}.wav",
+      //       email: response.data.email,
+      //     ),
+      //   ),
+      // );
     } else if (response.code == -1006) {
       await tokenRefreshPost();
     } else {
