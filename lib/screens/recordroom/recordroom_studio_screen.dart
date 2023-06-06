@@ -69,8 +69,13 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   }
 
   void toNextPage() async {
+    String filePath =
+        "${modelDir.path}/${widget.metaData['name']![_index - 1]}.wav";
     if (_recordingState == RecordingState.recording) {
       await _stopRecording();
+    }
+    if (!await File(filePath).exists()) {
+      return;
     }
     _index = _index + 1;
     setState(() {});
