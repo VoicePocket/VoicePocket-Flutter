@@ -98,8 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Text(
                   'HOME',
                   style: TextStyle(
-                    fontSize: Sizes.size48,
-                    fontWeight: FontWeight.w700,
+                    fontFamily: 'contests_fonts',
+                    fontSize: Sizes.size40,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 const Spacer(),

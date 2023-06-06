@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen copy.dart';
 import 'package:voicepocket/services/fcm_setting.dart';
 
 void main() async {
@@ -45,6 +46,7 @@ class _AppState extends State<App> {
       ),
       home: const MainScreen(),
       //home: const PostTextScreen(),
+      //home: const VoicePocketPlayScreenCopy(email: 'ssh@gmail.com'),
     );
   }
 }

@@ -4,11 +4,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen_demo.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
 import '../authentications/home_screen.dart';
-import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen copy.dart';
 import 'package:voicepocket/models/database_service.dart';
 
 
@@ -93,7 +92,7 @@ class _SelectScreenState extends State<SelectScreen> {
         if (!mounted) return;
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => VoicePocketPlayScreen(
+            builder: (context) => VoicePocketPlayScreenCopy(
               email: defaultEmail,
             ),
           ),
@@ -104,7 +103,7 @@ class _SelectScreenState extends State<SelectScreen> {
         if (!mounted) return;
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => VoicePocketPlayScreen(
+            builder: (context) => VoicePocketPlayScreenCopy(
               email: manEmail,
             ),
           ),
@@ -115,7 +114,7 @@ class _SelectScreenState extends State<SelectScreen> {
         if (!mounted) return;
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => VoicePocketPlayScreen(
+            builder: (context) => VoicePocketPlayScreenCopy(
               email: womanEmail,
             ),
           ),

@@ -97,7 +97,7 @@ class _MainScreenState extends State<MainScreen> {
     return GestureDetector(
       onTap: _onScaffoldTab,
       child: Scaffold(
-        backgroundColor: const Color(0xFFD8E4FF),
+        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
         body: Center(
           child: Padding(
@@ -112,14 +112,14 @@ class _MainScreenState extends State<MainScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: "title_font",
-                      fontSize: Sizes.size80,
+                      fontSize: Sizes.size64,
                       fontWeight: FontWeight.w700,
                       color: Theme.of(context).primaryColor,
-                      shadows: const <Shadow>[
+                      shadows: <Shadow>[
                         Shadow(
-                          offset: Offset(2, 2),
-                          blurRadius: 3.0,
-                          color: Colors.black38,
+                          offset: Offset(0, 10),
+                          blurRadius: 8.0,
+                          color: Colors.black.withOpacity(0.15),
                         ),
                       ],
                     ),
@@ -146,15 +146,15 @@ class _MainScreenState extends State<MainScreen> {
                       focusedErrorBorder: OutlineInputBorder(
                         borderSide: const BorderSide(
                           color: Colors.red,
-                          width: 1,
+                          width: 2,
                         ),
                         borderRadius: BorderRadius.circular(
                           Sizes.size32,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                        borderSide: const BorderSide(
+                          color: Colors.red,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -163,7 +163,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).primaryColor,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -172,7 +172,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).primaryColor,
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -212,15 +212,15 @@ class _MainScreenState extends State<MainScreen> {
                       focusedErrorBorder: OutlineInputBorder(
                         borderSide: const BorderSide(
                           color: Colors.red,
-                          width: 1,
+                          width: 2,
                         ),
                         borderRadius: BorderRadius.circular(
                           Sizes.size32,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                        borderSide: const BorderSide(
+                          color: Colors.red,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -229,7 +229,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).primaryColor,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -238,7 +238,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).primaryColor,
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(

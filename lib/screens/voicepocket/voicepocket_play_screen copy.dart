@@ -1,5 +1,6 @@
 import 'dart:async';
-
+import 'package:voicepocket/constants/gaps.dart';
+import 'package:voicepocket/services/song_progressbar.dart';
 import '../authentications/home_screen.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +12,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'dart:io';
 
-class VoicePocketPlayScreen extends StatefulWidget {
+class VoicePocketPlayScreenCopy extends StatefulWidget {
   final String email;
-  const VoicePocketPlayScreen({super.key, required this.email});
+  const VoicePocketPlayScreenCopy({super.key, required this.email});
 
   @override
-  State<VoicePocketPlayScreen> createState() => _VoicePocketPlayScreenState();
+  State<VoicePocketPlayScreenCopy> createState() => _VoicePocketPlayScreenCopyState();
 }
 
 class PositionData {
@@ -83,7 +84,7 @@ List? songs2 = [];
 
 bool isLoop = false;
 
-class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
+class _VoicePocketPlayScreenCopyState extends State<VoicePocketPlayScreenCopy> {
   late AudioPlayer player;
   final CarouselController _carouselController = CarouselController();
   LoopMode _loopMode = LoopMode.off;
@@ -116,7 +117,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
     );
   }
 
-  void _handlePreviousButtonPressed() async {
+  /* void _handlePreviousButtonPressed() async {
     await player.seekToPrevious();
     final int newIndex = recent_song - 1;
     _carouselController.animateToPage(newIndex);
@@ -126,7 +127,33 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
     await player.seekToNext();
     final int newIndex = recent_song + 1;
     _carouselController.animateToPage(newIndex);
-  }
+  } */
+
+  void _handlePreviousButtonPressed() async {
+  await player.seekToPrevious();
+  final int newIndex = recent_song - 1;
+  _carouselController.animateToPage(newIndex);
+  _positionDataStream.listen((positionData) {
+    (PositionData(
+      Duration.zero,
+      positionData.bufferedPosition,
+      positionData.duration,
+    ));
+  });
+  print('포지션 변경');
+}
+
+
+void _handleNextButtonPressed() async {
+  await player.seekToNext();
+  final int newIndex = recent_song + 1;
+  _carouselController.animateToPage(newIndex);
+  _positionDataStream.any(const PositionData(
+    Duration.zero,
+    Duration.zero,
+    Duration.zero
+  ) as bool Function(PositionData element));
+}
 
   void _handleLoopButtonPressed() {
     switch (_loopMode) {
@@ -220,14 +247,15 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
         Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              vertical: Sizes.size40,
-              horizontal: Sizes.size16,
+              vertical: Sizes.size20,
+              horizontal: Sizes.size20,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
                   child: Container(
+                    height: MediaQuery.of(context).size.height * 0.58,
                     alignment: Alignment.topCenter,
                     child: Stack(
                       alignment: Alignment.topCenter,
@@ -245,24 +273,32 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       carouselController: _carouselController,
                                       itemCount: snapshot.data.length,
                                       itemBuilder: (BuildContext context,
-                                          int itemIndex, int pageViewIndex) {
+                                        int itemIndex, int pageViewIndex) {
                                         return Container(
-                                          width: MediaQuery.of(context).size.width * 0.8,
+                                          alignment: Alignment.center,
+                                          margin: const EdgeInsets.symmetric(horizontal: 5, vertical:5),
+                                          width: MediaQuery.of(context).size.width * 0.75,
                                           child: Stack(
                                           alignment: Alignment.center,
                                           children: [
                                             Container(
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(15.0),
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(15.0),
-                                              child: Image.asset(
-                                                'assets/images/playpage2.png',
-                                                fit: BoxFit.cover,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    offset: const Offset(-3, 0),
+                                                    blurRadius: 8.0,
+                                                    color: Colors.black.withOpacity(0.15),
+                                                  )
+                                                ],
+                                                gradient: const LinearGradient(
+                                                  colors:[
+                                                    Color(0xFFCDC1FF),
+                                                    Color(0xFFE5D9F2)
+                                                    ],
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight
+                                                )
                                               ),
                                             ),
                                             Text(
@@ -275,11 +311,12 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                         ));
                                       },
                                       options: CarouselOptions(
-                                        height: MediaQuery.of(context).size.height * 0.46,
+                                        height: MediaQuery.of(context).size.height * 0.58,
                                         enlargeCenterPage: true,
                                         onPageChanged: (index, reason) {
                                           setState(() {
                                             player.stop();
+                                            const PositionData(Duration.zero,Duration.zero, Duration.zero);
                                             isPlaying = false;
                                             print(index.toString());
                                             recent_song = index;
@@ -351,11 +388,11 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                     ),
                                   ],
                                 ),
-                                StreamBuilder<PositionData>(
+                                /* StreamBuilder<PositionData>(
                                   stream: _positionDataStream,
                                   builder: (context, snapshot) {
                                     final positionData = snapshot.data;
-                                    return ProgressBar(
+                                    return SongProgressBar(
                                       barHeight: 4,
                                       progressBarColor:
                                           Theme.of(context).primaryColor,
@@ -371,6 +408,25 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       onSeek: player.seek,
                                     );
                                   },
+                                ), */
+                                StreamBuilder<PositionData>(
+                                  stream: _positionDataStream,
+                                  builder: (context, snapshot) {
+                                    final positionData = snapshot.data ?? const PositionData(
+                                      Duration.zero,
+                                      Duration.zero,
+                                      Duration.zero,
+                                    );
+                                    return SongProgressBar(
+                                      barHeight: 4,
+                                      progressBarColor: Theme.of(context).primaryColor,
+                                      thumbColor: Theme.of(context).primaryColor,
+                                      progress: positionData.position,
+                                      buffered: positionData.bufferedPosition,
+                                      total: positionData.duration,
+                                      onSeek: player.seek,
+                                    );
+                                  },
                                 ),
                                 const SizedBox(height: 20),
                                 Row(
@@ -380,7 +436,6 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       padding: const EdgeInsets.all(20),
                                       //use LoopNum
                                       onPressed: _handleLoopButtonPressed,
-
                                       icon: Icon(
                                         _loopIcon,
                                         size: 30,

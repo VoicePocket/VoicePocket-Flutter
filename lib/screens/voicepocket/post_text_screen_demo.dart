@@ -200,14 +200,6 @@ chatMessages() {
               controller: _scrollController,
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, index) {
-                /* if(bottomFlag){
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                        _scrollController.jumpTo(
-                            _scrollController.position.maxScrollExtent,
-                        );
-                    bottomFlag = false;
-                  });
-                } */
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
