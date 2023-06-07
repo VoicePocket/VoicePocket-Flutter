@@ -3,14 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
+import 'package:voicepocket/screens/friend/friend_main_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
+import 'package:voicepocket/services/load_csv.dart';
+
+import '../../services/google_cloud_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,16 +23,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Map<String, List<String>> metaData;
   @override
   void initState() {
     super.initState();
-    createFolder();
+    SharedPreferences.getInstance().then(
+      (value) => createFolder(value.getString("email")!),
+    );
+    loadCSV().then((value) => metaData = value);
   }
 
   void _onRecordTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const RecordroomStudioScreen(),
+        builder: (context) => RecordroomStudioScreen(
+          metaData: metaData,
+        ),
+      ),
+    );
+  }
+
+  void _onFriendTab(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const FriendMainScreen(),
       ),
     );
   }
@@ -55,11 +72,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> createFolder() async {
-    final routeDir = await getApplicationDocumentsDirectory();
+  Future<void> createFolder(String email) async {
+    final routeDir = await getPublicDownloadFolderPath();
     print("default 저장 경로: ${routeDir.path}");
     final modelDir = Directory('${routeDir.path}/model');
-    final wavDir = Directory('${routeDir.path}/wav');
+    final wavDir = Directory('${routeDir.path}/wav/$email');
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
@@ -117,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Gaps.v64,
             Flexible(
+              flex: 3,
               fit: FlexFit.loose,
               child: GestureDetector(
                 onTap: () => _onRecordTab(context),
@@ -181,6 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Gaps.v16,
             Flexible(
               fit: FlexFit.loose,
+              flex: 3,
               child: GestureDetector(
                 onTap: () => _onVoicePocketListTab(context),
                 child: Container(
@@ -242,99 +261,68 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Gaps.v16,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Flexible(
-                  fit: FlexFit.tight,
-                  flex: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0XFFD8BBFF),
-                      borderRadius: BorderRadius.circular(25),
+            Flexible(
+              fit: FlexFit.loose,
+              flex: 2,
+              child: GestureDetector(
+                onTap: () => _onFriendTab(context),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0XFFD8BBFF),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 25,
+                      horizontal: 30,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 15,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "친구에게",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "친구에게\n내 목소리를\n전달해보세요.",
+                              style: TextStyle(
+                                fontSize: Sizes.size16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
-                          ),
-                          Gaps.v8,
-                          const Text(
-                            "요청해보세요!",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
+                            const Spacer(),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: Sizes.size10,
+                                  horizontal: Sizes.size32,
+                                ),
+                                child: Text(
+                                  "만나러 가기",
+                                  style: TextStyle(
+                                    fontSize: Sizes.size16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                          Gaps.v5,
-                          Icon(
-                            Icons.people_alt,
-                            size: Sizes.size28,
-                            color: Colors.grey.shade800,
-                          )
-                        ],
-                      ),
+                          ],
+                        ),
+                        Icon(
+                          Icons.people_alt,
+                          color: Colors.grey.shade800,
+                          size: Sizes.size96 + Sizes.size20,
+                        )
+                      ],
                     ),
                   ),
                 ),
-                Gaps.h16,
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0XFFD8BBFF),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 15,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "친구에게",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          Gaps.v8,
-                          const Text(
-                            "요청해보세요!",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          Gaps.v5,
-                          Icon(
-                            Icons.people_alt,
-                            size: Sizes.size28,
-                            color: Colors.grey.shade800,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),

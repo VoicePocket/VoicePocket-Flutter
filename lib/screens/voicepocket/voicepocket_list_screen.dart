@@ -22,7 +22,7 @@ class _ListScreenState extends State<ListScreen> {
     SharedPreferences.getInstance().then((pref) {
       _pref = pref;
       setState(() {
-        name = _pref.getString("name")!;
+        name = _pref.getString("email")!;
       });
     });
   }

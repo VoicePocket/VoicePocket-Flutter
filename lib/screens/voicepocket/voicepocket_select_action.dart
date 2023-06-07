@@ -10,7 +10,6 @@ import '../authentications/home_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen copy.dart';
 import 'package:voicepocket/models/database_service.dart';
 
-
 class SelectScreen extends StatefulWidget {
   final int index;
   const SelectScreen({super.key, required this.index});
@@ -37,14 +36,13 @@ class _SelectScreenState extends State<SelectScreen> {
     final pref = await SharedPreferences.getInstance();
     defaultEmail = pref.getString("email")!;
     defaultName = pref.getString("name")!;
-    
+
     DatabaseService().savingUserData(defaultName, defaultEmail);
 
     /* if(DatabaseService().gettingUserData(defaultEmail) == "") {
       DatabaseService().savingUserData(defaultName, defaultEmail);
       print('firestore create');
     } */
-
   }
 
   Future<void> createFolder() async {
@@ -277,5 +275,5 @@ class _SelectScreenState extends State<SelectScreen> {
               ),
       ),
     );
-  }  
+  }
 }
