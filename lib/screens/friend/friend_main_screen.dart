@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/services/request_friendship.dart';
 
 import '../../constants/gaps.dart';
 import '../authentications/home_screen.dart';
@@ -103,14 +104,19 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
               ),
               actions: [
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (!isFriendValid()) {
                       return;
                     }
+                    final friend = await requestFriendShip(_friend);
                     setState(() {
-                      _cardList.add(
-                        card(_friend, _cardList.length),
-                      );
+                      if (friend.success) {
+                        _cardList.add(
+                          card(_friend, _cardList.length),
+                        );
+                        _friendController.clear();
+                        Navigator.of(context).pop();
+                      }
                       _friendController.clear();
                       Navigator.of(context).pop();
                     });

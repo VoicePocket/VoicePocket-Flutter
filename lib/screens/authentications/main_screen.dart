@@ -40,7 +40,33 @@ class _MainScreenState extends State<MainScreen> {
         _password = _passwordController.text;
       });
     });
-    SharedPreferences.getInstance().then((pref) => _pref = pref);
+    SharedPreferences.getInstance().then((pref) async {
+      _pref = pref;
+      if (pref.containsKey("email") &&
+          pref.containsKey("password") &&
+          pref.containsKey("fcmKey")) {
+        final loginModel = await loginPost(pref.getString("email")!,
+            pref.getString("password")!, pref.getString("fcmKey")!);
+        if (!mounted) return;
+        if (loginModel.success) {
+          Fluttertoast.showToast(
+            msg: "${pref.getString("email")!}님 환영합니다!",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            textColor: Colors.white,
+            backgroundColor: const Color(0xFFA594F9),
+            fontSize: Sizes.size20,
+          );
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ),
+            (route) => false,
+          );
+        }
+      }
+    });
   }
 
   void _onScaffoldTab() {
@@ -55,8 +81,10 @@ class _MainScreenState extends State<MainScreen> {
 
       if (!mounted) return;
       if (loginModel.success) {
+        _pref.setString("email", _email);
+        _pref.setString("password", _password);
         Fluttertoast.showToast(
-          msg: "${_pref.getString("name")!}님 환영합니다!",
+          msg: "${_pref.getString("email")!}님 환영합니다!",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
