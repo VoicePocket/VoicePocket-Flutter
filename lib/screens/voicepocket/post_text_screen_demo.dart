@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:gcloud/storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/models/text_model.dart';
+import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
+import 'package:voicepocket/services/message_tile_indicator.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
 import 'package:voicepocket/models/database_service.dart';
-import 'package:voicepocket/widgets/message_tile.dart';
+import 'package:voicepocket/services/message_tile.dart';
 
 class PostTextScreenDemo extends StatefulWidget {
   final String email;
@@ -22,17 +26,44 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
   String inputText = "";
   bool isLoading = false;
   String defaultEmail = "";
+  late ScrollController _scrollController;
+  List<QueryDocumentSnapshot> listMessage = [];
+
+  bool isUILoading = false;
+  bool bottomFlag = true;
+  bool isScrollBottomFixed = true;
+
+
 
   @override
   void initState() {
     getChat();
     super.initState();
+    bool isUILoading = false;
+    bool bottomFlag = true;
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     _textController.addListener(() {
       setState(() {
         inputText = _textController.text;
       });
     });
   }
+
+
+  _scrollListener() {
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      setState(() {
+        isScrollBottomFixed = true;
+      });
+    } else {
+      setState(() {
+        isScrollBottomFixed = false;
+      });
+    }
+  }
+
 
   getChat() {
     DatabaseService().getChats(widget.email).then((val) {
@@ -52,14 +83,6 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
       setState(() {
         isLoading = false;
       });
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(
-      //     builder: (context) => MediaPlayerScreen(
-      //       path: "${response.data.uuid}.wav",
-      //       email: response.data.email,
-      //     ),
-      //   ),
-      // );
     } else if (response.code == -1006) {
       await tokenRefreshPost();
     } else {
@@ -90,14 +113,17 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
           ),
         ],
       ),
-      body: Stack(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           chatMessages(),
           Container(
             alignment: Alignment.bottomCenter,
             width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.1,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              height: MediaQuery.of(context).size.height * 0.1,
               width: MediaQuery.of(context).size.width,
               color: const Color.fromRGBO(243, 230, 255, 0.816),
               child: Row(
@@ -119,8 +145,9 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                     onTap: () {
                       sendMessage(inputText);
                       _postTextTab(inputText);
+                      bottomFlag = true;
                     },
-                    child: Container(
+                    child:Container(
                       height: 50,
                       width: 50,
                       decoration: BoxDecoration(
@@ -139,60 +166,58 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
               ),
             ),
           ),
-          isLoading
-              ? Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.height * 0.1,
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).primaryColor,
-                      strokeWidth: 8.0,
-                    ),
-                  ),
-                )
-              : Container(),
+          
         ],
       ),
     );
   }
-
+  
   sendMessage(String text) async {
-    final pref = await SharedPreferences.getInstance();
-    defaultEmail = pref.getString("email")!;
-    if (text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": text,
-        "sender": defaultEmail,
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
+  final pref = await SharedPreferences.getInstance();
+  defaultEmail = pref.getString("email")!;
+  if (text.isNotEmpty) {
+    Map<String, dynamic> chatMessageMap = {
+      "message": text,
+      "sender": defaultEmail,
+      "time": DateTime.now().millisecondsSinceEpoch,
+    };
+    DatabaseService().sendMessage(widget.email, chatMessageMap);
 
-      print('DB에 메시지 저장');
-
-      DatabaseService().sendMessage(widget.email, chatMessageMap);
-      setState(() {
-        _textController.clear();
-      });
-    }
+    setState(() {
+      _textController.clear();
+    });
   }
+}
 
-  chatMessages() {
-    return StreamBuilder(
-      stream: chats,
-      builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return MessageTile(
+chatMessages() {
+  return SizedBox(
+    height: MediaQuery.of(context).size.height * 0.75,
+    child: StreamBuilder(
+    stream: chats,
+    builder: (context, AsyncSnapshot snapshot) {
+      return snapshot.hasData
+          ? ListView.builder(
+              controller: _scrollController,
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    MessageTile(
                       message: snapshot.data.docs[index]['message'],
                       sender: snapshot.data.docs[index]['sender'],
-                      sentByMe:
-                          widget.email == snapshot.data.docs[index]['sender']);
-                },
-              )
-            : Container();
-      },
+                      sentByMe: widget.email ==
+                          snapshot.data.docs[index]['sender'],
+                    ),
+                    if (isLoading && index == snapshot.data.docs.length - 1)
+                      const MessageTileIndicator(),
+                  ],
+                );
+              },
+            )
+          : Container();
+         },
+      )
     );
   }
 }

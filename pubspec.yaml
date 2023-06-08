@@ -47,6 +47,7 @@ dependencies:
   fluttertoast: ^8.2.1
   font_awesome_flutter: ^10.3.0
   gcloud: ^0.8.7
+  get: ^4.6.5
   googleapis_auth: ^1.3.1
   http: ^0.13.5
   just_audio: ^0.9.32
@@ -109,12 +110,11 @@ flutter:
   fonts:
     - family: title_font
       fonts:
-        - asset: assets/fonts/Caveat-Regular.ttf
-        - asset: assets/fonts/Caveat-Medium.ttf
+        - asset: assets/fonts/GmarketSansTTFLight.ttf
           weight: 300
-        - asset: assets/fonts/Caveat-SemiBold.ttf
+        - asset: assets/fonts/GmarketSansTTFMedium.ttf
           weight: 500
-        - asset: assets/fonts/Caveat-Bold.ttf
+        - asset: assets/fonts/GmarketSansTTFBold.ttf
           weight: 700
     - family: contents_font
       fonts:
@@ -125,5 +125,7 @@ flutter:
           weight: 500
         - asset: assets/fonts/NanumSquareEB.ttf
           weight: 700
+        - asset: assets/fonts/Inter-ExtraBold.ttf
+          weight: 800
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

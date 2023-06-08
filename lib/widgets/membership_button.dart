@@ -12,6 +12,7 @@ class MembershipButton extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: Sizes.size10),
       decoration: BoxDecoration(
         color: const Color(0xFFFFFFFF),
+        border: Border.all(color: Theme.of(context).primaryColor, width: 1),
         borderRadius: BorderRadius.circular(Sizes.size32),
       ),
       child: Padding(
@@ -24,6 +25,7 @@ class MembershipButton extends StatelessWidget {
             Text(
               "회원가입",
               style: TextStyle(
+                fontFamily: 'contents_fonts',
                 fontSize: Sizes.size20,
                 color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.w600,
