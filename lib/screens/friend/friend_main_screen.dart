@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/screens/friend/friend_check_request_screen.dart';
 import 'package:voicepocket/services/request_friendship.dart';
 
 import '../../constants/gaps.dart';
@@ -38,6 +40,14 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
         builder: (context) => const HomeScreen(),
       ),
       (route) => false,
+    );
+  }
+
+  void toFriendCheckRequest(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const FriendCheckRequestScreen(),
+      ),
     );
   }
 
@@ -178,12 +188,8 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
         });
   }
 
-  void _subCardWidget() {
-    setState(() {
-      if (_cardList.isNotEmpty) {
-        _cardList.removeLast();
-      }
-    });
+  void _checkRequest() async {
+    setState(() {});
   }
 
   Widget card(String email, int index) {
@@ -305,16 +311,24 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 FloatingActionButton(
+                  backgroundColor: Theme.of(context).primaryColor,
                   heroTag: "btn1",
                   onPressed: _addCardWidget,
                   tooltip: 'Add',
-                  child: const Icon(Icons.add),
+                  child: const Icon(
+                    Icons.group_add_rounded,
+                    size: Sizes.size36,
+                  ),
                 ),
                 FloatingActionButton(
+                  backgroundColor: Theme.of(context).primaryColor,
                   heroTag: "btn2",
-                  onPressed: _subCardWidget,
+                  onPressed: () => toFriendCheckRequest(context),
                   tooltip: 'Sub',
-                  child: const Icon(Icons.minimize_outlined),
+                  child: const Icon(
+                    FontAwesomeIcons.getPocket,
+                    size: Sizes.size36,
+                  ),
                 ),
               ],
             ),

@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/user_info_model.dart';
 
-Future<UserInfoModel> requestUserInfo(String email) async {
+Future<UserInfoModel> getUserInfo(String email) async {
   final pref = await SharedPreferences.getInstance();
   final uri = defaultTargetPlatform == TargetPlatform.iOS
       ? 'http://localhost:8080/api/user/email/${email.split('@')[0]}%40${email.split('@')[1]}?lang=ko'
@@ -24,7 +24,6 @@ Future<UserInfoModel> requestUserInfo(String email) async {
       ),
     );
     if (model.success) {
-      pref.setString("email", model.data.email);
       pref.setString("nickname", model.data.nickName);
       pref.setString("name", model.data.name);
     }

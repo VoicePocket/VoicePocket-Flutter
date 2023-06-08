@@ -1,22 +1,22 @@
-class FriendShipModel {
+class FriendShipRequestModel {
   bool success;
   int code;
   String message;
-  Data? data;
+  List<Data> data;
 
-  FriendShipModel({
+  FriendShipRequestModel({
     required this.success,
     required this.code,
     required this.message,
     required this.data,
   });
 
-  factory FriendShipModel.fromJson(Map<String, dynamic> json) {
-    return FriendShipModel(
+  factory FriendShipRequestModel.fromJson(Map<String, dynamic> json) {
+    return FriendShipRequestModel(
       success: json['success'],
       code: json['code'],
       message: json['message'],
-      data: json['success'] ? Data.fromJson(json['data']) : null,
+      data: (json['data']! as List).map((e) => Data.fromDynamic(e)).toList(),
     );
   }
 }
@@ -34,12 +34,12 @@ class Data {
     required this.status,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) {
+  factory Data.fromDynamic(Map<String, dynamic> json1) {
     return Data(
-      id: json['id'],
-      requestFrom: RequestFrom.fromJson(json['request_from']),
-      requestTo: RequestTo.fromJson(json['request_to']),
-      status: json['status'],
+      id: json1['id'],
+      requestFrom: RequestFrom.fromDynamic(json1['request_from']),
+      requestTo: RequestTo.fromDynamic(json1['request_to']),
+      status: json1['status'],
     );
   }
 }
@@ -57,7 +57,7 @@ class RequestFrom {
     required this.nickName,
   });
 
-  factory RequestFrom.fromJson(Map<String, dynamic> json) {
+  factory RequestFrom.fromDynamic(Map<String, dynamic> json) {
     return RequestFrom(
       userId: json['userId'],
       email: json['email'],
@@ -80,7 +80,7 @@ class RequestTo {
     required this.nickName,
   });
 
-  factory RequestTo.fromJson(Map<String, dynamic> json) {
+  factory RequestTo.fromDynamic(Map<String, dynamic> json) {
     return RequestTo(
       userId: json['userId'],
       email: json['email'],

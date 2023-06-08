@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
 import 'package:voicepocket/screens/authentications/submit_term_screen.dart';
+import 'package:voicepocket/services/get_user_info.dart';
 import 'package:voicepocket/services/login_post.dart';
 import 'package:voicepocket/widgets/login_button.dart';
 import 'package:voicepocket/widgets/membership_button.dart';
@@ -45,10 +46,11 @@ class _MainScreenState extends State<MainScreen> {
       if (pref.containsKey("email") &&
           pref.containsKey("password") &&
           pref.containsKey("fcmKey")) {
-        final loginModel = await loginPost(pref.getString("email")!,
-            pref.getString("password")!, pref.getString("fcmKey")!);
+        final loginModel = await loginPost(
+            pref.getString("email")!, pref.getString("password")!);
         if (!mounted) return;
         if (loginModel.success) {
+          await getUserInfo(_pref.getString("email")!);
           Fluttertoast.showToast(
             msg: "${pref.getString("email")!}님 환영합니다!",
             toastLength: Toast.LENGTH_LONG,
@@ -58,6 +60,7 @@ class _MainScreenState extends State<MainScreen> {
             backgroundColor: const Color(0xFFA594F9),
             fontSize: Sizes.size20,
           );
+          if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => const HomeScreen(),
@@ -74,13 +77,13 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onLoginTab(BuildContext context) async {
-    String fcmKey = _pref.getString("fcmKey") ?? "";
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      final loginModel = await loginPost(_email, _password, fcmKey);
+      final loginModel = await loginPost(_email, _password);
 
       if (!mounted) return;
       if (loginModel.success) {
+        await getUserInfo(_email);
         _pref.setString("email", _email);
         _pref.setString("password", _password);
         Fluttertoast.showToast(
@@ -92,6 +95,7 @@ class _MainScreenState extends State<MainScreen> {
           backgroundColor: const Color(0xFFA594F9),
           fontSize: Sizes.size20,
         );
+        if (!mounted) return;
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => const HomeScreen(),

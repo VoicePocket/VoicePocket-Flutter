@@ -18,18 +18,20 @@ class NotificationProvider extends AsyncNotifier {
     //백그라운드에서 메시지를 받은 경우
     print(
         "I got message in BACKGROUND\nMessage data: ${message.data['wavUrl']}");
-    final wavUrl = message.data['wavUrl'];
-    await readWavFileFromNotification(wavUrl);
-    if (message.data['wavUrl'].endsWith('.wav')) {
-      Navigator.of(GlobalVariable.navState.currentContext!).push(
-        MaterialPageRoute(
-          builder: (context) => MediaPlayerScreen(
-            email: wavUrl.split("/")[0],
-            path: wavUrl.split("/")[1],
+    if (message.data['wavUrl'] != null) {
+      final wavUrl = message.data['wavUrl'];
+      await readWavFileFromNotification(wavUrl);
+      if (message.data['wavUrl'].endsWith('.wav')) {
+        Navigator.of(GlobalVariable.navState.currentContext!).push(
+          MaterialPageRoute(
+            builder: (context) => MediaPlayerScreen(
+              email: wavUrl.split("/")[0],
+              path: wavUrl.split("/")[1],
+            ),
           ),
-        ),
-      );
-      return;
+        );
+        return;
+      }
     }
   }
 
@@ -85,18 +87,20 @@ class NotificationProvider extends AsyncNotifier {
             ),
           ),
         );
-        final wavUrl = message.data['wavUrl'];
-        await readWavFileFromNotification(wavUrl);
-        if (message.data['wavUrl'].endsWith('.wav')) {
-          Navigator.of(GlobalVariable.navState.currentContext!).push(
-            MaterialPageRoute(
-              builder: (context) => MediaPlayerScreen(
-                email: wavUrl.split("/")[0],
-                path: wavUrl.split("/")[1],
+        if (message.data['wavUrl'] != null) {
+          final wavUrl = message.data['wavUrl'];
+          await readWavFileFromNotification(wavUrl);
+          if (message.data['wavUrl'].endsWith('.wav')) {
+            Navigator.of(GlobalVariable.navState.currentContext!).push(
+              MaterialPageRoute(
+                builder: (context) => MediaPlayerScreen(
+                  email: wavUrl.split("/")[0],
+                  path: wavUrl.split("/")[1],
+                ),
               ),
-            ),
-          );
-          return;
+            );
+            return;
+          }
         }
       }
     });
@@ -115,13 +119,12 @@ class NotificationProvider extends AsyncNotifier {
   FutureOr build() async {
     String token = await _messaging.getToken() ?? "";
     SharedPreferences pref = await SharedPreferences.getInstance();
-    if (token == null) return;
+    if (token == "") return;
     await initListener();
     _messaging.onTokenRefresh.listen((newToken) {
       token = newToken;
     });
-    pref.setString("fcmKey", token);
-    print(token);
+    //pref.setString("fcmToken", token);
   }
 }
 
