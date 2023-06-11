@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voicepocket/screens/friend/friend_main_screen.dart';
 import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
 
@@ -32,6 +33,12 @@ class NotificationProvider extends AsyncNotifier {
         );
         return;
       }
+    } else if (message.notification!.title!.contains("Request")) {
+      Navigator.of(GlobalVariable.navState.currentContext!).push(
+        MaterialPageRoute(
+          builder: (context) => const FriendMainScreen(),
+        ),
+      );
     }
   }
 
@@ -101,6 +108,12 @@ class NotificationProvider extends AsyncNotifier {
             );
             return;
           }
+        } else if (message.notification!.title!.contains("Request")) {
+          Navigator.of(GlobalVariable.navState.currentContext!).push(
+            MaterialPageRoute(
+              builder: (context) => const FriendMainScreen(),
+            ),
+          );
         }
       }
     });

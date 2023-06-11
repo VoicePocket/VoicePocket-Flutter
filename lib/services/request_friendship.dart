@@ -109,9 +109,9 @@ Future<bool> acceptFriendShip(String email) async {
   const String iosUrl = VoicePocketUri.iosUrl;
   const String androidUrl = VoicePocketUri.androidUrl;
   final uri = defaultTargetPlatform == TargetPlatform.iOS
-      ? '$iosUrl/friend/requests/ACCEPT'
-      : '$androidUrl/friend/requests/ACCEPT';
-  final http.Response response = await http.post(
+      ? '$iosUrl/friend/request/ACCEPT'
+      : '$androidUrl/friend/request/ACCEPT';
+  final http.Response response = await http.put(
     Uri.parse(uri),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
@@ -131,7 +131,7 @@ Future<bool> acceptFriendShip(String email) async {
       Fluttertoast.showToast(
         msg: "이제 $email과 친구입니다.",
         toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
+        gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         backgroundColor: const Color(0xFFA594F9),
@@ -163,9 +163,9 @@ Future<bool> rejectFriendShip(String email) async {
   const String iosUrl = VoicePocketUri.iosUrl;
   const String androidUrl = VoicePocketUri.androidUrl;
   final uri = defaultTargetPlatform == TargetPlatform.iOS
-      ? '$iosUrl/friend/requests/REJECT'
-      : '$androidUrl/friend/requests/REJECT';
-  final http.Response response = await http.post(
+      ? '$iosUrl/friend/request/REJECT'
+      : '$androidUrl/friend/request/REJECT';
+  final http.Response response = await http.put(
     Uri.parse(uri),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
@@ -185,7 +185,7 @@ Future<bool> rejectFriendShip(String email) async {
       Fluttertoast.showToast(
         msg: "$email님의 친구 요청을 거절하셨습니.",
         toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
+        gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
         textColor: Colors.white,
         backgroundColor: const Color(0xFFA594F9),
