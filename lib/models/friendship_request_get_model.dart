@@ -1,45 +1,45 @@
-class FriendShipRequestModel {
+class FriendShipRequestGetModel {
   bool success;
   int code;
   String message;
-  DataR? data;
+  List<DataG> data;
 
-  FriendShipRequestModel({
+  FriendShipRequestGetModel({
     required this.success,
     required this.code,
     required this.message,
     required this.data,
   });
 
-  factory FriendShipRequestModel.fromJson(Map<String, dynamic> json) {
-    return FriendShipRequestModel(
+  factory FriendShipRequestGetModel.fromJson(Map<String, dynamic> json) {
+    return FriendShipRequestGetModel(
       success: json['success'],
       code: json['code'],
       message: json['message'],
-      data: json['success'] ? DataR.fromJson(json['data']) : null,
+      data: (json['data']! as List).map((e) => DataG.fromDynamic(e)).toList(),
     );
   }
 }
 
-class DataR {
+class DataG {
   int id;
   RequestFrom requestFrom;
   RequestTo requestTo;
   String status;
 
-  DataR({
+  DataG({
     required this.id,
     required this.requestFrom,
     required this.requestTo,
     required this.status,
   });
 
-  factory DataR.fromJson(Map<String, dynamic> json) {
-    return DataR(
-      id: json['id'],
-      requestFrom: RequestFrom.fromJson(json['request_from']),
-      requestTo: RequestTo.fromJson(json['request_to']),
-      status: json['status'],
+  factory DataG.fromDynamic(Map<String, dynamic> json1) {
+    return DataG(
+      id: json1['id'],
+      requestFrom: RequestFrom.fromDynamic(json1['request_from']),
+      requestTo: RequestTo.fromDynamic(json1['request_to']),
+      status: json1['status'],
     );
   }
 }
@@ -57,7 +57,7 @@ class RequestFrom {
     required this.nickName,
   });
 
-  factory RequestFrom.fromJson(Map<String, dynamic> json) {
+  factory RequestFrom.fromDynamic(Map<String, dynamic> json) {
     return RequestFrom(
       userId: json['userId'],
       email: json['email'],
@@ -80,7 +80,7 @@ class RequestTo {
     required this.nickName,
   });
 
-  factory RequestTo.fromJson(Map<String, dynamic> json) {
+  factory RequestTo.fromDynamic(Map<String, dynamic> json) {
     return RequestTo(
       userId: json['userId'],
       email: json['email'],

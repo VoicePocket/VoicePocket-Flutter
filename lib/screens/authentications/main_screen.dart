@@ -150,7 +150,7 @@ class _MainScreenState extends State<MainScreen> {
                       color: Theme.of(context).primaryColor,
                       shadows: <Shadow>[
                         Shadow(
-                          offset: Offset(0, 10),
+                          offset: const Offset(0, 10),
                           blurRadius: 8.0,
                           color: Colors.black.withOpacity(0.15),
                         ),

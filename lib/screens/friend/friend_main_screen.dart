@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/friend/friend_check_request_screen.dart';
+import 'package:voicepocket/models/friendship_request_get_model.dart';
 import 'package:voicepocket/services/request_friendship.dart';
+import 'package:voicepocket/widgets/nav_tab.dart';
 
 import '../../constants/gaps.dart';
 import '../authentications/home_screen.dart';
@@ -17,6 +18,7 @@ class FriendMainScreen extends StatefulWidget {
 class _FriendMainScreenState extends State<FriendMainScreen> {
   final TextEditingController _friendController = TextEditingController();
   String _friend = "";
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -25,6 +27,12 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
       setState(() {
         _friend = _friendController.text;
       });
+    });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
     });
   }
 
@@ -43,17 +51,9 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
     );
   }
 
-  void toFriendCheckRequest(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const FriendCheckRequestScreen(),
-      ),
-    );
-  }
-
   final List<Widget> _cardList = [];
 
-  void _addCardWidget() {
+  void _requestFriend() {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -292,49 +292,272 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Sizes.size20,
-          vertical: Sizes.size10,
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: _cardList.length,
-                itemBuilder: (context, index) {
-                  return _cardList[index];
+      body: (_currentIndex == 0)
+          ? Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Sizes.size20,
+                vertical: Sizes.size10,
+              ),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: _cardList.length,
+                      itemBuilder: (context, index) {
+                        return _cardList[index];
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: Sizes.size20,
+                vertical: Sizes.size10,
+              ),
+              child: FutureBuilder<List<DataG>>(
+                future: getFriendShipRequest,
+                builder: (context, snapshot) {
+                  if (snapshot.data == null) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    List<DataG> dataList = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        String name = dataList[index].requestFrom.name;
+                        String email = dataList[index].requestFrom.email;
+                        return Container(
+                          height: 80,
+                          margin:
+                              const EdgeInsets.only(top: 5, left: 8, right: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          child: Center(
+                            child: ListTile(
+                              leading: const CircleAvatar(
+                                radius: 28,
+                                backgroundColor: Colors.white,
+                                child: CircleAvatar(
+                                  radius: 26,
+                                  backgroundImage: NetworkImage(
+                                      "https://picsum.photos/id/48/200/300"),
+                                ),
+                              ),
+                              title: Text(
+                                name,
+                                style: TextStyle(
+                                  fontSize: Sizes.size16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.deepPurple.shade800,
+                                ),
+                              ),
+                              subtitle: Text(
+                                email,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: Sizes.size14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              trailing: Card(
+                                elevation: 1,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: SizedBox(
+                                    width: 50,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            final success =
+                                                await acceptFriendShip(email);
+                                            setState(() {
+                                              if (success) {
+                                                dataList
+                                                    .remove(dataList[index]);
+                                              }
+                                            });
+                                          },
+                                          child: const Icon(
+                                            FontAwesomeIcons.check,
+                                            textDirection: TextDirection.rtl,
+                                            size: 20,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 1,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            final success =
+                                                await rejectFriendShip(email);
+                                            setState(() {
+                                              if (success) {
+                                                dataList
+                                                    .remove(dataList[index]);
+                                              }
+                                            });
+                                          },
+                                          child: const Icon(
+                                            FontAwesomeIcons.xmark,
+                                            textDirection: TextDirection.rtl,
+                                            size: 20,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
                 },
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FloatingActionButton(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  heroTag: "btn1",
-                  onPressed: _addCardWidget,
-                  tooltip: 'Add',
-                  child: const Icon(
-                    Icons.group_add_rounded,
-                    size: Sizes.size36,
-                  ),
+      bottomNavigationBar: Container(
+        color: Theme.of(context).primaryColor,
+        padding: const EdgeInsets.only(
+          bottom: Sizes.size32,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              NavTab(
+                selectedIcon: FontAwesomeIcons.userGroup,
+                icon: FontAwesomeIcons.userGroup,
+                label: "친구 목록",
+                isSelected: _currentIndex == 0,
+                onTab: () => _onItemTapped(0),
+                containerColor: Theme.of(context).primaryColor,
+              ),
+              Gaps.h24,
+              GestureDetector(
+                onTap: () => _requestFriend(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Positioned(
+                          right: 20,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Sizes.size8,
+                            ),
+                            height: Sizes.size32,
+                            width: Sizes.size24,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF61D4F0),
+                              borderRadius: BorderRadius.circular(
+                                Sizes.size11,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 20,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Sizes.size8,
+                            ),
+                            height: Sizes.size32,
+                            width: Sizes.size24,
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade500,
+                              borderRadius: BorderRadius.circular(
+                                Sizes.size11,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Sizes.size10,
+                          ),
+                          height: Sizes.size32,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(
+                              Sizes.size11,
+                            ),
+                          ),
+                          child: const Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.plus,
+                              color: Colors.black,
+                              size: Sizes.size20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Gaps.v10,
+                    const Text(
+                      "친구 추가",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                FloatingActionButton(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  heroTag: "btn2",
-                  onPressed: () => toFriendCheckRequest(context),
-                  tooltip: 'Sub',
-                  child: const Icon(
-                    FontAwesomeIcons.getPocket,
-                    size: Sizes.size36,
-                  ),
-                ),
-              ],
-            ),
-          ],
+              ),
+              Gaps.h24,
+              NavTab(
+                selectedIcon: FontAwesomeIcons.solidPaperPlane,
+                icon: FontAwesomeIcons.paperPlane,
+                label: "받은 신청",
+                isSelected: _currentIndex == 3,
+                onTab: () => _onItemTapped(3),
+                containerColor: Theme.of(context).primaryColor,
+              ),
+            ],
+          ),
         ),
       ),
+      //  BottomNavigationBar(
+      //   currentIndex: _currentIndex,
+      //   onTap: (value) => _onItemTapped(value),
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   items: const [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(
+      //         Icons.group_sharp,
+      //         size: Sizes.size36,
+      //         color: Colors.white,
+      //       ),
+      //       label: "친구 목록",
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(
+      //         FontAwesomeIcons.getPocket,
+      //         size: Sizes.size36,
+      //         color: Colors.white,
+      //       ),
+      //       label: "받은 신청",
+      //     ),
+      //   ],
+      // ),
     );
   }
 }

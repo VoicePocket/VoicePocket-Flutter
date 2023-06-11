@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/models/friendship_request_get_model.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
 import 'package:voicepocket/services/request_friendship.dart';
 
-class FriendCheckRequestScreen extends StatelessWidget {
+class FriendCheckRequestScreen extends StatefulWidget {
   const FriendCheckRequestScreen({super.key});
 
+  @override
+  State<FriendCheckRequestScreen> createState() =>
+      _FriendCheckRequestScreenState();
+}
+
+class _FriendCheckRequestScreenState extends State<FriendCheckRequestScreen> {
   void toHomeScreen(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
@@ -41,7 +48,7 @@ class FriendCheckRequestScreen extends StatelessWidget {
           horizontal: Sizes.size20,
           vertical: Sizes.size10,
         ),
-        child: FutureBuilder<List<String>>(
+        child: FutureBuilder<List<DataG>>(
           future: getFriendShipRequest,
           builder: (context, snapshot) {
             if (snapshot.data == null) {
@@ -49,11 +56,12 @@ class FriendCheckRequestScreen extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             } else {
-              List<String> nameList = snapshot.data!;
+              List<DataG> dataList = snapshot.data!;
               return ListView.builder(
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
-                  String name = nameList[index];
+                  String name = dataList[index].requestFrom.name;
+                  String email = dataList[index].requestFrom.email;
                   return Container(
                     height: 80,
                     margin: const EdgeInsets.only(top: 5, left: 8, right: 8),
@@ -80,9 +88,9 @@ class FriendCheckRequestScreen extends StatelessWidget {
                             color: Colors.deepPurple.shade800,
                           ),
                         ),
-                        subtitle: const Text(
-                          'Freedom Fighter',
-                          style: TextStyle(
+                        subtitle: Text(
+                          email,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: Sizes.size14,
                             color: Colors.white,
@@ -100,21 +108,43 @@ class FriendCheckRequestScreen extends StatelessWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(
-                                    FontAwesomeIcons.check,
-                                    textDirection: TextDirection.rtl,
-                                    size: 20,
-                                    color: Colors.green,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      final success =
+                                          await acceptFriendShip(email);
+                                      setState(() {
+                                        if (success) {
+                                          dataList.remove(dataList[index]);
+                                        }
+                                      });
+                                    },
+                                    child: const Icon(
+                                      FontAwesomeIcons.check,
+                                      textDirection: TextDirection.rtl,
+                                      size: 20,
+                                      color: Colors.green,
+                                    ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 1,
                                   ),
-                                  Icon(
-                                    FontAwesomeIcons.xmark,
-                                    textDirection: TextDirection.rtl,
-                                    size: 20,
-                                    color: Colors.red,
+                                  GestureDetector(
+                                    onTap: () async {
+                                      final success =
+                                          await rejectFriendShip(email);
+                                      setState(() {
+                                        if (success) {
+                                          dataList.remove(dataList[index]);
+                                        }
+                                      });
+                                    },
+                                    child: const Icon(
+                                      FontAwesomeIcons.xmark,
+                                      textDirection: TextDirection.rtl,
+                                      size: 20,
+                                      color: Colors.red,
+                                    ),
                                   ),
                                 ],
                               ),
