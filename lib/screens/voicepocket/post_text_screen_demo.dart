@@ -1,15 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:gcloud/storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:voicepocket/models/text_model.dart';
-import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
-import 'package:voicepocket/services/message_tile_indicator.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
 import 'package:voicepocket/models/database_service.dart';
-import 'package:voicepocket/services/message_tile.dart';
+import 'package:voicepocket/widgets/message_tile.dart';
+import 'package:voicepocket/widgets/message_tile_indicator.dart';
 
 class PostTextScreenDemo extends StatefulWidget {
   final String email;
@@ -33,8 +30,6 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
   bool bottomFlag = true;
   bool isScrollBottomFixed = true;
 
-
-
   @override
   void initState() {
     getChat();
@@ -50,9 +45,9 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
     });
   }
 
-
   _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
         isScrollBottomFixed = true;
@@ -63,7 +58,6 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
       });
     }
   }
-
 
   getChat() {
     DatabaseService().getChats(widget.email).then((val) {
@@ -147,7 +141,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                       _postTextTab(inputText);
                       bottomFlag = true;
                     },
-                    child:Container(
+                    child: Container(
                       height: 50,
                       width: 50,
                       decoration: BoxDecoration(
@@ -166,58 +160,57 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
               ),
             ),
           ),
-          
         ],
       ),
     );
   }
-  
+
   sendMessage(String text) async {
-  final pref = await SharedPreferences.getInstance();
-  defaultEmail = pref.getString("email")!;
-  if (text.isNotEmpty) {
-    Map<String, dynamic> chatMessageMap = {
-      "message": text,
-      "sender": defaultEmail,
-      "time": DateTime.now().millisecondsSinceEpoch,
-    };
-    DatabaseService().sendMessage(widget.email, chatMessageMap);
+    final pref = await SharedPreferences.getInstance();
+    defaultEmail = pref.getString("email")!;
+    if (text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": text,
+        "sender": defaultEmail,
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+      DatabaseService().sendMessage(widget.email, chatMessageMap);
 
-    setState(() {
-      _textController.clear();
-    });
+      setState(() {
+        _textController.clear();
+      });
+    }
   }
-}
 
-chatMessages() {
-  return SizedBox(
-    height: MediaQuery.of(context).size.height * 0.75,
-    child: StreamBuilder(
-    stream: chats,
-    builder: (context, AsyncSnapshot snapshot) {
-      return snapshot.hasData
-          ? ListView.builder(
-              controller: _scrollController,
-              itemCount: snapshot.data.docs.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    MessageTile(
-                      message: snapshot.data.docs[index]['message'],
-                      sender: snapshot.data.docs[index]['sender'],
-                      sentByMe: widget.email ==
-                          snapshot.data.docs[index]['sender'],
-                    ),
-                    if (isLoading && index == snapshot.data.docs.length - 1)
-                      const MessageTileIndicator(),
-                  ],
-                );
-              },
-            )
-          : Container();
-         },
-      )
-    );
+  chatMessages() {
+    return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.75,
+        child: StreamBuilder(
+          stream: chats,
+          builder: (context, AsyncSnapshot snapshot) {
+            return snapshot.hasData
+                ? ListView.builder(
+                    controller: _scrollController,
+                    itemCount: snapshot.data.docs.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          MessageTile(
+                            message: snapshot.data.docs[index]['message'],
+                            sender: snapshot.data.docs[index]['sender'],
+                            sentByMe: widget.email ==
+                                snapshot.data.docs[index]['sender'],
+                          ),
+                          if (isLoading &&
+                              index == snapshot.data.docs.length - 1)
+                            const MessageTileIndicator(),
+                        ],
+                      );
+                    },
+                  )
+                : Container();
+          },
+        ));
   }
 }

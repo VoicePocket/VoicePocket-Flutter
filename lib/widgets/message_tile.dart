@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gcloud/pubsub.dart';
 import 'package:voicepocket/screens/voicepocket/url_player_screen.dart';
 
 class MessageTile extends StatefulWidget {
@@ -11,7 +10,7 @@ class MessageTile extends StatefulWidget {
     Key? key,
     required this.message,
     required this.sender,
-    required this.sentByMe, 
+    required this.sentByMe,
   }) : super(key: key);
 
   @override
@@ -90,7 +89,10 @@ class _MessageTileState extends State<MessageTile> {
             if (isUrlMessage)
               SizedBox(
                 height: 50, // 적절한 크기를 지정하세요.
-                child: AudioPlayerPage(message: widget.message, sender: widget.sender, sentByMe: widget.sentByMe),
+                child: AudioPlayerPage(
+                    message: widget.message,
+                    sender: widget.sender,
+                    sentByMe: widget.sentByMe),
               )
             else
               Text(
