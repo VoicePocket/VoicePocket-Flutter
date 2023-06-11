@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
 
-import '../models/global_var.dart';
+import 'global_var.dart';
 
 class NotificationProvider extends AsyncNotifier {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;

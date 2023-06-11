@@ -8,14 +8,17 @@ import 'package:voicepocket/models/friendship_model.dart';
 import 'package:voicepocket/models/friendship_request_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:voicepocket/models/friendship_request_get_model.dart';
+import 'package:voicepocket/services/global_var.dart';
 
 import '../constants/sizes.dart';
 
 Future<FriendShipRequestModel> requestFriendShip(String requestTo) async {
   final pref = await SharedPreferences.getInstance();
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
   final uri = defaultTargetPlatform == TargetPlatform.iOS
-      ? 'http://localhost:8080/api/friend'
-      : 'http://10.0.2.2:8080/api/friend';
+      ? '$iosUrl/friend'
+      : '$androidUrl/friend';
   final http.Response response = await http.post(
     Uri.parse(uri),
     headers: <String, String>{
@@ -58,9 +61,11 @@ Future<FriendShipRequestModel> requestFriendShip(String requestTo) async {
 Future<List<DataG>> get getFriendShipRequest async {
   List<DataG> name = [];
   final pref = await SharedPreferences.getInstance();
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
   final uri = defaultTargetPlatform == TargetPlatform.iOS
-      ? 'http://localhost:8080/api/friend/requests'
-      : 'http://10.0.2.2:8080/api/friend/requests';
+      ? '$iosUrl/friend/requests'
+      : '$androidUrl/friend/requests';
   final http.Response response = await http.get(
     Uri.parse(uri),
     headers: <String, String>{
@@ -101,9 +106,11 @@ Future<List<DataG>> get getFriendShipRequest async {
 
 Future<bool> acceptFriendShip(String email) async {
   final pref = await SharedPreferences.getInstance();
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
   final uri = defaultTargetPlatform == TargetPlatform.iOS
-      ? 'http://localhost:8080/api/friend/requests/ACCEPT'
-      : 'http://10.0.2.2:8080/api/friend/requests/ACCEPT';
+      ? '$iosUrl/friend/requests/ACCEPT'
+      : '$androidUrl/friend/requests/ACCEPT';
   final http.Response response = await http.post(
     Uri.parse(uri),
     headers: <String, String>{
@@ -153,9 +160,11 @@ Future<bool> acceptFriendShip(String email) async {
 
 Future<bool> rejectFriendShip(String email) async {
   final pref = await SharedPreferences.getInstance();
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
   final uri = defaultTargetPlatform == TargetPlatform.iOS
-      ? 'http://localhost:8080/api/friend/requests/REJECT'
-      : 'http://10.0.2.2:8080/api/friend/requests/REJECT';
+      ? '$iosUrl/friend/requests/REJECT'
+      : '$androidUrl/friend/requests/REJECT';
   final http.Response response = await http.post(
     Uri.parse(uri),
     headers: <String, String>{

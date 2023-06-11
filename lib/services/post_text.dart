@@ -6,14 +6,17 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/services/global_var.dart';
 import 'package:voicepocket/models/text_model.dart';
 
 Future<TextModel> postText(String text) async {
   final pref = await SharedPreferences.getInstance();
   final uuid = const Uuid().v1();
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
   final uri = defaultTargetPlatform == TargetPlatform.iOS
-      ? 'http://localhost:8080/api/tts/send'
-      : 'http://10.0.2.2:8080/api/tts/send';
+      ? '$iosUrl/tts/send'
+      : '$androidUrl/tts/send';
   await pref.setString("uuid", uuid);
   int count = 0;
 
@@ -62,9 +65,12 @@ Future<TextModel> postText(String text) async {
 Future<TextModel> postTextDemo(String text, String email) async {
   final pref = await SharedPreferences.getInstance();
   final uuid = const Uuid().v1();
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
+
   final uri = defaultTargetPlatform == TargetPlatform.iOS
-      ? 'http://localhost:8080/api/tts/send'
-      : 'http://10.0.2.2:8080/api/tts/send';
+      ? '$iosUrl/tts/send'
+      : '$androidUrl/tts/send';
 
   await pref.setString("uuid", uuid);
   int count = 0;
