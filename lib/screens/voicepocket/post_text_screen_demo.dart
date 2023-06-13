@@ -181,7 +181,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
       "sender": defaultEmail,
       "time": DateTime.now().millisecondsSinceEpoch,
     };
-    DatabaseService().sendMessage(widget.email, chatMessageMap);
+    DatabaseService().sendMessageForFriend(widget.email,'friend@email.com', chatMessageMap);
 
     setState(() {
       _textController.clear();

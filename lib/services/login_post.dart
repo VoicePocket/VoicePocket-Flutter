@@ -1,15 +1,20 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/services/global_var.dart';
 import 'package:voicepocket/models/login_model.dart';
 
 import 'dart:io'; //Platform 사용을 위한 패키지
 import 'package:flutter/services.dart'; //PlatformException 사용을 위한 패키지
-import 'package:device_info/device_info.dart'; // 디바이스 정보 사용 패키지
+import 'package:device_info/device_info.dart';
+
+import 'google_cloud_service.dart'; // 디바이스 정보 사용 패키지
 
 Future<String> getMobileId() async {
   final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
@@ -28,12 +33,32 @@ Future<String> getMobileId() async {
   return id;
 }
 
-Future<LoginModel> loginPost(
-    String email, String password, String fcmToken) async {
+Future<void> createFolder(String email) async {
+  final routeDir = await getPublicDownloadFolderPath();
+  print("default 저장 경로: ${routeDir.path}");
+  final modelDir = Directory('${routeDir.path}/model');
+  final wavDir = Directory('${routeDir.path}/wav/$email');
+  var status = await Permission.storage.status;
+  if (!status.isGranted) {
+    await Permission.storage.request();
+  }
+  if (!(await modelDir.exists())) {
+    modelDir.create();
+  }
+  if (!(await wavDir.exists())) {
+    wavDir.create();
+  }
+}
+
+Future<LoginModel> loginPost(String email, String password) async {
   final pref = await SharedPreferences.getInstance();
+  final fcmToken = await FirebaseMessaging.instance.getToken() ?? "";
+  print("전송전: $fcmToken");
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
   final uri = defaultTargetPlatform == TargetPlatform.iOS
-      ? 'http://localhost:8080/api/login'
-      : 'http://10.0.2.2:8080/api/login';
+      ? '$iosUrl/login'
+      : '$androidUrl/login';
   final String mobileId = await getMobileId();
   final http.Response response = await http.post(
     Uri.parse(uri),
@@ -55,6 +80,7 @@ Future<LoginModel> loginPost(
     if (loginModel.success) {
       print("id = $mobileId");
       print(loginModel.data!.accessToken);
+      await createFolder(email);
       pref.setString("accessToken", loginModel.data!.accessToken);
       pref.setString("refreshToken", loginModel.data!.refreshToken);
       //await requestUserInfo(email);
