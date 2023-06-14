@@ -211,3 +211,99 @@ Future<bool> rejectFriendShip(String email) async {
     return false;
   }
 }
+
+Future<List<DataG>> get getFriendShip async {
+  List<DataG> name = [];
+  final pref = await SharedPreferences.getInstance();
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
+  final uri = defaultTargetPlatform == TargetPlatform.iOS
+      ? '$iosUrl/friend'
+      : '$androidUrl/friend';
+  final http.Response response = await http.get(
+    Uri.parse(uri),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-AUTH-TOKEN': pref.getString("accessToken")!,
+    },
+  );
+  if (response.statusCode == 200) {
+    FriendShipRequestGetModel friend = FriendShipRequestGetModel.fromJson(
+      json.decode(
+        utf8.decode(response.bodyBytes),
+      ),
+    );
+    if (friend.success) {
+      for (var data in friend.data) {
+        if (data.status == "ACCEPT") {
+          name.add(data);
+        }
+      }
+    }
+    return name;
+  } else {
+    FriendShipRequestGetModel friend = FriendShipRequestGetModel.fromJson(
+      json.decode(
+        utf8.decode(response.bodyBytes),
+      ),
+    );
+    Fluttertoast.showToast(
+      msg: friend.message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.white,
+      backgroundColor: const Color(0xFFA594F9),
+      fontSize: Sizes.size16,
+    );
+    return name;
+  }
+}
+
+Future<List<DataG>> get getSendFriendShip async {
+  List<DataG> name = [];
+  final pref = await SharedPreferences.getInstance();
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
+  final uri = defaultTargetPlatform == TargetPlatform.iOS
+      ? '$iosUrl/friend'
+      : '$androidUrl/friend';
+  final http.Response response = await http.get(
+    Uri.parse(uri),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'X-AUTH-TOKEN': pref.getString("accessToken")!,
+    },
+  );
+  if (response.statusCode == 200) {
+    FriendShipRequestGetModel friend = FriendShipRequestGetModel.fromJson(
+      json.decode(
+        utf8.decode(response.bodyBytes),
+      ),
+    );
+    if (friend.success) {
+      for (var data in friend.data) {
+        if (data.status == "ONGOING") {
+          name.add(data);
+        }
+      }
+    }
+    return name;
+  } else {
+    FriendShipRequestGetModel friend = FriendShipRequestGetModel.fromJson(
+      json.decode(
+        utf8.decode(response.bodyBytes),
+      ),
+    );
+    Fluttertoast.showToast(
+      msg: friend.message,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.white,
+      backgroundColor: const Color(0xFFA594F9),
+      fontSize: Sizes.size16,
+    );
+    return name;
+  }
+}

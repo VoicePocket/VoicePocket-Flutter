@@ -84,8 +84,8 @@ class _MainScreenState extends State<MainScreen> {
       if (!mounted) return;
       if (loginModel.success) {
         await getUserInfo(_email);
-        _pref.setString("email", _email);
-        _pref.setString("password", _password);
+        await _pref.setString("email", _email);
+        await _pref.setString("password", _password);
         Fluttertoast.showToast(
           msg: "${_pref.getString("email")!}님 환영합니다!",
           toastLength: Toast.LENGTH_LONG,

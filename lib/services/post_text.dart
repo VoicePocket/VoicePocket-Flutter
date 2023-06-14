@@ -9,7 +9,7 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/services/global_var.dart';
 import 'package:voicepocket/models/text_model.dart';
 
-Future<TextModel> postText(String text) async {
+Future<TextModel> postText(String email, String text) async {
   final pref = await SharedPreferences.getInstance();
   final uuid = const Uuid().v1();
   const String iosUrl = VoicePocketUri.iosUrl;
@@ -29,7 +29,7 @@ Future<TextModel> postText(String text) async {
     body: jsonEncode(<String, String>{
       "type": "ETL",
       "uuid": uuid,
-      "requestTo": pref.getString("email")!,
+      "requestTo": email,
       "text": text
     }),
   );
@@ -73,7 +73,6 @@ Future<TextModel> postTextDemo(String text, String email) async {
       : '$androidUrl/tts/send';
 
   await pref.setString("uuid", uuid);
-  int count = 0;
 
   final http.Response response = await http.post(
     Uri.parse(uri),

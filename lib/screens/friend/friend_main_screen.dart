@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/friendship_request_get_model.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_select_action.dart';
 import 'package:voicepocket/services/request_friendship.dart';
 import 'package:voicepocket/widgets/nav_tab.dart';
 
@@ -30,6 +31,17 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
     });
   }
 
+  void toVoiceSelect(BuildContext context, String name, String email) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SelectScreen(
+          name: name,
+          email: email,
+        ),
+      ),
+    );
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -50,8 +62,6 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
       (route) => false,
     );
   }
-
-  final List<Widget> _cardList = [];
 
   void _requestFriend() {
     showDialog(
@@ -121,9 +131,6 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
                     final friend = await requestFriendShip(_friend);
                     setState(() {
                       if (friend.success) {
-                        _cardList.add(
-                          card(_friend, _cardList.length),
-                        );
                         _friendController.clear();
                         Navigator.of(context).pop();
                       }
@@ -188,84 +195,6 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
         });
   }
 
-  void _checkRequest() async {
-    setState(() {});
-  }
-
-  Widget card(String email, int index) {
-    return Container(
-      height: 80,
-      margin: const EdgeInsets.only(top: 5, left: 8, right: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Theme.of(context).primaryColor,
-      ),
-      child: Center(
-        child: ListTile(
-          leading: const CircleAvatar(
-            radius: 28,
-            backgroundColor: Colors.white,
-            child: CircleAvatar(
-              radius: 26,
-              backgroundImage:
-                  NetworkImage("https://picsum.photos/id/48/200/300"),
-            ),
-          ),
-          title: Text(
-            email,
-            style: TextStyle(
-              fontSize: Sizes.size16,
-              fontWeight: FontWeight.w700,
-              color: Colors.deepPurple.shade800,
-            ),
-          ),
-          subtitle: const Text(
-            'Freedom Fighter',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: Sizes.size14,
-              color: Colors.white,
-            ),
-          ),
-          trailing: Card(
-            elevation: 1,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: SizedBox(
-                width: 50,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '$index',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 1,
-                    ),
-                    const Icon(
-                      Icons.access_alarms_outlined,
-                      textDirection: TextDirection.rtl,
-                      size: 20,
-                      color: Colors.grey,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   void dispose() {
     _friendController.dispose();
@@ -292,165 +221,229 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
           ),
         ],
       ),
-      body: (_currentIndex == 0)
-          ? Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Sizes.size20,
-                vertical: Sizes.size10,
-              ),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _cardList.length,
-                      itemBuilder: (context, index) {
-                        return _cardList[index];
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Sizes.size20,
-                vertical: Sizes.size10,
-              ),
-              child: FutureBuilder<List<DataG>>(
-                future: getFriendShipRequest,
-                builder: (context, snapshot) {
-                  if (snapshot.data == null) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else {
-                    List<DataG> dataList = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        String name = dataList[index].requestFrom.name;
-                        String email = dataList[index].requestFrom.email;
-                        return Container(
-                          height: 80,
-                          margin:
-                              const EdgeInsets.only(top: 5, left: 8, right: 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          child: Center(
-                            child: ListTile(
-                              leading: const CircleAvatar(
-                                radius: 28,
-                                backgroundColor: Colors.white,
-                                child: CircleAvatar(
-                                  radius: 26,
-                                  backgroundImage: NetworkImage(
-                                      "https://picsum.photos/id/48/200/300"),
+      body: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: Sizes.size20,
+            vertical: Sizes.size10,
+          ),
+          child: (_currentIndex == 0)
+              // 친구 목록
+              ? FutureBuilder<List<DataG>>(
+                  future: getFriendShip,
+                  builder: (context, snapshot) {
+                    if (snapshot.data == null) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      List<DataG> dataList = snapshot.data!;
+                      return ListView.builder(
+                        itemCount: dataList.length,
+                        itemBuilder: (context, index) {
+                          String name = dataList[index].requestTo.name;
+                          String email = dataList[index].requestTo.email;
+                          return Container(
+                            height: 90,
+                            margin: const EdgeInsets.only(
+                                top: 5, left: 8, right: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            child: Center(
+                              child: ListTile(
+                                  onTap: () async {
+                                    toVoiceSelect(context, name, email);
+                                  },
+                                  leading: CircleAvatar(
+                                    radius: 28,
+                                    backgroundColor: Colors.white,
+                                    child: CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      child: const Icon(
+                                        FontAwesomeIcons.user,
+                                        color: Colors.white,
+                                        size: Sizes.size28,
+                                      ),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    name,
+                                    style: TextStyle(
+                                      fontSize: Sizes.size20,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.black.withOpacity(0.4),
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    email,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: Sizes.size14,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  trailing: CircleAvatar(
+                                    radius: Sizes.size20 + Sizes.size2,
+                                    backgroundColor: Colors.white,
+                                    child: CircleAvatar(
+                                      radius: Sizes.size20,
+                                      backgroundColor:
+                                          Colors.deepPurple.shade300,
+                                      child: const Icon(
+                                        FontAwesomeIcons.arrowRight,
+                                        color: Colors.white,
+                                        size: Sizes.size20,
+                                      ),
+                                    ),
+                                  )),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  },
+                )
+              : FutureBuilder<List<DataG>>(
+                  future: getFriendShipRequest,
+                  builder: (context, snapshot) {
+                    if (snapshot.data == null) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      List<DataG> dataList = snapshot.data!;
+                      return ListView.builder(
+                        itemCount: dataList.length,
+                        itemBuilder: (context, index) {
+                          String name = dataList[index].requestFrom.name;
+                          String email = dataList[index].requestFrom.email;
+                          return Container(
+                            height: 80,
+                            margin: const EdgeInsets.only(
+                                top: 5, left: 8, right: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            child: Center(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  radius: 28,
+                                  backgroundColor: Colors.white,
+                                  child: CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    child: const Icon(
+                                      FontAwesomeIcons.user,
+                                      color: Colors.white,
+                                      size: Sizes.size28,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              title: Text(
-                                name,
-                                style: TextStyle(
-                                  fontSize: Sizes.size16,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.deepPurple.shade800,
+                                title: Text(
+                                  name,
+                                  style: TextStyle(
+                                    fontSize: Sizes.size20,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.grey.shade700,
+                                  ),
                                 ),
-                              ),
-                              subtitle: Text(
-                                email,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: Sizes.size14,
-                                  color: Colors.white,
+                                subtitle: Text(
+                                  email,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: Sizes.size14,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                              trailing: Card(
-                                elevation: 1,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: SizedBox(
-                                    width: 50,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () async {
-                                            final success =
-                                                await acceptFriendShip(email);
-                                            setState(() {
-                                              if (success) {
-                                                dataList
-                                                    .remove(dataList[index]);
-                                              }
-                                            });
-                                          },
-                                          child: const Icon(
-                                            FontAwesomeIcons.check,
-                                            textDirection: TextDirection.rtl,
-                                            size: 20,
-                                            color: Colors.green,
+                                trailing: Card(
+                                  elevation: 1,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: SizedBox(
+                                      width: 50,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () async {
+                                              final success =
+                                                  await acceptFriendShip(email);
+                                              setState(() {
+                                                if (success) {
+                                                  dataList
+                                                      .remove(dataList[index]);
+                                                }
+                                              });
+                                            },
+                                            child: const Icon(
+                                              FontAwesomeIcons.check,
+                                              textDirection: TextDirection.rtl,
+                                              size: 20,
+                                              color: Colors.green,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(
-                                          width: 1,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            final success =
-                                                await rejectFriendShip(email);
-                                            setState(() {
-                                              if (success) {
-                                                dataList
-                                                    .remove(dataList[index]);
-                                              }
-                                            });
-                                          },
-                                          child: const Icon(
-                                            FontAwesomeIcons.xmark,
-                                            textDirection: TextDirection.rtl,
-                                            size: 20,
-                                            color: Colors.red,
+                                          const SizedBox(
+                                            width: 1,
                                           ),
-                                        ),
-                                      ],
+                                          GestureDetector(
+                                            onTap: () async {
+                                              final success =
+                                                  await rejectFriendShip(email);
+                                              setState(() {
+                                                if (success) {
+                                                  dataList
+                                                      .remove(dataList[index]);
+                                                }
+                                              });
+                                            },
+                                            child: const Icon(
+                                              FontAwesomeIcons.xmark,
+                                              textDirection: TextDirection.rtl,
+                                              size: 20,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-            ),
+                          );
+                        },
+                      );
+                    }
+                  },
+                )),
       bottomNavigationBar: Container(
         color: Theme.of(context).primaryColor,
-        padding: const EdgeInsets.only(
-          bottom: Sizes.size32,
+        padding: const EdgeInsets.symmetric(
+          vertical: Sizes.size5,
         ),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               NavTab(
-                selectedIcon: FontAwesomeIcons.userGroup,
-                icon: FontAwesomeIcons.userGroup,
+                selectedIcon: FontAwesomeIcons.solidCircleUser,
+                icon: FontAwesomeIcons.circleUser,
                 label: "친구 목록",
                 isSelected: _currentIndex == 0,
                 onTab: () => _onItemTapped(0),
                 containerColor: Theme.of(context).primaryColor,
               ),
-              Gaps.h24,
               GestureDetector(
                 onTap: () => _requestFriend(),
                 child: Column(
@@ -522,42 +515,18 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
                   ],
                 ),
               ),
-              Gaps.h24,
               NavTab(
-                selectedIcon: FontAwesomeIcons.solidPaperPlane,
-                icon: FontAwesomeIcons.paperPlane,
+                selectedIcon: FontAwesomeIcons.solidCircleDown,
+                icon: FontAwesomeIcons.circleDown,
                 label: "받은 신청",
-                isSelected: _currentIndex == 3,
-                onTab: () => _onItemTapped(3),
+                isSelected: _currentIndex == 2,
+                onTab: () => _onItemTapped(2),
                 containerColor: Theme.of(context).primaryColor,
               ),
             ],
           ),
         ),
       ),
-      //  BottomNavigationBar(
-      //   currentIndex: _currentIndex,
-      //   onTap: (value) => _onItemTapped(value),
-      //   backgroundColor: Theme.of(context).primaryColor,
-      //   items: const [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(
-      //         Icons.group_sharp,
-      //         size: Sizes.size36,
-      //         color: Colors.white,
-      //       ),
-      //       label: "친구 목록",
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(
-      //         FontAwesomeIcons.getPocket,
-      //         size: Sizes.size36,
-      //         color: Colors.white,
-      //       ),
-      //       label: "받은 신청",
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
