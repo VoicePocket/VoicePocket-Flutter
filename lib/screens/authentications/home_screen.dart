@@ -38,7 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onFriendTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const FriendMainScreen(),
+        builder: (context) => const FriendMainScreen(
+          index: 0,
+        ),
       ),
     );
   }
@@ -75,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: Sizes.size20,
