@@ -167,15 +167,16 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
   }
 
   sendMessage(String text) async {
-    final pref = await SharedPreferences.getInstance();
-    defaultEmail = pref.getString("email")!;
-    if (text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": text,
-        "sender": defaultEmail,
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
-      DatabaseService().sendMessage(widget.email, chatMessageMap);
+  final pref = await SharedPreferences.getInstance();
+  defaultEmail = pref.getString("email")!;
+  if (text.isNotEmpty) {
+    Map<String, dynamic> chatMessageMap = {
+      "message": text,
+      "sender": defaultEmail,
+      "time": DateTime.now().millisecondsSinceEpoch,
+    };
+    DatabaseService().sendMessageForFriend(defaultEmail, widget.email, chatMessageMap);
+
 
       setState(() {
         _textController.clear();
