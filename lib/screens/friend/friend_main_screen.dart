@@ -10,7 +10,8 @@ import '../../constants/gaps.dart';
 import '../authentications/home_screen.dart';
 
 class FriendMainScreen extends StatefulWidget {
-  const FriendMainScreen({super.key});
+  final int index;
+  const FriendMainScreen({super.key, required this.index});
 
   @override
   State<FriendMainScreen> createState() => _FriendMainScreenState();
@@ -24,6 +25,7 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.index;
     _friendController.addListener(() {
       setState(() {
         _friend = _friendController.text;

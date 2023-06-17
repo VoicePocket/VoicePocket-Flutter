@@ -52,7 +52,7 @@ class _MainScreenState extends State<MainScreen> {
         if (loginModel.success) {
           await getUserInfo(_pref.getString("email")!);
           Fluttertoast.showToast(
-            msg: "${pref.getString("email")!}님 환영합니다!",
+            msg: "${pref.getString("name")!}님 환영합니다!",
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -87,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
         await _pref.setString("email", _email);
         await _pref.setString("password", _password);
         Fluttertoast.showToast(
-          msg: "${_pref.getString("email")!}님 환영합니다!",
+          msg: "${_pref.getString("name")!}님 환영합니다!",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,

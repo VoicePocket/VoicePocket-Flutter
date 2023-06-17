@@ -93,6 +93,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       drawer: const Drawer(),
       appBar: AppBar(
         title: Image.asset(
@@ -190,6 +191,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
           builder: (context, AsyncSnapshot snapshot) {
             return snapshot.hasData
                 ? ListView.builder(
+                    physics: const BouncingScrollPhysics(),
                     controller: _scrollController,
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (context, index) {

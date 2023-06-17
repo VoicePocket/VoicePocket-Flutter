@@ -14,34 +14,6 @@ import 'global_var.dart';
 class NotificationProvider extends AsyncNotifier {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   //FCM 상태는 3가지(Back / Fore / Terminated)
-  Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
-    //백그라운드에서 메시지를 받은 경우
-    print(
-        "I got message in BACKGROUND\nMessage data: ${message.data['wavUrl']}");
-    if (message.data['wavUrl'] != null) {
-      final wavUrl = message.data['wavUrl'];
-      await readWavFileFromNotification(wavUrl);
-      if (message.data['wavUrl'].endsWith('.wav')) {
-        Navigator.of(GlobalVariable.navState.currentContext!).push(
-          MaterialPageRoute(
-            builder: (context) => MediaPlayerScreen(
-              email: wavUrl.split("/")[0],
-              path: wavUrl.split("/")[1],
-            ),
-          ),
-        );
-        return;
-      }
-    } else if (message.notification!.title!.contains("Request")) {
-      Navigator.of(GlobalVariable.navState.currentContext!).push(
-        MaterialPageRoute(
-          builder: (context) => const FriendMainScreen(),
-        ),
-      );
-    }
-  }
-
   Future<void> initListener() async {
     //android & ios permission
     final permission = await _messaging.requestPermission(
@@ -63,9 +35,13 @@ class NotificationProvider extends AsyncNotifier {
 
     AndroidNotificationChannel channel = const AndroidNotificationChannel(
       'VoicePocketNotificationId', // id
-      'VoicePocketNotificationName',
-      description: 'VoicePocket FCM Test', // description
+      'VoicePocketNotificationName1',
+      description: 'VoicePocket FCM Test!', // description
       importance: Importance.high,
+      playSound: true,
+      enableVibration: true,
+      showBadge: true,
+      enableLights: false,
     );
     //foreground 에서의 푸쉬 알람 표시를 위한 local notification 설정
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -74,14 +50,17 @@ class NotificationProvider extends AsyncNotifier {
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
+    var initializationSettingsAndroid =
+        const AndroidInitializationSettings('@mipmap/ic_launcher');
     //Foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
-      print(
-          "I got message in FOREGROUND\nMessage data: ${message.data['wavUrl']}");
+      print("I got message in FOREGROUND\nMessage data: ${message.data['ID']}");
       if (message.notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
+        await flutterLocalNotificationsPlugin.initialize(
+            InitializationSettings(android: initializationSettingsAndroid));
+        await flutterLocalNotificationsPlugin.show(
           notification.hashCode,
           notification?.title,
           notification?.body,
@@ -90,11 +69,12 @@ class NotificationProvider extends AsyncNotifier {
               channel.id,
               channel.name,
               channelDescription: channel.description,
-              icon: android.smallIcon,
+              enableVibration: true,
+              channelShowBadge: true,
             ),
           ),
         );
-        if (message.data['wavUrl'] != null) {
+        if (message.data['ID'].toString() == "3") {
           final wavUrl = message.data['wavUrl'];
           await readWavFileFromNotification(wavUrl);
           if (message.data['wavUrl'].endsWith('.wav')) {
@@ -108,23 +88,75 @@ class NotificationProvider extends AsyncNotifier {
             );
             return;
           }
-        } else if (message.notification!.title!.contains("Request")) {
+          //친구 신청(Frined Request)
+        } else if (message.data['ID'].toString() == "1") {
           Navigator.of(GlobalVariable.navState.currentContext!).push(
             MaterialPageRoute(
-              builder: (context) => const FriendMainScreen(),
+              builder: (context) => const FriendMainScreen(
+                index: 2,
+              ),
             ),
           );
+          //친구 수락(Friend Accept)
+        } else if (message.data['ID'].toString() == "2") {
+          Navigator.of(GlobalVariable.navState.currentContext!).push(
+            MaterialPageRoute(
+              builder: (context) => const FriendMainScreen(
+                index: 0,
+              ),
+            ),
+          );
+        } else {
+          print("데이터 없습니다.");
+          return;
         }
       }
     });
     //Background
-    FirebaseMessaging.onMessageOpenedApp
-        .listen(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      //백그라운드에서 메시지를 받은 경우
+      print("I got message in BACKGROUND\nMessage data: ${message.data['ID']}");
+      if (message.data['wavUrl'] != null) {
+        final wavUrl = message.data['wavUrl'];
+        await readWavFileFromNotification(wavUrl);
+        if (message.data['wavUrl'].endsWith('.wav')) {
+          Navigator.of(GlobalVariable.navState.currentContext!).push(
+            MaterialPageRoute(
+              builder: (context) => MediaPlayerScreen(
+                email: wavUrl.split("/")[0],
+                path: wavUrl.split("/")[1],
+              ),
+            ),
+          );
+          return;
+        }
+        //친구 신청(Frined Request)
+      } else if (message.notification!.title!.contains("Request")) {
+        Navigator.of(GlobalVariable.navState.currentContext!).push(
+          MaterialPageRoute(
+            builder: (context) => const FriendMainScreen(
+              index: 2,
+            ),
+          ),
+        );
+        //친구 수락(Friend Accept)
+      } else if (message.notification!.title!.contains("Accept")) {
+        Navigator.of(GlobalVariable.navState.currentContext!).push(
+          MaterialPageRoute(
+            builder: (context) => const FriendMainScreen(
+              index: 0,
+            ),
+          ),
+        );
+      } else {
+        print("데이터 없습니다.");
+        return;
+      }
+    });
     //Terminated
     final message = await _messaging.getInitialMessage();
     if (message != null) {
-      print(
-          "I got message in TERMINATED\nMessage data: ${message.data['wavUrl']}");
+      print("I got message in TERMINATED\nMessage data: ${message.data['ID']}");
     }
   }
 

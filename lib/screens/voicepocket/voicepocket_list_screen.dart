@@ -85,7 +85,7 @@ class _ListScreenState extends State<ListScreen> {
                   return Column(
                     children: [
                       Text(
-                        "친구 선택",
+                        "모델 선택",
                         style: TextStyle(
                           fontSize: Sizes.size40,
                           color: Theme.of(context).primaryColor,
@@ -100,7 +100,7 @@ class _ListScreenState extends State<ListScreen> {
                           elevation: Sizes.size8,
                           shadowColor: Colors.black,
                           margin: const EdgeInsets.only(bottom: Sizes.size10),
-                          color: Theme.of(context).primaryColor,
+                          color: const Color.fromARGB(255, 120, 104, 199),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                               vertical: Sizes.size16,
@@ -113,7 +113,7 @@ class _ListScreenState extends State<ListScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      myName,
+                                      "$myName (My)",
                                       style: const TextStyle(
                                         fontSize: Sizes.size36,
                                         color: Colors.white,
