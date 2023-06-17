@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen_demo.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
@@ -11,18 +9,15 @@ import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen copy.dar
 import 'package:voicepocket/models/database_service.dart';
 
 class SelectScreen extends StatefulWidget {
-  final int index;
-  const SelectScreen({super.key, required this.index});
+  final String name, email;
+  const SelectScreen({super.key, required this.name, required this.email});
 
   @override
   State<SelectScreen> createState() => _SelectScreenState();
 }
 
 class _SelectScreenState extends State<SelectScreen> {
-  String defaultEmail = "";
-  String defaultName = "";
-  String manEmail = "man@gmail.com";
-  String womanEmail = "woman@gmail.com";
+  String defaultEmail = "", defaultName = "";
   bool isLoading = false;
 
   @override
@@ -33,9 +28,8 @@ class _SelectScreenState extends State<SelectScreen> {
   }
 
   Future<void> createFireStore() async {
-    final pref = await SharedPreferences.getInstance();
-    defaultEmail = pref.getString("email")!;
-    defaultName = pref.getString("name")!;
+    defaultEmail = widget.email;
+    defaultName = widget.name;
 
     DatabaseService().savingUserData(defaultName, defaultEmail);
 
@@ -46,22 +40,13 @@ class _SelectScreenState extends State<SelectScreen> {
   }
 
   Future<void> createFolder() async {
-    final pref = await SharedPreferences.getInstance();
-    defaultEmail = pref.getString("email")!;
-    final routeDir = await getApplicationDocumentsDirectory();
-    final wavManDir = Directory('${routeDir.path}/wav/$manEmail');
-    final wavWomanDir = Directory('${routeDir.path}/wav/$womanEmail');
+    defaultEmail = widget.email;
+    final routeDir = await getPublicDownloadFolderPath();
     final defaultDir = Directory('${routeDir.path}/wav/$defaultEmail');
 
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
-    }
-    if (!(await wavManDir.exists())) {
-      wavManDir.create();
-    }
-    if (!(await wavWomanDir.exists())) {
-      wavWomanDir.create();
     }
     if (!(await defaultDir.exists())) {
       defaultDir.create();
@@ -81,76 +66,29 @@ class _SelectScreenState extends State<SelectScreen> {
     setState(() {
       isLoading = true;
     });
-    switch (widget.index) {
-      case 0:
-        await readAllWavFiles(defaultEmail);
-        setState(() {
-          isLoading = false;
-        });
-        if (!mounted) return;
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => VoicePocketPlayScreenCopy(
-              email: defaultEmail,
-            ),
-          ),
-        );
-        break;
-      case 1:
-        await readAllWavFiles(manEmail);
-        if (!mounted) return;
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => VoicePocketPlayScreenCopy(
-              email: manEmail,
-            ),
-          ),
-        );
-        break;
-      case 2:
-        await readAllWavFiles(womanEmail);
-        if (!mounted) return;
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => VoicePocketPlayScreenCopy(
-              email: womanEmail,
-            ),
-          ),
-        );
-        break;
-    }
+
+    await readAllWavFiles(defaultEmail);
+    setState(() {
+      isLoading = false;
+    });
+    if (!mounted) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => VoicePocketPlayScreenCopy(
+          email: defaultEmail,
+        ),
+      ),
+    );
   }
 
   void _onPostTab(BuildContext context) {
-    switch (widget.index) {
-      case 0:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => PostTextScreenDemo(
-              email: defaultEmail,
-            ),
-          ),
-        );
-        break;
-      case 1:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => PostTextScreenDemo(
-              email: manEmail,
-            ),
-          ),
-        );
-        break;
-      case 2:
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => PostTextScreenDemo(
-              email: womanEmail,
-            ),
-          ),
-        );
-        break;
-    }
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PostTextScreenDemo(
+          email: defaultEmail,
+        ),
+      ),
+    );
   }
 
   @override

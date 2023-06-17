@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/models/friendship_request_get_model.dart';
+import 'package:voicepocket/services/request_friendship.dart';
 import '../authentications/home_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_select_action.dart';
 
@@ -14,7 +17,7 @@ class ListScreen extends StatefulWidget {
 
 class _ListScreenState extends State<ListScreen> {
   late final SharedPreferences _pref;
-  String name = "";
+  String name = "", myName = "", myEmail = "";
 
   @override
   void initState() {
@@ -22,7 +25,8 @@ class _ListScreenState extends State<ListScreen> {
     SharedPreferences.getInstance().then((pref) {
       _pref = pref;
       setState(() {
-        name = _pref.getString("email")!;
+        myName = _pref.getString("name")!;
+        myEmail = _pref.getString("email")!;
       });
     });
   }
@@ -36,10 +40,10 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-  void _onVoicePocketTab(BuildContext context, int index) {
+  void _onVoicePocketTab(BuildContext context, String name, String email) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => SelectScreen(index: index),
+        builder: (context) => SelectScreen(name: name, email: email),
       ),
     );
   }
@@ -64,156 +68,159 @@ class _ListScreenState extends State<ListScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: Sizes.size40,
-              horizontal: Sizes.size16,
-            ),
-            child: Column(
-              children: [
-                Text(
-                  "친구 선택",
-                  style: TextStyle(
-                    fontSize: Sizes.size40,
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                Gaps.v40,
-                GestureDetector(
-                  onTap: () => _onVoicePocketTab(context, 0),
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: Sizes.size10),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(Sizes.size16),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: Sizes.size16,
-                        horizontal: Sizes.size20,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                name,
-                                style: const TextStyle(
-                                  fontSize: Sizes.size36,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Gaps.v16,
-                              const Text(
-                                "2023.04.27",
-                                style: TextStyle(
-                                  fontSize: Sizes.size20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => _onVoicePocketTab(context, 1),
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: Sizes.size10),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(Sizes.size16),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: Sizes.size16,
-                        horizontal: Sizes.size20,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                "샘플남",
-                                style: TextStyle(
-                                  fontSize: Sizes.size36,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Gaps.v16,
-                              Text(
-                                "2023.04.27",
-                                style: TextStyle(
-                                  fontSize: Sizes.size20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => _onVoicePocketTab(context, 2),
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: Sizes.size10),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(Sizes.size16),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: Sizes.size16,
-                        horizontal: Sizes.size20,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                "샘플녀",
-                                style: TextStyle(
-                                  fontSize: Sizes.size36,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Gaps.v16,
-                              Text(
-                                "2023.04.27",
-                                style: TextStyle(
-                                  fontSize: Sizes.size20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: Sizes.size40,
+            horizontal: Sizes.size16,
           ),
+          child: FutureBuilder<List<DataG>>(
+              future: getFriendShip,
+              builder: (context, snapshot) {
+                if (snapshot.data == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      Text(
+                        "모델 선택",
+                        style: TextStyle(
+                          fontSize: Sizes.size40,
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      Gaps.v40,
+                      GestureDetector(
+                        onTap: () =>
+                            _onVoicePocketTab(context, myName, myEmail),
+                        child: Card(
+                          elevation: Sizes.size8,
+                          shadowColor: Colors.black,
+                          margin: const EdgeInsets.only(bottom: Sizes.size10),
+                          color: const Color.fromARGB(255, 120, 104, 199),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: Sizes.size16,
+                              horizontal: Sizes.size20,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "$myName (My)",
+                                      style: const TextStyle(
+                                        fontSize: Sizes.size36,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                    Gaps.v16,
+                                    Text(
+                                      myEmail,
+                                      style: const TextStyle(
+                                        fontSize: Sizes.size20,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                CircleAvatar(
+                                  radius: Sizes.size28,
+                                  backgroundColor: Colors.white,
+                                  child: CircleAvatar(
+                                    radius: Sizes.size24 + Sizes.size1,
+                                    backgroundColor: Colors.deepPurple.shade300,
+                                    child: const Icon(
+                                      FontAwesomeIcons.arrowRight,
+                                      color: Colors.white,
+                                      size: Sizes.size32,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          String name = snapshot.data![index].requestTo.name;
+                          String email = snapshot.data![index].requestTo.email;
+                          return GestureDetector(
+                            onTap: () =>
+                                _onVoicePocketTab(context, name, email),
+                            child: Card(
+                              elevation: Sizes.size8,
+                              shadowColor: Colors.black,
+                              margin:
+                                  const EdgeInsets.only(bottom: Sizes.size10),
+                              color: Theme.of(context).primaryColor,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: Sizes.size16,
+                                  horizontal: Sizes.size20,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          name,
+                                          style: const TextStyle(
+                                            fontSize: Sizes.size36,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                        Gaps.v16,
+                                        Text(
+                                          email,
+                                          style: const TextStyle(
+                                            fontSize: Sizes.size20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    CircleAvatar(
+                                      radius: Sizes.size28,
+                                      backgroundColor: Colors.white,
+                                      child: CircleAvatar(
+                                        radius: Sizes.size24 + Sizes.size1,
+                                        backgroundColor:
+                                            Colors.deepPurple.shade300,
+                                        child: const Icon(
+                                          FontAwesomeIcons.arrowRight,
+                                          color: Colors.white,
+                                          size: Sizes.size32,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                }
+              }),
         ),
       ),
     );

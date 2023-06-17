@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
@@ -12,8 +9,6 @@ import 'package:voicepocket/screens/friend/friend_main_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
 import 'package:voicepocket/services/load_csv.dart';
-
-import '../../services/google_cloud_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,9 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance().then(
-      (value) => createFolder(value.getString("email")!),
-    );
     loadCSV().then((value) => metaData = value);
   }
 
@@ -46,7 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onFriendTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const FriendMainScreen(),
+        builder: (context) => const FriendMainScreen(
+          index: 0,
+        ),
       ),
     );
   }
@@ -72,23 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> createFolder(String email) async {
-    final routeDir = await getPublicDownloadFolderPath();
-    print("default 저장 경로: ${routeDir.path}");
-    final modelDir = Directory('${routeDir.path}/model');
-    final wavDir = Directory('${routeDir.path}/wav/$email');
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
-    if (!(await modelDir.exists())) {
-      modelDir.create();
-    }
-    if (!(await wavDir.exists())) {
-      wavDir.create();
-    }
-  }
-
   void _onVoicePocketListTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -100,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: Sizes.size20,

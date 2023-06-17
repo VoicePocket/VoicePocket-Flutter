@@ -4,8 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/services/notification_provider.dart';
-
-import 'models/global_var.dart';
+import 'package:voicepocket/services/global_var.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
