@@ -1,16 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/models/friendship_model.dart';
 import 'package:voicepocket/models/friendship_request_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:voicepocket/models/friendship_request_get_model.dart';
 import 'package:voicepocket/services/global_var.dart';
-
-import '../constants/sizes.dart';
 
 Future<FriendShipRequestModel> requestFriendShip(String requestTo) async {
   final pref = await SharedPreferences.getInstance();
@@ -44,15 +40,6 @@ Future<FriendShipRequestModel> requestFriendShip(String requestTo) async {
       json.decode(
         utf8.decode(response.bodyBytes),
       ),
-    );
-    Fluttertoast.showToast(
-      msg: friend.message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      backgroundColor: const Color(0xFFA594F9),
-      fontSize: Sizes.size16,
     );
     return friend;
   }
@@ -91,20 +78,11 @@ Future<List<DataG>> get getFriendShipRequest async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    Fluttertoast.showToast(
-      msg: friend.message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      backgroundColor: const Color(0xFFA594F9),
-      fontSize: Sizes.size16,
-    );
     return name;
   }
 }
 
-Future<bool> acceptFriendShip(String email) async {
+Future<FriendShipModel> acceptFriendShip(String email) async {
   final pref = await SharedPreferences.getInstance();
   const String iosUrl = VoicePocketUri.iosUrl;
   const String androidUrl = VoicePocketUri.androidUrl;
@@ -127,38 +105,18 @@ Future<bool> acceptFriendShip(String email) async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    if (friend.success) {
-      Fluttertoast.showToast(
-        msg: "이제 $email과 친구입니다.",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        backgroundColor: const Color(0xFFA594F9),
-        fontSize: Sizes.size16,
-      );
-    }
-    return true;
+    return friend;
   } else {
     FriendShipModel friend = FriendShipModel.fromJson(
       json.decode(
         utf8.decode(response.bodyBytes),
       ),
     );
-    Fluttertoast.showToast(
-      msg: friend.message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      backgroundColor: const Color(0xFFA594F9),
-      fontSize: Sizes.size16,
-    );
-    return false;
+    return friend;
   }
 }
 
-Future<bool> rejectFriendShip(String email) async {
+Future<FriendShipModel> rejectFriendShip(String email) async {
   final pref = await SharedPreferences.getInstance();
   const String iosUrl = VoicePocketUri.iosUrl;
   const String androidUrl = VoicePocketUri.androidUrl;
@@ -181,34 +139,14 @@ Future<bool> rejectFriendShip(String email) async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    if (friend.success) {
-      Fluttertoast.showToast(
-        msg: "$email님의 친구 요청을 거절하셨습니.",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        backgroundColor: const Color(0xFFA594F9),
-        fontSize: Sizes.size16,
-      );
-    }
-    return true;
+    return friend;
   } else {
     FriendShipModel friend = FriendShipModel.fromJson(
       json.decode(
         utf8.decode(response.bodyBytes),
       ),
     );
-    Fluttertoast.showToast(
-      msg: friend.message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      backgroundColor: const Color(0xFFA594F9),
-      fontSize: Sizes.size16,
-    );
-    return false;
+    return friend;
   }
 }
 
@@ -242,20 +180,6 @@ Future<List<DataG>> get getFriendShip async {
     }
     return name;
   } else {
-    FriendShipRequestGetModel friend = FriendShipRequestGetModel.fromJson(
-      json.decode(
-        utf8.decode(response.bodyBytes),
-      ),
-    );
-    Fluttertoast.showToast(
-      msg: friend.message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      backgroundColor: const Color(0xFFA594F9),
-      fontSize: Sizes.size16,
-    );
     return name;
   }
 }
@@ -290,20 +214,6 @@ Future<List<DataG>> get getSendFriendShip async {
     }
     return name;
   } else {
-    FriendShipRequestGetModel friend = FriendShipRequestGetModel.fromJson(
-      json.decode(
-        utf8.decode(response.bodyBytes),
-      ),
-    );
-    Fluttertoast.showToast(
-      msg: friend.message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      backgroundColor: const Color(0xFFA594F9),
-      fontSize: Sizes.size16,
-    );
     return name;
   }
 }
