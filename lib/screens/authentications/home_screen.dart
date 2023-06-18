@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
@@ -48,16 +47,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onLogoutTab(BuildContext context) async {
     final pref = await SharedPreferences.getInstance();
     pref.clear();
-    Fluttertoast.showToast(
-      msg: "로그아웃",
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      backgroundColor: const Color(0xFFA594F9),
-      fontSize: Sizes.size16,
-    );
     if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("로그아웃"),
+        duration: Duration(seconds: 1),
+        backgroundColor: Colors.grey,
+      ),
+    );
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const MainScreen(),

@@ -44,7 +44,6 @@ dependencies:
   flutter_audio_recorder2: ^0.0.2
   flutter_native_splash: ^2.2.19
   flutter_sound: ^9.2.13
-  fluttertoast: ^8.2.1
   font_awesome_flutter: ^10.3.0
   gcloud: ^0.8.7
   get: ^4.6.5

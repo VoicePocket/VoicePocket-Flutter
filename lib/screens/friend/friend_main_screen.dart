@@ -135,6 +135,14 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
                       if (friend.success) {
                         _friendController.clear();
                         Navigator.of(context).pop();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(friend.message),
+                            duration: const Duration(seconds: 1),
+                            backgroundColor: Colors.red.shade500,
+                          ),
+                        );
                       }
                       _friendController.clear();
                       Navigator.of(context).pop();
@@ -378,12 +386,35 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
                                         children: [
                                           GestureDetector(
                                             onTap: () async {
-                                              final success =
+                                              final accept =
                                                   await acceptFriendShip(email);
                                               setState(() {
-                                                if (success) {
+                                                if (accept.success) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content:
+                                                          Text("이제 친구입니다."),
+                                                      duration:
+                                                          Duration(seconds: 1),
+                                                      backgroundColor:
+                                                          Color(0xFFA594F9),
+                                                    ),
+                                                  );
                                                   dataList
                                                       .remove(dataList[index]);
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content:
+                                                          Text(accept.message),
+                                                      duration: const Duration(
+                                                          seconds: 1),
+                                                      backgroundColor:
+                                                          Colors.red.shade500,
+                                                    ),
+                                                  );
                                                 }
                                               });
                                             },
@@ -399,12 +430,35 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
                                           ),
                                           GestureDetector(
                                             onTap: () async {
-                                              final success =
+                                              final reject =
                                                   await rejectFriendShip(email);
                                               setState(() {
-                                                if (success) {
+                                                if (reject.success) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          "친구 요청을 거절 하셨습니다."),
+                                                      duration:
+                                                          Duration(seconds: 1),
+                                                      backgroundColor:
+                                                          Color(0xFFA594F9),
+                                                    ),
+                                                  );
                                                   dataList
                                                       .remove(dataList[index]);
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content:
+                                                          Text(reject.message),
+                                                      duration: const Duration(
+                                                          seconds: 1),
+                                                      backgroundColor:
+                                                          Colors.red.shade500,
+                                                    ),
+                                                  );
                                                 }
                                               });
                                             },

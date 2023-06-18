@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
@@ -51,21 +50,37 @@ class _MainScreenState extends State<MainScreen> {
         if (!mounted) return;
         if (loginModel.success) {
           await getUserInfo(_pref.getString("email")!);
-          Fluttertoast.showToast(
-            msg: "${pref.getString("name")!}님 환영합니다!",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            textColor: Colors.white,
-            backgroundColor: const Color(0xFFA594F9),
-            fontSize: Sizes.size20,
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("환영합니다!"),
+              duration: Duration(seconds: 1),
+              backgroundColor: Color(0xFFA594F9),
+            ),
           );
+          // Fluttertoast.showToast(
+          //   msg: "${pref.getString("name")!}님 환영합니다!",
+          //   toastLength: Toast.LENGTH_LONG,
+          //   gravity: ToastGravity.CENTER,
+          //   timeInSecForIosWeb: 1,
+          //   textColor: Colors.white,
+          //   backgroundColor: const Color(0xFFA594F9),
+          //   fontSize: Sizes.size20,
+          // );
           if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => const HomeScreen(),
             ),
             (route) => false,
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(loginModel.message),
+              duration: const Duration(seconds: 1),
+              backgroundColor: Colors.red.shade500,
+            ),
           );
         }
       }
@@ -86,15 +101,23 @@ class _MainScreenState extends State<MainScreen> {
         await getUserInfo(_email);
         await _pref.setString("email", _email);
         await _pref.setString("password", _password);
-        Fluttertoast.showToast(
-          msg: "${_pref.getString("name")!}님 환영합니다!",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          backgroundColor: const Color(0xFFA594F9),
-          fontSize: Sizes.size20,
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("환영합니다!"),
+            duration: Duration(seconds: 1),
+            backgroundColor: Color(0xFFA594F9),
+          ),
         );
+        // Fluttertoast.showToast(
+        //   msg: "${_pref.getString("name")!}님 환영합니다!",
+        //   toastLength: Toast.LENGTH_LONG,
+        //   gravity: ToastGravity.CENTER,
+        //   timeInSecForIosWeb: 1,
+        //   textColor: Colors.white,
+        //   backgroundColor: const Color(0xFFA594F9),
+        //   fontSize: Sizes.size20,
+        // );
         if (!mounted) return;
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
@@ -103,6 +126,13 @@ class _MainScreenState extends State<MainScreen> {
           (route) => false,
         );
       } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(loginModel.message),
+            duration: const Duration(seconds: 1),
+            backgroundColor: Colors.red.shade500,
+          ),
+        );
         _emailController.clear();
         _passwordController.clear();
         _onScaffoldTab();

@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/services/global_var.dart';
 import 'package:voicepocket/models/login_model.dart';
 
@@ -96,15 +93,15 @@ Future<LoginModel> loginPost(String email, String password) async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    Fluttertoast.showToast(
-      msg: loginModel.message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      backgroundColor: const Color(0xFFA594F9),
-      fontSize: Sizes.size16,
-    );
+    // Fluttertoast.showToast(
+    //   msg: loginModel.message,
+    //   toastLength: Toast.LENGTH_LONG,
+    //   gravity: ToastGravity.BOTTOM,
+    //   timeInSecForIosWeb: 1,
+    //   textColor: Colors.white,
+    //   backgroundColor: const Color(0xFFA594F9),
+    //   fontSize: Sizes.size16,
+    // );
     return loginModel;
   }
 }

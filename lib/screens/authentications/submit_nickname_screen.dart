@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
@@ -41,14 +40,12 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
         await signUpPost(widget.email, widget.password, _name, _nickName);
     if (!mounted) return;
     if (signUpModel.success) {
-      Fluttertoast.showToast(
-        msg: "회원 가입 성공했습니다.",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        backgroundColor: const Color(0xFFA594F9),
-        fontSize: Sizes.size16,
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("회원 가입 성공했습니다."),
+          duration: Duration(seconds: 1),
+          backgroundColor: Color(0xFFA594F9),
+        ),
       );
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
@@ -57,6 +54,13 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
         (route) => false,
       );
     } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(signUpModel.message),
+          duration: const Duration(seconds: 1),
+          backgroundColor: Colors.red.shade500,
+        ),
+      );
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => const SubmitInfoScreen(),
