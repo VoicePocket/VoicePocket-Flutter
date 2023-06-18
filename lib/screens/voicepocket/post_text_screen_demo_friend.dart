@@ -101,7 +101,7 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       drawer: const Drawer(),
       appBar: AppBar(
         title: Image.asset(
@@ -116,7 +116,8 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
           ),
         ],
       ),
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           chatMessages(),
@@ -171,6 +172,7 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
           ),
         ],
       ),
+      )
     );
   }
 
