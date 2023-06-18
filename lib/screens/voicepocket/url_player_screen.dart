@@ -58,8 +58,8 @@ class AudioPlayerHelper {
   }
 
   void dispose() {
-    audioPlayer.dispose();
-    _playerStateSubject.close();
+    //audioPlayer.dispose();
+    //_playerStateSubject.close();
   }
 }
 
@@ -85,7 +85,7 @@ class _AudioPlayerPageState extends State<AudioPlayerPage> {
 
   @override
   void dispose() {
-    audioPlayerHelper.dispose();
+    //audioPlayerHelper.dispose();
     super.dispose();
   }
 

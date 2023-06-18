@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/friendship_request_get_model.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_select_action.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_select_action_friend.dart';
 import 'package:voicepocket/services/request_friendship.dart';
 import 'package:voicepocket/widgets/nav_tab.dart';
 
@@ -36,7 +37,7 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
   void toVoiceSelect(BuildContext context, String name, String email) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => SelectScreen(
+        builder: (context) => SelectScreenFriend(
           name: name,
           email: email,
         ),

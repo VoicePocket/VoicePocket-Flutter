@@ -7,6 +7,7 @@ import 'package:voicepocket/models/friendship_request_get_model.dart';
 import 'package:voicepocket/services/request_friendship.dart';
 import '../authentications/home_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_select_action.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_select_action_friend.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({super.key});
@@ -39,13 +40,27 @@ class _ListScreenState extends State<ListScreen> {
       (route) => false,
     );
   }
-
-  void _onVoicePocketTab(BuildContext context, String name, String email) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => SelectScreen(name: name, email: email),
-      ),
-    );
+  
+  /// 내 페이지인지 친구 페이지인지 이메일로 판단하는 기능 추가
+  void _onVoicePocketTab(BuildContext context, String name, String email) async{
+    final pref = await SharedPreferences.getInstance();
+    final defaultEmail = pref.getString("email")!;
+    if(email != defaultEmail){
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => SelectScreenFriend(name: name, email: email),
+        ),
+      );
+    }
+    else{
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => SelectScreen(name: name, email: email),
+        ),
+      );
+    }
   }
 
   @override

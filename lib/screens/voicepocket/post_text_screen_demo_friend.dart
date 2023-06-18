@@ -10,15 +10,15 @@ import 'package:voicepocket/models/database_service.dart';
 import 'package:voicepocket/widgets/message_tile.dart';
 import 'package:voicepocket/widgets/message_tile_indicator.dart';
 
-class PostTextScreenDemo extends StatefulWidget {
+class PostTextScreenDemoFriend extends StatefulWidget {
   final String email;
-  const PostTextScreenDemo({super.key, required this.email});
+  const PostTextScreenDemoFriend({super.key, required this.email});
 
   @override
-  State<PostTextScreenDemo> createState() => _PostTextScreenDemoState();
+  State<PostTextScreenDemoFriend> createState() => _PostTextScreenDemoFriendState();
 }
 
-class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
+class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
   Stream<QuerySnapshot>? chats;
   final TextEditingController _textController = TextEditingController();
   TextModel? response;
@@ -36,7 +36,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
 
   @override
   void initState() {
-    getChat();
+    getFriendsChat();
     super.initState();
     bool isUILoading = false;
     bool bottomFlag = true;
@@ -63,8 +63,10 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
     }
   }
 
-  getChat() {
-    DatabaseService().getChats(widget.email).then((val) {
+  getFriendsChat() async{
+    final pref = await SharedPreferences.getInstance();
+    defaultEmail = pref.getString("email")!;
+    DatabaseService().getFriendsChats(defaultEmail, widget.email).then((val) {
       setState(() {
         chats = val;
       });
@@ -144,7 +146,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                   ),
                   InkWell(
                     onTap: () {
-                      sendMessage(inputText);
+                      sendMessageForFriend(inputText);
                       _postTextTab(inputText);
                       bottomFlag = true;
                     },
@@ -172,16 +174,16 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
     );
   }
 
-  sendMessage(String text) async {
-  final pref = await SharedPreferences.getInstance();
-  defaultEmail = pref.getString("email")!;
-  if (text.isNotEmpty) {
-    Map<String, dynamic> chatMessageMap = {
-      "message": text,
-      "sender": defaultEmail,
-      "time": DateTime.now().millisecondsSinceEpoch,
-    };
-    DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+  sendMessageForFriend(String text) async {
+    final pref = await SharedPreferences.getInstance();
+    defaultEmail = pref.getString("email")!;
+    if (text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": text,
+        "sender": defaultEmail,
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+      DatabaseService().sendMessageForFriend(defaultEmail, widget.email, chatMessageMap);
 
       setState(() {
         _textController.clear();
@@ -207,7 +209,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                           MessageTile(
                             message: snapshot.data.docs[index]['message'],
                             sender: snapshot.data.docs[index]['sender'],
-                            sentByMe: widget.email ==
+                            sentByMe: defaultEmail ==
                                 snapshot.data.docs[index]['sender'],
                           ),
                           if (isLoading &&

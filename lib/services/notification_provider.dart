@@ -8,11 +8,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/screens/friend/friend_main_screen.dart';
 import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
+import 'package:voicepocket/models/database_service.dart';
 
 import 'global_var.dart';
 
 class NotificationProvider extends AsyncNotifier {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  String defaultEmail = "";
+
+  //메시지 전송 함수
+  sendMessage(String text) async{
+    final pref = await SharedPreferences.getInstance();
+    defaultEmail = pref.getString("email")!;
+    if (text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": text,
+        "sender": 'SERVER',
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+      DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+    }
+  }
+
   //FCM 상태는 3가지(Back / Fore / Terminated)
   Future<void> initListener() async {
     //android & ios permission
@@ -78,14 +95,33 @@ class NotificationProvider extends AsyncNotifier {
           final wavUrl = message.data['wavUrl'];
           await readWavFileFromNotification(wavUrl);
           if (message.data['wavUrl'].endsWith('.wav')) {
-            Navigator.of(GlobalVariable.navState.currentContext!).push(
+            final pref = await SharedPreferences.getInstance();
+            defaultEmail = pref.getString("email")!;
+
+            //파이어베이스에 서버 명의로 메시지 전송
+            Map<String, dynamic> chatMessageMap = {
+              "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
+              "sender": 'SERVER',
+              "time": DateTime.now().millisecondsSinceEpoch,
+            };
+
+            final notiEmail = wavUrl.split("/")[0];
+            print(notiEmail);
+
+            if (defaultEmail == notiEmail){
+              DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+            }
+            else{
+              DatabaseService().sendMessageForFriend(defaultEmail, notiEmail , chatMessageMap);
+            }
+            /* Navigator.of(GlobalVariable.navState.currentContext!).push(
               MaterialPageRoute(
                 builder: (context) => MediaPlayerScreen(
                   email: wavUrl.split("/")[0],
                   path: wavUrl.split("/")[1],
                 ),
               ),
-            );
+            ); */
             return;
           }
           //친구 신청(Frined Request)
@@ -120,14 +156,32 @@ class NotificationProvider extends AsyncNotifier {
         final wavUrl = message.data['wavUrl'];
         await readWavFileFromNotification(wavUrl);
         if (message.data['wavUrl'].endsWith('.wav')) {
-          Navigator.of(GlobalVariable.navState.currentContext!).push(
+          final pref = await SharedPreferences.getInstance();
+            defaultEmail = pref.getString("email")!;
+
+          //파이어베이스에 서버 명의로 메시지 전송
+            Map<String, dynamic> chatMessageMap = {
+              "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
+              "sender": 'SERVER',
+              "time": DateTime.now().millisecondsSinceEpoch,
+            };
+
+            final notiEmail = wavUrl.split("/")[0];
+
+            if (defaultEmail == notiEmail){
+              DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+            }
+            else{
+              DatabaseService().sendMessageForFriend(defaultEmail, notiEmail , chatMessageMap);
+            }
+          /* Navigator.of(GlobalVariable.navState.currentContext!).push(
             MaterialPageRoute(
               builder: (context) => MediaPlayerScreen(
                 email: wavUrl.split("/")[0],
                 path: wavUrl.split("/")[1],
               ),
             ),
-          );
+          ); */
           return;
         }
         //친구 신청(Frined Request)
@@ -157,6 +211,31 @@ class NotificationProvider extends AsyncNotifier {
     final message = await _messaging.getInitialMessage();
     if (message != null) {
       print("I got message in TERMINATED\nMessage data: ${message.data['ID']}");
+      if (message.data['wavUrl'] != null) {
+        final wavUrl = message.data['wavUrl'];
+        await readWavFileFromNotification(wavUrl);
+        if (message.data['wavUrl'].endsWith('.wav')) {
+          final pref = await SharedPreferences.getInstance();
+            defaultEmail = pref.getString("email")!;
+
+          //파이어베이스에 서버 명의로 메시지 전송
+            Map<String, dynamic> chatMessageMap = {
+              "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
+              "sender": 'SERVER',
+              "time": DateTime.now().millisecondsSinceEpoch,
+            };
+
+            final notiEmail = wavUrl.split("/")[0];
+            
+            if (defaultEmail == notiEmail){
+              DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+            }
+            else{
+              DatabaseService().sendMessageForFriend(defaultEmail, notiEmail , chatMessageMap);
+            }
+          return;
+        }
+      } 
     }
   }
 
