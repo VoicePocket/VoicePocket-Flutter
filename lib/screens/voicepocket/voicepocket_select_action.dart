@@ -66,8 +66,6 @@ class _SelectScreenState extends State<SelectScreen> {
     setState(() {
       isLoading = true;
     });
-
-    await readAllWavFiles(defaultEmail);
     setState(() {
       isLoading = false;
     });

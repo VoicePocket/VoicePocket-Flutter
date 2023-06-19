@@ -6,7 +6,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/screens/friend/friend_main_screen.dart';
-import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
 import 'package:voicepocket/models/database_service.dart';
 
@@ -17,7 +16,7 @@ class NotificationProvider extends AsyncNotifier {
   String defaultEmail = "";
 
   //메시지 전송 함수
-  sendMessage(String text) async{
+  sendMessage(String text) async {
     final pref = await SharedPreferences.getInstance();
     defaultEmail = pref.getString("email")!;
     if (text.isNotEmpty) {
@@ -69,6 +68,10 @@ class NotificationProvider extends AsyncNotifier {
         ?.createNotificationChannel(channel);
     var initializationSettingsAndroid =
         const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = const IOSInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true);
     //Foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification? notification = message.notification;
@@ -76,7 +79,10 @@ class NotificationProvider extends AsyncNotifier {
       print("I got message in FOREGROUND\nMessage data: ${message.data['ID']}");
       if (message.notification != null && android != null) {
         await flutterLocalNotificationsPlugin.initialize(
-            InitializationSettings(android: initializationSettingsAndroid));
+          InitializationSettings(
+              android: initializationSettingsAndroid,
+              iOS: initializationSettingsIOS),
+        );
         await flutterLocalNotificationsPlugin.show(
           notification.hashCode,
           notification?.title,
@@ -108,11 +114,11 @@ class NotificationProvider extends AsyncNotifier {
             final notiEmail = wavUrl.split("/")[0];
             print(notiEmail);
 
-            if (defaultEmail == notiEmail){
+            if (defaultEmail == notiEmail) {
               DatabaseService().sendMessage(defaultEmail, chatMessageMap);
-            }
-            else{
-              DatabaseService().sendMessageForFriend(defaultEmail, notiEmail , chatMessageMap);
+            } else {
+              DatabaseService().sendMessageForFriend(
+                  defaultEmail, notiEmail, chatMessageMap);
             }
             /* Navigator.of(GlobalVariable.navState.currentContext!).push(
               MaterialPageRoute(
@@ -157,23 +163,23 @@ class NotificationProvider extends AsyncNotifier {
         await readWavFileFromNotification(wavUrl);
         if (message.data['wavUrl'].endsWith('.wav')) {
           final pref = await SharedPreferences.getInstance();
-            defaultEmail = pref.getString("email")!;
+          defaultEmail = pref.getString("email")!;
 
           //파이어베이스에 서버 명의로 메시지 전송
-            Map<String, dynamic> chatMessageMap = {
-              "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
-              "sender": 'SERVER',
-              "time": DateTime.now().millisecondsSinceEpoch,
-            };
+          Map<String, dynamic> chatMessageMap = {
+            "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
+            "sender": 'SERVER',
+            "time": DateTime.now().millisecondsSinceEpoch,
+          };
 
-            final notiEmail = wavUrl.split("/")[0];
+          final notiEmail = wavUrl.split("/")[0];
 
-            if (defaultEmail == notiEmail){
-              DatabaseService().sendMessage(defaultEmail, chatMessageMap);
-            }
-            else{
-              DatabaseService().sendMessageForFriend(defaultEmail, notiEmail , chatMessageMap);
-            }
+          if (defaultEmail == notiEmail) {
+            DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+          } else {
+            DatabaseService()
+                .sendMessageForFriend(defaultEmail, notiEmail, chatMessageMap);
+          }
           /* Navigator.of(GlobalVariable.navState.currentContext!).push(
             MaterialPageRoute(
               builder: (context) => MediaPlayerScreen(
@@ -216,26 +222,26 @@ class NotificationProvider extends AsyncNotifier {
         await readWavFileFromNotification(wavUrl);
         if (message.data['wavUrl'].endsWith('.wav')) {
           final pref = await SharedPreferences.getInstance();
-            defaultEmail = pref.getString("email")!;
+          defaultEmail = pref.getString("email")!;
 
           //파이어베이스에 서버 명의로 메시지 전송
-            Map<String, dynamic> chatMessageMap = {
-              "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
-              "sender": 'SERVER',
-              "time": DateTime.now().millisecondsSinceEpoch,
-            };
+          Map<String, dynamic> chatMessageMap = {
+            "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
+            "sender": 'SERVER',
+            "time": DateTime.now().millisecondsSinceEpoch,
+          };
 
-            final notiEmail = wavUrl.split("/")[0];
-            
-            if (defaultEmail == notiEmail){
-              DatabaseService().sendMessage(defaultEmail, chatMessageMap);
-            }
-            else{
-              DatabaseService().sendMessageForFriend(defaultEmail, notiEmail , chatMessageMap);
-            }
+          final notiEmail = wavUrl.split("/")[0];
+
+          if (defaultEmail == notiEmail) {
+            DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+          } else {
+            DatabaseService()
+                .sendMessageForFriend(defaultEmail, notiEmail, chatMessageMap);
+          }
           return;
         }
-      } 
+      }
     }
   }
 

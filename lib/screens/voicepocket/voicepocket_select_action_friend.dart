@@ -10,7 +10,8 @@ import 'package:voicepocket/models/database_service.dart';
 
 class SelectScreenFriend extends StatefulWidget {
   final String name, email;
-  const SelectScreenFriend({super.key, required this.name, required this.email});
+  const SelectScreenFriend(
+      {super.key, required this.name, required this.email});
 
   @override
   State<SelectScreenFriend> createState() => _SelectScreenFriendState();
@@ -66,8 +67,6 @@ class _SelectScreenFriendState extends State<SelectScreenFriend> {
     setState(() {
       isLoading = true;
     });
-
-    await readAllWavFiles(defaultEmail);
     setState(() {
       isLoading = false;
     });

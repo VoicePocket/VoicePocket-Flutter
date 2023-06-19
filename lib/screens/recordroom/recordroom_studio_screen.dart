@@ -6,7 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_recorder2/flutter_audio_recorder2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
@@ -32,6 +32,7 @@ class RecordroomStudioScreen extends StatefulWidget {
 }
 
 class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
+  bool _hasPermission = false;
   List<String> name = [], content = [];
   Directory modelDir = Directory("");
   late AudioPlayer audioPlayer;
@@ -39,8 +40,8 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
 
-  IconData _recordIcon = FontAwesomeIcons.microphone;
-  String _recordText = '녹음 준비 완료';
+  IconData _recordIcon = FontAwesomeIcons.microphoneSlash;
+  String _recordText = '권한 없음';
   TextStyle _recordTextStyle = TextStyle(
     fontSize: Sizes.size20,
     color: Colors.grey.shade700,
@@ -55,17 +56,22 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   @override
   void initState() {
     super.initState();
-    FlutterAudioRecorder2.hasPermissions.then((hasPermision) {
-      if (hasPermision!) {
-        _recordingState = RecordingState.ready;
-        _recordIcon = FontAwesomeIcons.microphone;
-        _recordText = '녹음 준비 완료';
-      }
-    });
-    getApplicationDocumentsDirectory().then((dir) {
+    requestPermission();
+    getPublicDownloadFolderPath().then((dir) {
       modelDir = Directory("${dir.path}/model");
     });
     loadList();
+  }
+
+  Future<void> requestPermission() async {
+    _hasPermission = await Permission.microphone.request().isGranted;
+    if (_hasPermission) {
+      setState(() {
+        _recordingState = RecordingState.ready;
+        _recordIcon = FontAwesomeIcons.microphone;
+        _recordText = '녹음 준비 완료';
+      });
+    }
   }
 
   void toNextPage() async {
@@ -107,12 +113,12 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
 
       case RecordingState.unready:
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Please allow recording from settings.'),
         ));
         break;
     }
+    setState(() {});
   }
 
   _initRecorder() async {
@@ -132,7 +138,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   }
 
   _stopRecording() async {
-    await audioRecorder.stop();
+    final file = await audioRecorder.stop();
     _recordingState = RecordingState.stopped;
     _recordIcon = FontAwesomeIcons.solidCircle;
     _recordText = '녹음하기';
@@ -141,32 +147,20 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
       fontWeight: FontWeight.w900,
       color: Colors.grey.shade700,
     );
-    await setAudio();
+    await setAudio(file!.path!);
   }
 
   Future<void> _recordVoice() async {
-    final hasPermission = await FlutterAudioRecorder2.hasPermissions;
-    if (hasPermission ?? false) {
-      await _initRecorder();
-
-      await _startRecording();
-      _recordingState = RecordingState.recording;
-      _recordIcon = FontAwesomeIcons.stop;
-      _recordText = '녹음중..';
-      _recordTextStyle = const TextStyle(
-        fontSize: Sizes.size20,
-        fontWeight: FontWeight.w900,
-        color: Colors.red,
-      );
-    } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please allow recording from settings.'),
-        ),
-      );
-    }
+    await _initRecorder();
+    await _startRecording();
+    _recordingState = RecordingState.recording;
+    _recordIcon = FontAwesomeIcons.stop;
+    _recordText = '녹음중..';
+    _recordTextStyle = const TextStyle(
+      fontSize: Sizes.size20,
+      fontWeight: FontWeight.w900,
+      color: Colors.red,
+    );
   }
 
   void zipEncoder(Directory dir, String zipPath) {
@@ -197,10 +191,9 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     );
   }
 
-  Future<void> setAudio() async {
+  Future<void> setAudio(String path) async {
     audioPlayer = AudioPlayer();
-    await audioPlayer.setSourceDeviceFile(
-        "${modelDir.path}/${widget.metaData['name']![_index - 1]}.wav");
+    await audioPlayer.setSourceDeviceFile(path);
     await audioPlayer.setReleaseMode(ReleaseMode.release);
     isPlaying = audioPlayer.state == PlayerState.playing;
     audioPlayer.onPlayerStateChanged.listen((state) {
