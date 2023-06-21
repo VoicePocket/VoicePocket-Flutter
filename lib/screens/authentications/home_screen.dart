@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,8 +7,10 @@ import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/screens/friend/friend_main_screen.dart';
+import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
+import 'package:voicepocket/services/google_cloud_service.dart';
 import 'package:voicepocket/services/load_csv.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,18 +22,39 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Map<String, List<String>> metaData;
+  List<int> modelIndexList = [];
+  int modelIndex = 0;
+
   @override
   void initState() {
     super.initState();
     loadCSV().then((value) => metaData = value);
+    getPublicDownloadFolderPath().then((dir) {
+      final modelDir = Directory("${dir.path}/model");
+      if (modelDir.listSync().isEmpty) {
+        return;
+      } else {
+        for (var file in modelDir.listSync()) {
+          if (file.path.endsWith(".wav")) {
+            int fileNum = int.parse(file.path.split("/").last.substring(6, 9));
+            modelIndexList.add(fileNum);
+          }
+        }
+        modelIndexList.sort();
+        modelIndex = modelIndexList.last;
+      }
+    });
   }
 
   void _onRecordTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => RecordroomStudioScreen(
-          metaData: metaData,
-        ),
+        builder: (context) => modelIndex == 315
+            ? const RecordroomMainScreen()
+            : RecordroomStudioScreen(
+                metaData: metaData,
+                modelIndex: modelIndex,
+              ),
       ),
     );
   }

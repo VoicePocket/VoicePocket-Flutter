@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:voicepocket/services/google_cloud_service.dart';
 import 'package:voicepocket/services/song_progressbar.dart';
 import '../authentications/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -547,7 +548,7 @@ class _VoicePocketPlayScreenCopyState extends State<VoicePocketPlayScreenCopy> {
 Future<List<String>> loadingSongs2(String email) async {
   List<String> mp3FileNames = [];
 
-  Directory appDocDir = await getApplicationDocumentsDirectory();
+  Directory appDocDir = await getPublicDownloadFolderPath();
 
   String DocDir1 = appDocDir.path;
   String DocDir2 = '$DocDir1/wav/$email';

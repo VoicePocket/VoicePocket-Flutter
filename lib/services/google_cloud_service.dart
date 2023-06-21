@@ -80,7 +80,7 @@ Future<void> readAllWavFiles(String email) async {
   }
 }
 
-Future<void> uploadModelVoiceFileToBucket() async {
+Future<bool> uploadModelVoiceFileToBucket() async {
   // 모델 생성을 위한 녹음파일 버킷에 업로드
   final pref = await SharedPreferences.getInstance();
   final email = pref.getString("email");
@@ -94,10 +94,13 @@ Future<void> uploadModelVoiceFileToBucket() async {
         .openRead()
         .pipe(bucket.write("$email/$email.zip")); // 버킷 내에 경로 및  파일명
     print("버킷 업로드 완료");
+  } catch (e) {
+    return false;
   } finally {
     File("${directory.path}/$email.zip").delete();
     client.close();
   }
+  return true;
 }
 
 Future<Directory> getPublicDownloadFolderPath() async {
