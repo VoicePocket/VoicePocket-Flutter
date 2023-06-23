@@ -644,7 +644,7 @@ PODS:
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/Logger (~> 7.8)
-  - FirebaseCoreInternal (10.9.0):
+  - FirebaseCoreInternal (10.10.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
   - FirebaseFirestore (10.7.0):
     - abseil/algorithm (~> 1.20211102.0)
@@ -659,7 +659,7 @@ PODS:
     - "gRPC-C++ (~> 1.44.0)"
     - leveldb-library (~> 1.22)
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseInstallations (10.9.0):
+  - FirebaseInstallations (10.10.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
@@ -684,9 +684,6 @@ PODS:
     - Flutter
     - flutter_sound_core (= 9.2.13)
   - flutter_sound_core (9.2.13)
-  - fluttertoast (0.0.2):
-    - Flutter
-    - Toast
   - GoogleDataTransport (9.2.3):
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
@@ -783,7 +780,6 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - Toast (4.0.0)
   - uri_to_file (0.0.1):
     - Flutter
 
@@ -800,7 +796,6 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
-  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -828,7 +823,6 @@ SPEC REPOS:
     - Libuv-gRPC
     - nanopb
     - PromisesObjC
-    - Toast
 
 EXTERNAL SOURCES:
   audio_session:
@@ -855,8 +849,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
   flutter_sound:
     :path: ".symlinks/plugins/flutter_sound/ios"
-  fluttertoast:
-    :path: ".symlinks/plugins/fluttertoast/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/ios"
   path_provider_foundation:
@@ -881,9 +873,9 @@ SPEC CHECKSUMS:
   firebase_messaging: 67fbcdaf6a7c81849590e542eff2409dc49d9fa5
   FirebaseAuth: dd64c01631df724b09f33e584625775c52f7d71f
   FirebaseCore: e317665b9d744727a97e623edbbed009320afdd7
-  FirebaseCoreInternal: d2b4acb827908e72eca47a9fd896767c3053921e
+  FirebaseCoreInternal: 971029061d326000d65bfdc21f5502c75c8b0893
   FirebaseFirestore: 3963a6edd1c84b4748dab3e2c62624a29d03eca1
-  FirebaseInstallations: c58489c9caacdbf27d1da60891a87318e20218e0
+  FirebaseInstallations: 52153982b057d3afcb4e1fbb3eb0b6d00611e681
   FirebaseMessaging: ac9062bcc35ed56e15a0241d8fd317022499baf8
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_audio_recorder2: 0eda9d0c791d9d093e6f5f07df414d34edec4eda
@@ -891,7 +883,6 @@ SPEC CHECKSUMS:
   flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   flutter_sound: c60effa2a350fb977885f0db2fbc4c1ad5160900
   flutter_sound_core: 26c10e5832e76aaacfae252d8925232281c486ae
-  fluttertoast: eb263d302cc92e04176c053d2385237e9f43fad0
   GoogleDataTransport: f0308f5905a745f94fb91fea9c6cbaf3831cb1bd
   GoogleUtilities: 9aa0ad5a7bc171f8bae016300bfcfa3fb8425749
   "gRPC-C++": 9675f953ace2b3de7c506039d77be1f2e77a8db2
@@ -905,9 +896,8 @@ SPEC CHECKSUMS:
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
-  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   uri_to_file: c4726881848febf4806f0a5707bd12903e02b0f0
 
-PODFILE CHECKSUM: bf375fe85a44de6d37184a678046de726f8ed1c7
+PODFILE CHECKSUM: 7a8f93086886737f589e76bff7ddb55b500d116c
 
 COCOAPODS: 1.11.3

@@ -24,6 +24,7 @@ class DatabaseService {
     return snapshot;
   }
 
+  ///내 채팅방 메시지 불러오기
   getChats(String email) async {
     return userCollection
         .doc(email)
@@ -32,9 +33,28 @@ class DatabaseService {
         .snapshots();
   }
 
-  // send message
+  ///친구에게 보낸 채팅 메시지 불러오기, (friendsemail)에 친구의 이메일 넣기
+  getFriendsChats(String email, String friendsemail) async {
+    return userCollection
+        .doc(email)
+        .collection(friendsemail)
+        .orderBy("time")
+        .snapshots();
+  }
+
+  ///메시지 전송
   sendMessage(String email, Map<String, dynamic> chatMessageData) async {
     userCollection.doc(email).collection("messages").add(chatMessageData);
+    userCollection.doc(email).update({
+      "recentMessage": chatMessageData['message'],
+      "recentMessageSender": chatMessageData['sender'],
+      "recentMessageTime": chatMessageData['time'].toString(),
+    });
+  }
+
+  ///친구에게 메시지 전송
+  sendMessageForFriend(String email,String friendsemail ,Map<String, dynamic> chatMessageData) async {
+    userCollection.doc(email).collection(friendsemail).add(chatMessageData);
     userCollection.doc(email).update({
       "recentMessage": chatMessageData['message'],
       "recentMessageSender": chatMessageData['sender'],

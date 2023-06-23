@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/services/google_cloud_service.dart';
 
 class MediaPlayerScreen extends StatefulWidget {
   final String path, email;
@@ -52,7 +52,7 @@ class _MediaPlayerScreenState extends State<MediaPlayerScreen> {
   Future setAudio() async {
     audioPlayer.setReleaseMode(ReleaseMode.stop);
 
-    var directory = await getApplicationDocumentsDirectory();
+    var directory = await getPublicDownloadFolderPath();
     final file = File("${directory.path}/wav/${widget.email}/${widget.path}");
     audioPlayer.setSourceDeviceFile(file.path);
   }

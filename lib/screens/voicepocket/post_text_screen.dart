@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:voicepocket/models/text_model.dart';
-import 'package:voicepocket/screens/voicepocket/media_player_screen.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
 
 class PostTextScreen extends StatefulWidget {
-  const PostTextScreen({super.key});
+  final String email;
+  const PostTextScreen({super.key, required this.email});
 
   @override
   State<PostTextScreen> createState() => _PostTextScreenState();
@@ -31,20 +31,20 @@ class _PostTextScreenState extends State<PostTextScreen> {
     setState(() {
       isLoading = true;
     });
-    var response = await postText(text);
+    var response = await postText(widget.email, text);
     if (!mounted) return;
     if (response.success) {
       setState(() {
         isLoading = false;
       });
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => MediaPlayerScreen(
-            path: "${response.data.uuid}.wav",
-            email: response.data.email,
-          ),
-        ),
-      );
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) => MediaPlayerScreen(
+      //       path: "${response.data.uuid}.wav",
+      //       email: response.data.email,
+      //     ),
+      //   ),
+      // );
     } else if (response.code == -1006) {
       await tokenRefreshPost();
     } else {

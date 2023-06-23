@@ -29,6 +29,8 @@ class PositionData {
   final Duration position;
   final Duration bufferedPosition;
   final Duration duration;
+
+  get processingState => null;
 }
 
 class Controls extends StatelessWidget {
@@ -86,13 +88,13 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   final CarouselController _carouselController = CarouselController();
   LoopMode _loopMode = LoopMode.off;
   late final StreamSubscription<PlayerState> _playerStateSubscription =
-        player.playerStateStream.listen((PlayerState playerState) {
-      if (playerState.processingState == ProcessingState.completed) {
-        if(_loopMode == LoopMode.all){
-          _playNext();
-        }
+      player.playerStateStream.listen((PlayerState playerState) {
+    if (playerState.processingState == ProcessingState.completed) {
+      if (_loopMode == LoopMode.all) {
+        _playNext();
       }
-    });
+    }
+  });
 
   @override
   void initState() {
@@ -244,26 +246,40 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
                                       itemCount: snapshot.data.length,
                                       itemBuilder: (BuildContext context,
                                           int itemIndex, int pageViewIndex) {
-                                        return Container(
+                                        return SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.8,
                                             child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(15.0),
-                                              child: Image.asset(
-                                                'assets/images/playpage2.png',
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                            Text(
-                                              snapshot.data?[itemIndex],
-                                              overflow: TextOverflow.fade,
-                                              textAlign: TextAlign.center,
-                                              maxLines: 2,
-                                            ),
-                                          ],
-                                        ));
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15.0),
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15.0),
+                                                  child: Image.asset(
+                                                    'assets/images/playpage2.png',
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  snapshot.data?[itemIndex],
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                  maxLines: 2,
+                                                ),
+                                              ],
+                                            ));
                                       },
                                       options: CarouselOptions(
                                         height:
@@ -530,7 +546,6 @@ void showSliderDialog({
   required double min,
   required double max,
   String valueSuffix = '',
-  // TODO: Replace these two by ValueStream.
   required double value,
   required Stream<double> stream,
   required ValueChanged<double> onChanged,

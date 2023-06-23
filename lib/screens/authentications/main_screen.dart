@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
 import 'package:voicepocket/screens/authentications/submit_term_screen.dart';
+import 'package:voicepocket/services/get_user_info.dart';
 import 'package:voicepocket/services/login_post.dart';
 import 'package:voicepocket/widgets/login_button.dart';
 import 'package:voicepocket/widgets/membership_button.dart';
@@ -40,7 +40,51 @@ class _MainScreenState extends State<MainScreen> {
         _password = _passwordController.text;
       });
     });
-    SharedPreferences.getInstance().then((pref) => _pref = pref);
+    SharedPreferences.getInstance().then((pref) async {
+      _pref = pref;
+      if (pref.containsKey("email") &&
+          pref.containsKey("password") &&
+          pref.containsKey("fcmKey")) {
+        final loginModel = await loginPost(
+            pref.getString("email")!, pref.getString("password")!);
+        if (!mounted) return;
+        if (loginModel.success) {
+          await getUserInfo(_pref.getString("email")!);
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("환영합니다!"),
+              duration: Duration(seconds: 1),
+              backgroundColor: Color(0xFFA594F9),
+            ),
+          );
+          // Fluttertoast.showToast(
+          //   msg: "${pref.getString("name")!}님 환영합니다!",
+          //   toastLength: Toast.LENGTH_LONG,
+          //   gravity: ToastGravity.CENTER,
+          //   timeInSecForIosWeb: 1,
+          //   textColor: Colors.white,
+          //   backgroundColor: const Color(0xFFA594F9),
+          //   fontSize: Sizes.size20,
+          // );
+          if (!mounted) return;
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ),
+            (route) => false,
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(loginModel.message),
+              duration: const Duration(seconds: 1),
+              backgroundColor: Colors.red.shade500,
+            ),
+          );
+        }
+      }
+    });
   }
 
   void _onScaffoldTab() {
@@ -54,15 +98,27 @@ class _MainScreenState extends State<MainScreen> {
 
       if (!mounted) return;
       if (loginModel.success) {
-        Fluttertoast.showToast(
-          msg: "${_pref.getString("name")!}님 환영합니다!",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          backgroundColor: const Color(0xFFA594F9),
-          fontSize: Sizes.size20,
+        await getUserInfo(_email);
+        await _pref.setString("email", _email);
+        await _pref.setString("password", _password);
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("환영합니다!"),
+            duration: Duration(seconds: 1),
+            backgroundColor: Color(0xFFA594F9),
+          ),
         );
+        // Fluttertoast.showToast(
+        //   msg: "${_pref.getString("name")!}님 환영합니다!",
+        //   toastLength: Toast.LENGTH_LONG,
+        //   gravity: ToastGravity.CENTER,
+        //   timeInSecForIosWeb: 1,
+        //   textColor: Colors.white,
+        //   backgroundColor: const Color(0xFFA594F9),
+        //   fontSize: Sizes.size20,
+        // );
+        if (!mounted) return;
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => const HomeScreen(),
@@ -70,6 +126,13 @@ class _MainScreenState extends State<MainScreen> {
           (route) => false,
         );
       } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(loginModel.message),
+            duration: const Duration(seconds: 1),
+            backgroundColor: Colors.red.shade500,
+          ),
+        );
         _emailController.clear();
         _passwordController.clear();
         _onScaffoldTab();
@@ -97,7 +160,7 @@ class _MainScreenState extends State<MainScreen> {
     return GestureDetector(
       onTap: _onScaffoldTab,
       child: Scaffold(
-        backgroundColor: const Color(0xFFD8E4FF),
+        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
         body: Center(
           child: Padding(
@@ -112,14 +175,14 @@ class _MainScreenState extends State<MainScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: "title_font",
-                      fontSize: Sizes.size80,
+                      fontSize: Sizes.size64,
                       fontWeight: FontWeight.w700,
                       color: Theme.of(context).primaryColor,
-                      shadows: const <Shadow>[
+                      shadows: <Shadow>[
                         Shadow(
-                          offset: Offset(2, 2),
-                          blurRadius: 3.0,
-                          color: Colors.black38,
+                          offset: const Offset(0, 10),
+                          blurRadius: 8.0,
+                          color: Colors.black.withOpacity(0.15),
                         ),
                       ],
                     ),
@@ -146,15 +209,15 @@ class _MainScreenState extends State<MainScreen> {
                       focusedErrorBorder: OutlineInputBorder(
                         borderSide: const BorderSide(
                           color: Colors.red,
-                          width: 1,
+                          width: 2,
                         ),
                         borderRadius: BorderRadius.circular(
                           Sizes.size32,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                        borderSide: const BorderSide(
+                          color: Colors.red,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -163,7 +226,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).primaryColor,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -172,7 +235,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).primaryColor,
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -212,15 +275,15 @@ class _MainScreenState extends State<MainScreen> {
                       focusedErrorBorder: OutlineInputBorder(
                         borderSide: const BorderSide(
                           color: Colors.red,
-                          width: 1,
+                          width: 2,
                         ),
                         borderRadius: BorderRadius.circular(
                           Sizes.size32,
                         ),
                       ),
                       errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                        borderSide: const BorderSide(
+                          color: Colors.red,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -229,7 +292,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).primaryColor,
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(
@@ -238,7 +301,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).primaryColor,
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(
