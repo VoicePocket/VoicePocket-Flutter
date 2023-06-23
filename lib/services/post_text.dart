@@ -1,60 +1,35 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:voicepocket/services/global_var.dart';
 import 'package:voicepocket/models/text_model.dart';
-import 'package:voicepocket/services/get_task.dart';
-import 'package:voicepocket/services/google_cloud_service.dart';
-import 'package:voicepocket/models/database_service.dart';
 
-
-Future<TextModel> postText(String text) async {
+Future<TextModel> postText(String email, String text) async {
   final pref = await SharedPreferences.getInstance();
   final uuid = const Uuid().v1();
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
+  final uri = defaultTargetPlatform == TargetPlatform.iOS
+      ? '$iosUrl/tts/send'
+      : '$androidUrl/tts/send';
   await pref.setString("uuid", uuid);
   int count = 0;
-  String defaultEmail = "";
-
-  sendMessage(String text) async{
-    defaultEmail = pref.getString("email")!;
-    if (text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": text,
-        "sender": 'SERVER',
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
-      DatabaseService().sendMessage(defaultEmail, chatMessageMap);
-    }
-  }
 
   final http.Response response = await http.post(
-    Uri.parse('http://localhost:8080/api/tts/send'), // IOS
-    //'http://172.20.10.12:8080/send'), // Real-test
-    //Uri.parse('http://10.0.0.2:8000/api/texts/psg1478795@naver.com/make_wav'), // ANDROID
+    Uri.parse(uri),
     headers: <String, String>{
-      //토큰 추가 (이메일, 패스워드 송신 필요)
       'Content-Type': 'application/json; charset=UTF-8',
       'X-AUTH-TOKEN': pref.getString("accessToken")!,
     },
     body: jsonEncode(<String, String>{
       "type": "ETL",
       "uuid": uuid,
-      "email": pref.getString("email")!,
+      "requestTo": email,
       "text": text
     }),
   );
-  while (await taskStatus() != 200) {
-    // 2초 동안 기다립니다.
-    print("response 없는 상태, 2초 딜레이 $count");
-    await Future.delayed(const Duration(seconds: 1));
-    // 다시 요청합니다.
-    //taskStatus;
-    count += 1;
-    if (count == 30) {
-      throw Exception('Failed to post');
-    }
-  }
-
   if (response.statusCode == 200) {
     TextModel model = TextModel.fromJson(
       json.decode(
@@ -62,39 +37,33 @@ Future<TextModel> postText(String text) async {
       ),
     );
     if (model.success) {
-      await readWavFileFromBucket(model, uuid);
-      print("다운로드 완료");
-      sendMessage("$uuid.wav 음성합성 진행완료");
+      print(model.message);
     }
     return model;
   } else {
-    throw Exception('Failed to post');
+    TextModel model = TextModel.fromJson(
+      json.decode(
+        utf8.decode(response.bodyBytes),
+      ),
+    );
+    return model;
   }
 }
 
 Future<TextModel> postTextDemo(String text, String email) async {
   final pref = await SharedPreferences.getInstance();
   final uuid = const Uuid().v1();
-  await pref.setString("uuid", uuid);
-  int count = 0;
-  String defaultEmail = "";
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
 
-  sendMessage(String text) async{
-    defaultEmail = pref.getString("email")!;
-    if (text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": text,
-        "sender": 'SERVER',
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
-      DatabaseService().sendMessage(defaultEmail, chatMessageMap);
-    }
-  }
+  final uri = defaultTargetPlatform == TargetPlatform.iOS
+      ? '$iosUrl/tts/send'
+      : '$androidUrl/tts/send';
+
+  await pref.setString("uuid", uuid);
 
   final http.Response response = await http.post(
-    Uri.parse('http://localhost:8080/api/tts/send'), // IOS
-    //'http://172.20.10.12:8080/send'), // Real-test
-    //Uri.parse('http://10.0.0.2:8000/api/texts/psg1478795@naver.com/make_wav'), // ANDROID
+    Uri.parse(uri),
     headers: <String, String>{
       //토큰 추가 (이메일, 패스워드 송신 필요)
       'Content-Type': 'application/json; charset=UTF-8',
@@ -103,22 +72,22 @@ Future<TextModel> postTextDemo(String text, String email) async {
     body: jsonEncode(<String, String>{
       "type": "ETL",
       "uuid": uuid,
-      "email": email,
+      "requestTo": email,
       "text": text
     }),
   );
-  while (await taskStatus() != 200) {
-    // 2초 동안 기다립니다.
-    print('post text창 $taskStatus');
-    print("response 없는 상태, 2초 딜레이 $count");
-    await Future.delayed(const Duration(milliseconds: 500));
-    // 다시 요청합니다.
-    //taskStatus;
-    count += 1;
-    if (count == 15) {
-      throw Exception('Failed to post');
-    }
-  }
+  // while (await taskStatus() != 200) {
+  //   // 2초 동안 기다립니다.
+  //   print('post text창 $taskStatus');
+  //   print("response 없는 상태, 2초 딜레이 $count");
+  //   await Future.delayed(const Duration(milliseconds: 500));
+  //   // 다시 요청합니다.
+  //   //taskStatus;
+  //   count += 1;
+  //   if (count == 30) {
+  //     throw Exception('Failed to post');
+  //   }
+  // }
 
   if (response.statusCode == 200) {
     TextModel model = TextModel.fromJson(
@@ -126,9 +95,7 @@ Future<TextModel> postTextDemo(String text, String email) async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    await readWavFileFromBucket(model, uuid);
-    print("다운로드 완료");
-    sendMessage("https://storage.googleapis.com/voicepocket/$email/$uuid.wav");
+    print(model.message);
     return model;
   } else {
     throw Exception('Failed to post');

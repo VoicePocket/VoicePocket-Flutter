@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/services/global_var.dart';
 import 'package:voicepocket/models/login_model.dart';
 
 Future<LoginModel> tokenRefreshPost() async {
+  const String iosUrl = VoicePocketUri.iosUrl;
+  const String androidUrl = VoicePocketUri.androidUrl;
   final uri = defaultTargetPlatform == TargetPlatform.iOS
-      ? 'http://localhost:8080/api/reissue'
-      : 'http://10.0.2.2:8080/api/reissue';
+      ? '$iosUrl/reissue'
+      : '$androidUrl/reissue';
   final pref = await SharedPreferences.getInstance();
   final http.Response response = await http.post(
     Uri.parse(uri),
@@ -40,15 +40,7 @@ Future<LoginModel> tokenRefreshPost() async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    Fluttertoast.showToast(
-      msg: loginModel.message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      backgroundColor: const Color(0xFFA594F9),
-      fontSize: Sizes.size16,
-    );
+
     return loginModel;
   } else {
     throw Exception('Failed to post');

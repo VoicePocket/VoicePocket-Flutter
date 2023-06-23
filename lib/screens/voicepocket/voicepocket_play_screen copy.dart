@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'package:voicepocket/constants/gaps.dart';
+import 'package:voicepocket/services/google_cloud_service.dart';
 import 'package:voicepocket/services/song_progressbar.dart';
 import '../authentications/home_screen.dart';
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,7 +16,8 @@ class VoicePocketPlayScreenCopy extends StatefulWidget {
   const VoicePocketPlayScreenCopy({super.key, required this.email});
 
   @override
-  State<VoicePocketPlayScreenCopy> createState() => _VoicePocketPlayScreenCopyState();
+  State<VoicePocketPlayScreenCopy> createState() =>
+      _VoicePocketPlayScreenCopyState();
 }
 
 class PositionData {
@@ -89,13 +89,13 @@ class _VoicePocketPlayScreenCopyState extends State<VoicePocketPlayScreenCopy> {
   final CarouselController _carouselController = CarouselController();
   LoopMode _loopMode = LoopMode.off;
   late final StreamSubscription<PlayerState> _playerStateSubscription =
-        player.playerStateStream.listen((PlayerState playerState) {
-      if (playerState.processingState == ProcessingState.completed) {
-        if(_loopMode == LoopMode.all){
-          _playNext();
-        }
+      player.playerStateStream.listen((PlayerState playerState) {
+    if (playerState.processingState == ProcessingState.completed) {
+      if (_loopMode == LoopMode.all) {
+        _playNext();
       }
-    });
+    }
+  });
 
   @override
   void initState() {
@@ -130,30 +130,27 @@ class _VoicePocketPlayScreenCopyState extends State<VoicePocketPlayScreenCopy> {
   } */
 
   void _handlePreviousButtonPressed() async {
-  await player.seekToPrevious();
-  final int newIndex = recent_song - 1;
-  _carouselController.animateToPage(newIndex);
-  _positionDataStream.listen((positionData) {
-    (PositionData(
-      Duration.zero,
-      positionData.bufferedPosition,
-      positionData.duration,
-    ));
-  });
-  print('포지션 변경');
-}
+    await player.seekToPrevious();
+    final int newIndex = recent_song - 1;
+    _carouselController.animateToPage(newIndex);
+    _positionDataStream.listen((positionData) {
+      (PositionData(
+        Duration.zero,
+        positionData.bufferedPosition,
+        positionData.duration,
+      ));
+    });
+    print('포지션 변경');
+  }
 
-
-void _handleNextButtonPressed() async {
-  await player.seekToNext();
-  final int newIndex = recent_song + 1;
-  _carouselController.animateToPage(newIndex);
-  _positionDataStream.any(const PositionData(
-    Duration.zero,
-    Duration.zero,
-    Duration.zero
-  ) as bool Function(PositionData element));
-}
+  void _handleNextButtonPressed() async {
+    await player.seekToNext();
+    final int newIndex = recent_song + 1;
+    _carouselController.animateToPage(newIndex);
+    _positionDataStream.any(
+        const PositionData(Duration.zero, Duration.zero, Duration.zero) as bool
+            Function(PositionData element));
+  }
 
   void _handleLoopButtonPressed() {
     switch (_loopMode) {
@@ -273,50 +270,64 @@ void _handleNextButtonPressed() async {
                                       carouselController: _carouselController,
                                       itemCount: snapshot.data.length,
                                       itemBuilder: (BuildContext context,
-                                        int itemIndex, int pageViewIndex) {
+                                          int itemIndex, int pageViewIndex) {
                                         return Container(
-                                          alignment: Alignment.center,
-                                          margin: const EdgeInsets.symmetric(horizontal: 5, vertical:5),
-                                          width: MediaQuery.of(context).size.width * 0.75,
-                                          child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(15.0),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    offset: const Offset(-3, 0),
-                                                    blurRadius: 8.0,
-                                                    color: Colors.black.withOpacity(0.15),
-                                                  )
-                                                ],
-                                                gradient: const LinearGradient(
-                                                  colors:[
-                                                    Color(0xFFCDC1FF),
-                                                    Color(0xFFE5D9F2)
-                                                    ],
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight
-                                                )
-                                              ),
-                                            ),
-                                            Text(
-                                              snapshot.data?[itemIndex],
-                                              overflow: TextOverflow.ellipsis,
-                                              textAlign: TextAlign.center,
-                                              maxLines: 2,
-                                            ),
-                                          ],
-                                        ));
+                                            alignment: Alignment.center,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 5, vertical: 5),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.75,
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15.0),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          offset: const Offset(
+                                                              -3, 0),
+                                                          blurRadius: 8.0,
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                  0.15),
+                                                        )
+                                                      ],
+                                                      gradient:
+                                                          const LinearGradient(
+                                                              colors: [
+                                                            Color(0xFFCDC1FF),
+                                                            Color(0xFFE5D9F2)
+                                                          ],
+                                                              begin: Alignment
+                                                                  .topLeft,
+                                                              end: Alignment
+                                                                  .bottomRight)),
+                                                ),
+                                                Text(
+                                                  snapshot.data?[itemIndex],
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                  maxLines: 2,
+                                                ),
+                                              ],
+                                            ));
                                       },
                                       options: CarouselOptions(
-                                        height: MediaQuery.of(context).size.height * 0.58,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.58,
                                         enlargeCenterPage: true,
                                         onPageChanged: (index, reason) {
                                           setState(() {
                                             player.stop();
-                                            const PositionData(Duration.zero,Duration.zero, Duration.zero);
+                                            const PositionData(Duration.zero,
+                                                Duration.zero, Duration.zero);
                                             isPlaying = false;
                                             print(index.toString());
                                             recent_song = index;
@@ -412,15 +423,18 @@ void _handleNextButtonPressed() async {
                                 StreamBuilder<PositionData>(
                                   stream: _positionDataStream,
                                   builder: (context, snapshot) {
-                                    final positionData = snapshot.data ?? const PositionData(
-                                      Duration.zero,
-                                      Duration.zero,
-                                      Duration.zero,
-                                    );
+                                    final positionData = snapshot.data ??
+                                        const PositionData(
+                                          Duration.zero,
+                                          Duration.zero,
+                                          Duration.zero,
+                                        );
                                     return SongProgressBar(
                                       barHeight: 4,
-                                      progressBarColor: Theme.of(context).primaryColor,
-                                      thumbColor: Theme.of(context).primaryColor,
+                                      progressBarColor:
+                                          Theme.of(context).primaryColor,
+                                      thumbColor:
+                                          Theme.of(context).primaryColor,
                                       progress: positionData.position,
                                       buffered: positionData.bufferedPosition,
                                       total: positionData.duration,
@@ -534,7 +548,7 @@ void _handleNextButtonPressed() async {
 Future<List<String>> loadingSongs2(String email) async {
   List<String> mp3FileNames = [];
 
-  Directory appDocDir = await getApplicationDocumentsDirectory();
+  Directory appDocDir = await getPublicDownloadFolderPath();
 
   String DocDir1 = appDocDir.path;
   String DocDir2 = '$DocDir1/wav/$email';

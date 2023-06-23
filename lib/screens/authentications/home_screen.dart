@@ -1,16 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
+import 'package:voicepocket/screens/friend/friend_main_screen.dart';
+import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
+import 'package:voicepocket/services/google_cloud_service.dart';
+import 'package:voicepocket/services/load_csv.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,16 +21,50 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late Map<String, List<String>> metaData;
+  List<int> modelIndexList = [];
+  int modelIndex = 0;
+
   @override
   void initState() {
     super.initState();
-    createFolder();
+    loadCSV().then((value) => metaData = value);
+    getPublicDownloadFolderPath().then((dir) {
+      final modelDir = Directory("${dir.path}/model");
+      if (modelDir.listSync().isEmpty) {
+        return;
+      } else {
+        for (var file in modelDir.listSync()) {
+          if (file.path.endsWith(".wav")) {
+            int fileNum = int.parse(file.path.split("/").last.substring(6, 9));
+            modelIndexList.add(fileNum);
+          }
+        }
+        modelIndexList.sort();
+        modelIndex = modelIndexList.last;
+      }
+    });
   }
 
   void _onRecordTab(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const RecordroomStudioScreen(),
+        builder: (context) => modelIndex == 315
+            ? const RecordroomMainScreen()
+            : RecordroomStudioScreen(
+                metaData: metaData,
+                modelIndex: modelIndex,
+              ),
+      ),
+    );
+  }
+
+  void _onFriendTab(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const FriendMainScreen(
+          index: 0,
+        ),
       ),
     );
   }
@@ -37,39 +72,20 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onLogoutTab(BuildContext context) async {
     final pref = await SharedPreferences.getInstance();
     pref.clear();
-    Fluttertoast.showToast(
-      msg: "로그아웃",
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      textColor: Colors.white,
-      backgroundColor: const Color(0xFFA594F9),
-      fontSize: Sizes.size16,
-    );
     if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("로그아웃"),
+        duration: Duration(seconds: 1),
+        backgroundColor: Colors.grey,
+      ),
+    );
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const MainScreen(),
       ),
       (route) => false,
     );
-  }
-
-  Future<void> createFolder() async {
-    final routeDir = await getApplicationDocumentsDirectory();
-    print("default 저장 경로: ${routeDir.path}");
-    final modelDir = Directory('${routeDir.path}/model');
-    final wavDir = Directory('${routeDir.path}/wav');
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
-    if (!(await modelDir.exists())) {
-      modelDir.create();
-    }
-    if (!(await wavDir.exists())) {
-      wavDir.create();
-    }
   }
 
   void _onVoicePocketListTab(BuildContext context) {
@@ -83,6 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: Sizes.size20,
@@ -117,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Gaps.v64,
             Flexible(
+              flex: 3,
               fit: FlexFit.loose,
               child: GestureDetector(
                 onTap: () => _onRecordTab(context),
@@ -181,6 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Gaps.v16,
             Flexible(
               fit: FlexFit.loose,
+              flex: 3,
               child: GestureDetector(
                 onTap: () => _onVoicePocketListTab(context),
                 child: Container(
@@ -242,99 +261,68 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Gaps.v16,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Flexible(
-                  fit: FlexFit.tight,
-                  flex: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0XFFD8BBFF),
-                      borderRadius: BorderRadius.circular(25),
+            Flexible(
+              fit: FlexFit.loose,
+              flex: 2,
+              child: GestureDetector(
+                onTap: () => _onFriendTab(context),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0XFFD8BBFF),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 25,
+                      horizontal: 30,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 15,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "친구에게",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "친구에게\n내 목소리를\n전달해보세요.",
+                              style: TextStyle(
+                                fontSize: Sizes.size16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
-                          ),
-                          Gaps.v8,
-                          const Text(
-                            "요청해보세요!",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
+                            const Spacer(),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: Sizes.size10,
+                                  horizontal: Sizes.size32,
+                                ),
+                                child: Text(
+                                  "만나러 가기",
+                                  style: TextStyle(
+                                    fontSize: Sizes.size16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                          Gaps.v5,
-                          Icon(
-                            Icons.people_alt,
-                            size: Sizes.size28,
-                            color: Colors.grey.shade800,
-                          )
-                        ],
-                      ),
+                          ],
+                        ),
+                        Icon(
+                          Icons.people_alt,
+                          color: Colors.grey.shade800,
+                          size: Sizes.size96 + Sizes.size20,
+                        )
+                      ],
                     ),
                   ),
                 ),
-                Gaps.h16,
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0XFFD8BBFF),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 15,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "친구에게",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          Gaps.v8,
-                          const Text(
-                            "요청해보세요!",
-                            style: TextStyle(
-                              fontSize: Sizes.size16 + Sizes.size2,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          Gaps.v5,
-                          Icon(
-                            Icons.people_alt,
-                            size: Sizes.size28,
-                            color: Colors.grey.shade800,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),
