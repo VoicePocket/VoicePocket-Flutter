@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/friendship_request_get_model.dart';
-import 'package:voicepocket/screens/voicepocket/voicepocket_select_action.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_select_action_friend.dart';
 import 'package:voicepocket/services/request_friendship.dart';
 import 'package:voicepocket/widgets/nav_tab.dart';
@@ -233,114 +232,39 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
         ],
       ),
       body: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: Sizes.size20,
-            vertical: Sizes.size10,
-          ),
-          child: (_currentIndex == 0)
-              // 친구 목록
-              ? FutureBuilder<List<DataG>>(
-                  future: getFriendShip,
-                  builder: (context, snapshot) {
-                    if (snapshot.data == null) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else {
-                      List<DataG> dataList = snapshot.data!;
-                      return ListView.builder(
-                        itemCount: dataList.length,
-                        itemBuilder: (context, index) {
-                          String name = dataList[index].requestTo.name;
-                          String email = dataList[index].requestTo.email;
-                          return Container(
-                            height: 90,
-                            margin: const EdgeInsets.only(
-                                top: 5, left: 8, right: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            child: Center(
-                              child: ListTile(
-                                  onTap: () async {
-                                    toVoiceSelect(context, name, email);
-                                  },
-                                  leading: CircleAvatar(
-                                    radius: 28,
-                                    backgroundColor: Colors.white,
-                                    child: CircleAvatar(
-                                      radius: 25,
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      child: const Icon(
-                                        FontAwesomeIcons.user,
-                                        color: Colors.white,
-                                        size: Sizes.size28,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    name,
-                                    style: TextStyle(
-                                      fontSize: Sizes.size20,
-                                      fontWeight: FontWeight.w900,
-                                      color: Colors.black.withOpacity(0.4),
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    email,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: Sizes.size14,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  trailing: CircleAvatar(
-                                    radius: Sizes.size20 + Sizes.size2,
-                                    backgroundColor: Colors.white,
-                                    child: CircleAvatar(
-                                      radius: Sizes.size20,
-                                      backgroundColor:
-                                          Colors.deepPurple.shade300,
-                                      child: const Icon(
-                                        FontAwesomeIcons.arrowRight,
-                                        color: Colors.white,
-                                        size: Sizes.size20,
-                                      ),
-                                    ),
-                                  )),
-                            ),
-                          );
-                        },
-                      );
-                    }
-                  },
-                )
-              : FutureBuilder<List<DataG>>(
-                  future: getFriendShipRequest,
-                  builder: (context, snapshot) {
-                    if (snapshot.data == null) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else {
-                      List<DataG> dataList = snapshot.data!;
-                      return ListView.builder(
-                        itemCount: dataList.length,
-                        itemBuilder: (context, index) {
-                          String name = dataList[index].requestFrom.name;
-                          String email = dataList[index].requestFrom.email;
-                          return Container(
-                            height: 80,
-                            margin: const EdgeInsets.only(
-                                top: 5, left: 8, right: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            child: Center(
-                              child: ListTile(
+        padding: const EdgeInsets.symmetric(
+          horizontal: Sizes.size20,
+          vertical: Sizes.size10,
+        ),
+        child: (_currentIndex == 0)
+            // 친구 목록
+            ? FutureBuilder<List<DataG>>(
+                future: getFriendShip,
+                builder: (context, snapshot) {
+                  if (snapshot.data == null) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    List<DataG> dataList = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: dataList.length,
+                      itemBuilder: (context, index) {
+                        String name = dataList[index].requestTo.name;
+                        String email = dataList[index].requestTo.email;
+                        return Container(
+                          height: 90,
+                          margin:
+                              const EdgeInsets.only(top: 5, left: 8, right: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          child: Center(
+                            child: ListTile(
+                                onTap: () async {
+                                  toVoiceSelect(context, name, email);
+                                },
                                 leading: CircleAvatar(
                                   radius: 28,
                                   backgroundColor: Colors.white,
@@ -360,7 +284,7 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
                                   style: TextStyle(
                                     fontSize: Sizes.size20,
                                     fontWeight: FontWeight.w900,
-                                    color: Colors.grey.shade700,
+                                    color: Colors.black.withOpacity(0.4),
                                   ),
                                 ),
                                 subtitle: Text(
@@ -371,118 +295,192 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
                                     color: Colors.white,
                                   ),
                                 ),
-                                trailing: Card(
-                                  elevation: 1,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
+                                trailing: CircleAvatar(
+                                  radius: Sizes.size20 + Sizes.size2,
+                                  backgroundColor: Colors.white,
+                                  child: CircleAvatar(
+                                    radius: Sizes.size20,
+                                    backgroundColor: Colors.deepPurple.shade300,
+                                    child: const Icon(
+                                      FontAwesomeIcons.arrowRight,
+                                      color: Colors.white,
+                                      size: Sizes.size20,
+                                    ),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: SizedBox(
-                                      width: 50,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () async {
-                                              final accept =
-                                                  await acceptFriendShip(email);
-                                              setState(() {
-                                                if (accept.success) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content:
-                                                          Text("이제 친구입니다."),
-                                                      duration:
-                                                          Duration(seconds: 1),
-                                                      backgroundColor:
-                                                          Color(0xFFA594F9),
-                                                    ),
-                                                  );
-                                                  dataList
-                                                      .remove(dataList[index]);
-                                                } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content:
-                                                          Text(accept.message),
-                                                      duration: const Duration(
-                                                          seconds: 1),
-                                                      backgroundColor:
-                                                          Colors.red.shade500,
-                                                    ),
-                                                  );
-                                                }
-                                              });
-                                            },
-                                            child: const Icon(
-                                              FontAwesomeIcons.check,
-                                              textDirection: TextDirection.rtl,
-                                              size: 20,
-                                              color: Colors.green,
-                                            ),
+                                )),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              )
+            : FutureBuilder<List<DataG>>(
+                future: getFriendShipRequest,
+                builder: (context, snapshot) {
+                  if (snapshot.data == null) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    List<DataG> dataList = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: dataList.length,
+                      itemBuilder: (context, index) {
+                        String name = dataList[index].requestFrom.name;
+                        String email = dataList[index].requestFrom.email;
+                        return Container(
+                          height: 80,
+                          margin:
+                              const EdgeInsets.only(top: 5, left: 8, right: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          child: Center(
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                radius: 28,
+                                backgroundColor: Colors.white,
+                                child: CircleAvatar(
+                                  radius: 25,
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  child: const Icon(
+                                    FontAwesomeIcons.user,
+                                    color: Colors.white,
+                                    size: Sizes.size28,
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                name,
+                                style: TextStyle(
+                                  fontSize: Sizes.size20,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                              subtitle: Text(
+                                email,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: Sizes.size14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              trailing: Card(
+                                elevation: 1,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: SizedBox(
+                                    width: 50,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            final accept =
+                                                await acceptFriendShip(email);
+                                            setState(() {
+                                              if (accept.success) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text("이제 친구입니다."),
+                                                    duration:
+                                                        Duration(seconds: 1),
+                                                    backgroundColor:
+                                                        Color(0xFFA594F9),
+                                                  ),
+                                                );
+                                                dataList
+                                                    .remove(dataList[index]);
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content:
+                                                        Text(accept.message),
+                                                    duration: const Duration(
+                                                        seconds: 1),
+                                                    backgroundColor:
+                                                        Colors.red.shade500,
+                                                  ),
+                                                );
+                                              }
+                                            });
+                                          },
+                                          child: const Icon(
+                                            FontAwesomeIcons.check,
+                                            textDirection: TextDirection.rtl,
+                                            size: 20,
+                                            color: Colors.green,
                                           ),
-                                          const SizedBox(
-                                            width: 1,
+                                        ),
+                                        const SizedBox(
+                                          width: 1,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            final reject =
+                                                await rejectFriendShip(email);
+                                            setState(() {
+                                              if (reject.success) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        "친구 요청을 거절 하셨습니다."),
+                                                    duration:
+                                                        Duration(seconds: 1),
+                                                    backgroundColor:
+                                                        Color(0xFFA594F9),
+                                                  ),
+                                                );
+                                                dataList
+                                                    .remove(dataList[index]);
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content:
+                                                        Text(reject.message),
+                                                    duration: const Duration(
+                                                        seconds: 1),
+                                                    backgroundColor:
+                                                        Colors.red.shade500,
+                                                  ),
+                                                );
+                                              }
+                                            });
+                                          },
+                                          child: const Icon(
+                                            FontAwesomeIcons.xmark,
+                                            textDirection: TextDirection.rtl,
+                                            size: 20,
+                                            color: Colors.red,
                                           ),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              final reject =
-                                                  await rejectFriendShip(email);
-                                              setState(() {
-                                                if (reject.success) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                          "친구 요청을 거절 하셨습니다."),
-                                                      duration:
-                                                          Duration(seconds: 1),
-                                                      backgroundColor:
-                                                          Color(0xFFA594F9),
-                                                    ),
-                                                  );
-                                                  dataList
-                                                      .remove(dataList[index]);
-                                                } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content:
-                                                          Text(reject.message),
-                                                      duration: const Duration(
-                                                          seconds: 1),
-                                                      backgroundColor:
-                                                          Colors.red.shade500,
-                                                    ),
-                                                  );
-                                                }
-                                              });
-                                            },
-                                            child: const Icon(
-                                              FontAwesomeIcons.xmark,
-                                              textDirection: TextDirection.rtl,
-                                              size: 20,
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      );
-                    }
-                  },
-                )),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+      ),
       bottomNavigationBar: Container(
         color: Theme.of(context).primaryColor,
         padding: const EdgeInsets.symmetric(

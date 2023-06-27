@@ -68,10 +68,13 @@ Future<void> readAllWavFiles(String email) async {
     );
     await for (var wav in wavlist) {
       if (wav.name.endsWith(".wav") &&
-          !(await File("${directory.path}/wav/${wav.name}").exists())) {
+          !(await File("${directory.path}/model/${wav.name.split("/")[1]}")
+              .exists())) {
         await bucket.read(wav.name).pipe(
-              File("${directory.path}/wav/${wav.name}").openWrite(),
+              File("${directory.path}/model/${wav.name.split("/")[1]}")
+                  .openWrite(),
             );
+        print(wav.name);
       }
     }
     print("받아오기 완료");

@@ -71,9 +71,9 @@ class NotificationProvider extends AsyncNotifier {
     var initializationSettingsAndroid =
         const AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = const IOSInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true);
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false);
     //Foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification? notification = message.notification;
@@ -118,23 +118,35 @@ class NotificationProvider extends AsyncNotifier {
             final notiEmail = wavUrl.split("/")[0];
             if (defaultEmail == notiEmail) {
               DatabaseService().sendMessage(defaultEmail, chatMessageMap);
-              Navigator.of(GlobalVariable.navState.currentContext!)
-                  .pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => PostTextScreenDemo(
-                    email: defaultEmail,
-                  ),
+              Navigator.pushReplacement(
+                GlobalVariable.navState.currentContext!,
+                PageRouteBuilder(
+                  pageBuilder: (BuildContext context,
+                      Animation<double> animation1,
+                      Animation<double> animation2) {
+                    return PostTextScreenDemo(
+                      email: defaultEmail,
+                    );
+                  },
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
                 ),
               );
             } else {
               DatabaseService().sendMessageForFriend(
                   defaultEmail, notiEmail, chatMessageMap);
-              Navigator.of(GlobalVariable.navState.currentContext!)
-                  .pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => PostTextScreenDemoFriend(
-                    email: notiEmail,
-                  ),
+              Navigator.pushReplacement(
+                GlobalVariable.navState.currentContext!,
+                PageRouteBuilder(
+                  pageBuilder: (BuildContext context,
+                      Animation<double> animation1,
+                      Animation<double> animation2) {
+                    return PostTextScreenDemoFriend(
+                      email: notiEmail,
+                    );
+                  },
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
                 ),
               );
             }
@@ -170,7 +182,7 @@ class NotificationProvider extends AsyncNotifier {
       AndroidNotification? android = message.notification?.android;
       AppleNotification? ios = message.notification?.apple;
       //백그라운드에서 메시지를 받은 경우
-      print("I got message in BACKGROUND\nMessage data: ${message.data['ID']}");
+      print("I got message in CLICKED\nMessage data: ${message.data['ID']}");
       if (notification != null && (android != null || ios != null)) {
         if (message.data['ID'].toString() == "3") {
           final wavUrl = message.data['wavUrl'];

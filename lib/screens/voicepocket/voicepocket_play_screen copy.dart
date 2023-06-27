@@ -7,7 +7,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'dart:io';
 
@@ -567,7 +566,7 @@ Future<List<String>> loadingSongs2(String email) async {
 Future<String> loadingSongs(String email) async {
   List<String> mp3FileNames = [];
 
-  Directory appDocDir = await getApplicationDocumentsDirectory();
+  Directory appDocDir = await getPublicDownloadFolderPath();
 
   //List<FileSystemEntity> files = appDocDir.listSync();
 

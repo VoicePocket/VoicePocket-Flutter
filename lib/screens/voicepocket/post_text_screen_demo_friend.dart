@@ -213,7 +213,7 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
 
   chatMessages() {
     return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.75,
+        height: MediaQuery.of(context).size.height * 0.79,
         child: StreamBuilder(
           stream: chats,
           builder: (context, AsyncSnapshot snapshot) {
