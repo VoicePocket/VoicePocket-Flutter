@@ -15,7 +15,8 @@ import 'package:voicepocket/services/google_cloud_service.dart';
 import 'package:voicepocket/services/load_csv.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  static const routeName = 'home-screen';
+  static const routeName = 'home';
+  static const routeURL = '/home';
   const HomeScreen({super.key});
   @override
   HomeScreenState createState() => HomeScreenState();
@@ -48,6 +49,11 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _onRecordTab(BuildContext context) {
+    // Navigator.of(context).pushNamed(
+    //   modelIndex == 315
+    //       ? RecordroomMainScreen.routeName
+    //       : RecordroomStudioScreen.routeName,
+    //   arguments: {'metaData': metaData, 'modelIndex': modelIndex},
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => modelIndex == 315

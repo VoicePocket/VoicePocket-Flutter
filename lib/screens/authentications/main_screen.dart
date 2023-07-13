@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
@@ -11,7 +12,8 @@ import 'package:voicepocket/widgets/membership_button.dart';
 import '../../constants/gaps.dart';
 
 class MainScreen extends StatefulWidget {
-  static const routeName = 'main-screen';
+  static const routeName = 'main';
+  static const routeURL = '/main';
   const MainScreen({super.key});
 
   @override
@@ -116,10 +118,7 @@ class _MainScreenState extends State<MainScreen> {
         //   fontSize: Sizes.size20,
         // );
         if (!mounted) return;
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          HomeScreen.routeName,
-          (route) => false,
-        );
+        context.pushReplacementNamed(HomeScreen.routeName);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -136,7 +135,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onSubmitTab(BuildContext context) {
-    Navigator.of(context).pushNamed(SubmitTermScreen.routeName);
+    context.pushNamed(SubmitTermScreen.routeName);
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:go_router/go_router.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
 import 'package:voicepocket/services/song_progressbar.dart';
 import '../authentications/home_screen.dart';
@@ -108,12 +109,7 @@ class _VoicePocketPlayScreenCopyState extends State<VoicePocketPlayScreenCopy> {
   }
 
   void toHomeScreen(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-      (route) => false,
-    );
+    context.pushReplacementNamed(HomeScreen.routeName);
   }
 
   /* void _handlePreviousButtonPressed() async {

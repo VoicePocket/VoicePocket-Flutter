@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
@@ -14,6 +15,7 @@ enum Progress {
 }
 
 class RecordroomMainScreen extends StatefulWidget {
+  static const routeName = 'recordroom-main-screen';
   final Map<String, List<String>> metaData;
   final int modelIndex;
   const RecordroomMainScreen(
@@ -42,12 +44,7 @@ class _RecordroomMainScreenState extends State<RecordroomMainScreen> {
   }
 
   void toHomeScreen(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-      (route) => false,
-    );
+    context.pushReplacementNamed(HomeScreen.routeName);
   }
 
   void reRecord() {

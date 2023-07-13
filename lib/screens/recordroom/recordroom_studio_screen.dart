@@ -6,6 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_recorder2/flutter_audio_recorder2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
@@ -24,6 +25,7 @@ enum RecordingState {
 }
 
 class RecordroomStudioScreen extends StatefulWidget {
+  static const routeName = 'recordroom-studio-screen';
   final Map<String, List<String>> metaData;
   final int modelIndex;
   const RecordroomStudioScreen(
@@ -234,12 +236,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   }
 
   void toHomeScreen(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-      (route) => false,
-    );
+    context.pushReplacementNamed(HomeScreen.routeName);
   }
 
   Future<void> setAudio(String path) async {

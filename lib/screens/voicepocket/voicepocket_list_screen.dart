@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
@@ -33,27 +34,22 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   void toHomeScreen(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-      (route) => false,
-    );
+    context.pushReplacementNamed(HomeScreen.routeName);
   }
-  
+
   /// 내 페이지인지 친구 페이지인지 이메일로 판단하는 기능 추가
-  void _onVoicePocketTab(BuildContext context, String name, String email) async{
+  void _onVoicePocketTab(
+      BuildContext context, String name, String email) async {
     final pref = await SharedPreferences.getInstance();
     final defaultEmail = pref.getString("email")!;
-    if(email != defaultEmail){
+    if (email != defaultEmail) {
       // ignore: use_build_context_synchronously
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => SelectScreenFriend(name: name, email: email),
         ),
       );
-    }
-    else{
+    } else {
       // ignore: use_build_context_synchronously
       Navigator.of(context).push(
         MaterialPageRoute(

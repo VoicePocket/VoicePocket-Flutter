@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 
 import 'submit_info_screen.dart';
 
 class SubmitTermScreen extends StatelessWidget {
-  static const routeName = 'submit-term-screen';
+  static const routeName = 'submitTerm';
+  static const routeURL = '/submitTerm';
 
   const SubmitTermScreen({super.key});
 
   void _onAgreeTab(BuildContext context) {
-    Navigator.of(context).pushNamed(
-      SubmitInfoScreen.routeName,
-    );
+    context.pushNamed(SubmitInfoScreen.routeName);
   }
 
   @override

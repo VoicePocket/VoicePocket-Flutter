@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:go_router/go_router.dart';
+
 import '../authentications/home_screen.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
@@ -108,12 +110,7 @@ class _VoicePocketPlayScreenState extends State<VoicePocketPlayScreen> {
   }
 
   void toHomeScreen(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-      (route) => false,
-    );
+    context.pushReplacementNamed(HomeScreen.routeName);
   }
 
   void _handlePreviousButtonPressed() async {

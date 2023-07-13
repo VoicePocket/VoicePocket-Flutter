@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/authentications/main_screen.dart';
+import 'package:voicepocket/screens/authentications/home_screen.dart';
 import 'package:voicepocket/screens/authentications/submit_info_screen.dart';
-import 'package:voicepocket/screens/authentications/submit_term_screen.dart';
 import 'package:voicepocket/services/signup_post.dart';
 
 class SubmitNicknameScreen extends StatefulWidget {
-  static const routeName = 'submit-nickname-screen';
+  static const routeName = 'submitNickname';
+  static const routeURL = '/submitNickname';
+  final String email, password;
   const SubmitNicknameScreen({
     super.key,
+    required this.email,
+    required this.password,
   });
 
   @override
@@ -33,9 +37,10 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
     }
   }
 
-  void _onSubmit(String email, String password) async {
+  void _onSubmit() async {
     if (!_isNicknameValid()) return;
-    final signUpModel = await signUpPost(email, password, _name, _nickName);
+    final signUpModel =
+        await signUpPost(widget.email, widget.password, _name, _nickName);
     if (!mounted) return;
     if (signUpModel.success) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -45,10 +50,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
           backgroundColor: Color(0xFFA594F9),
         ),
       );
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        MainScreen.routeName,
-        (route) => false,
-      );
+      context.pushReplacementNamed(HomeScreen.routeName);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -57,10 +59,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
           backgroundColor: Colors.red.shade500,
         ),
       );
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        SubmitInfoScreen.routeName,
-        ModalRoute.withName(SubmitTermScreen.routeName),
-      );
+      context.pop(SubmitInfoScreen.routeName);
     }
   }
 
@@ -88,7 +87,6 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final arg = ModalRoute.of(context)!.settings.arguments as Map;
     return GestureDetector(
       onTap: _onScaffoldTab,
       child: Scaffold(
@@ -219,7 +217,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
               Gaps.v96,
               Gaps.v96,
               GestureDetector(
-                onTap: () => _onSubmit(arg['email'], arg['password']),
+                onTap: () => _onSubmit(),
                 child: Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 10,

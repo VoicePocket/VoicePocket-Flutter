@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/friendship_request_get_model.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_select_action_friend.dart';
@@ -57,12 +58,7 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
   }
 
   void toHomeScreen(BuildContext context) {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-      (route) => false,
-    );
+    context.pushReplacementNamed(HomeScreen.routeName);
   }
 
   void _requestFriend() {
