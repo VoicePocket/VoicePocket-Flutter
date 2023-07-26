@@ -366,7 +366,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = J37F74C2JU;
+				DEVELOPMENT_TEAM = BRBLZLM3SM;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -396,9 +396,10 @@
 					"-framework",
 					"\"permission_handler_apple\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.voicepocket;
+				PRODUCT_BUNDLE_IDENTIFIER = com.examples.voicepocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -522,7 +523,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = J37F74C2JU;
+				DEVELOPMENT_TEAM = BRBLZLM3SM;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -552,9 +553,10 @@
 					"-framework",
 					"\"permission_handler_apple\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.voicepocket;
+				PRODUCT_BUNDLE_IDENTIFIER = com.examples.voicepocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -572,7 +574,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = J37F74C2JU;
+				DEVELOPMENT_TEAM = BRBLZLM3SM;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -602,9 +604,10 @@
 					"-framework",
 					"\"permission_handler_apple\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.voicepocket;
+				PRODUCT_BUNDLE_IDENTIFIER = com.examples.voicepocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

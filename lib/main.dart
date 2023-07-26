@@ -5,6 +5,7 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/services/notification_provider.dart';
 import 'package:voicepocket/services/global_var.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +48,7 @@ class App extends ConsumerWidget {
         ),
       ),
       home: const MainScreen(),
-      //home: const PostTextScreen(),
+      //home: const VoicePocketPlayScreen(email: 'ssh@gmail.com'),
     );
   }
 }
