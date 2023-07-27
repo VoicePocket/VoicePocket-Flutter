@@ -41,7 +41,7 @@ Future<void> readWavFileFromNotification(String wavUrl) async {
   final directory = await getPublicDownloadFolderPath();
   try {
     final storage = Storage(client, "VoicePocket");
-    final bucket = storage.bucket("voicepocket");
+    final bucket = storage.bucket("voice_pocket_egg");
 
     await bucket.read(wavUrl).pipe(
           File("${directory.path}/wav/$wavUrl").openWrite(),
@@ -61,7 +61,7 @@ Future<void> readAllWavFiles(String email) async {
   final directory = await getApplicationDocumentsDirectory();
   try {
     final storage = Storage(client, "VoicePocket");
-    final bucket = storage.bucket("voicepocket");
+    final bucket = storage.bucket("voice_pocket_egg");
 
     final wavlist = bucket.list(
       prefix: "$email/",
@@ -91,7 +91,7 @@ Future<bool> uploadModelVoiceFileToBucket() async {
   final directory = await getApplicationDocumentsDirectory();
   try {
     final storage = Storage(client, "VoicePocket");
-    final bucket = storage.bucket("voicepocket");
+    final bucket = storage.bucket("voice_pocket_egg");
 
     await File("${directory.path}/$email.zip") // 로컬의 파일명
         .openRead()

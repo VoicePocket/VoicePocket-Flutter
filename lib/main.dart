@@ -22,7 +22,7 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(notificationProvider);
+    ref.watch(notificationProvider(context));
     return MaterialApp.router(
       routerConfig: ref.watch(routeProvider),
       debugShowCheckedModeBanner: false,

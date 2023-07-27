@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
@@ -90,12 +91,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: Colors.grey,
       ),
     );
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const MainScreen(),
-      ),
-      (route) => false,
-    );
+    context.pushReplacementNamed(MainScreen.routeName);
   }
 
   void _onVoicePocketListTab(BuildContext context) {

@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/screens/authentications/home_screen.dart';
+import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/screens/authentications/submit_info_screen.dart';
 import 'package:voicepocket/services/signup_post.dart';
 
@@ -50,7 +50,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
           backgroundColor: Color(0xFFA594F9),
         ),
       );
-      context.pushReplacementNamed(HomeScreen.routeName);
+      context.pushReplacementNamed(MainScreen.routeName);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

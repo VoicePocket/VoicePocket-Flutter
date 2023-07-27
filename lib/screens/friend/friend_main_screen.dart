@@ -11,6 +11,8 @@ import '../../constants/gaps.dart';
 import '../authentications/home_screen.dart';
 
 class FriendMainScreen extends StatefulWidget {
+  static const routeName = 'friend';
+  static const routeURL = '/friend';
   final int index;
   const FriendMainScreen({super.key, required this.index});
 
