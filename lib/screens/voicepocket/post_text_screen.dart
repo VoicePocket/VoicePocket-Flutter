@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:voicepocket/models/text_model.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
@@ -27,12 +28,13 @@ class _PostTextScreenState extends State<PostTextScreen> {
     });
   }
 
-  void _postTextTab(String text) async {
+  Future<String> _postTextTab(String text) async {
+    final uuid = const Uuid().v1();
     setState(() {
       isLoading = true;
     });
-    var response = await postText(widget.email, text);
-    if (!mounted) return;
+    var response = await postText(widget.email, text, uuid);
+    if (!mounted) return '';
     if (response.success) {
       setState(() {
         isLoading = false;
@@ -45,10 +47,12 @@ class _PostTextScreenState extends State<PostTextScreen> {
       //     ),
       //   ),
       // );
+      return '${widget.email}/$uuid.wav';
     } else if (response.code == -1006) {
       await tokenRefreshPost();
+      return '';
     } else {
-      return;
+      return '';
     }
   }
 

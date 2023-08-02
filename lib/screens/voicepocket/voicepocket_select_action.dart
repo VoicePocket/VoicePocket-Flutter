@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/voicepocket/post_text_screen_demo.dart';
@@ -55,7 +54,12 @@ class _SelectScreenState extends State<SelectScreen> {
   }
 
   void toHomeScreen(BuildContext context) {
-    context.pushReplacementNamed(HomeScreen.routeName);
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
+      (route) => false,
+    );
   }
 
   void _onVoicePocketTab(BuildContext context) async {

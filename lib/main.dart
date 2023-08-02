@@ -2,7 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:voicepocket/constants/sizes.dart';
-import 'package:voicepocket/router.dart';
+import 'package:voicepocket/screens/authentications/main_screen.dart';
+import 'package:voicepocket/services/global_var.dart';
 import 'package:voicepocket/services/notification_provider.dart';
 
 void main() async {
@@ -22,9 +23,9 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(notificationProvider(context));
-    return MaterialApp.router(
-      routerConfig: ref.watch(routeProvider),
+    ref.watch(notificationProvider);
+    return MaterialApp(
+      navigatorKey: GlobalVariable.navState,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: "contents_font",
@@ -46,6 +47,8 @@ class App extends ConsumerWidget {
           ),
         ),
       ),
+      home: const MainScreen(),
+      //home: const PostTextScreen(),
     );
   }
 }

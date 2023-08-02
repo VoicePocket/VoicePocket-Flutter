@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 
@@ -12,7 +11,11 @@ class SubmitTermScreen extends StatelessWidget {
   const SubmitTermScreen({super.key});
 
   void _onAgreeTab(BuildContext context) {
-    context.pushNamed(SubmitInfoScreen.routeName);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const SubmitInfoScreen(),
+      ),
+    );
   }
 
   @override

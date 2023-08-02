@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
@@ -34,7 +33,12 @@ class _ListScreenState extends State<ListScreen> {
   }
 
   void toHomeScreen(BuildContext context) {
-    context.pushReplacementNamed(HomeScreen.routeName);
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
+      (route) => false,
+    );
   }
 
   /// 내 페이지인지 친구 페이지인지 이메일로 판단하는 기능 추가

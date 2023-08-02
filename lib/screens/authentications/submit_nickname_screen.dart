@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
@@ -50,7 +49,12 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
           backgroundColor: Color(0xFFA594F9),
         ),
       );
-      context.pushReplacementNamed(MainScreen.routeName);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const MainScreen(),
+        ),
+        (route) => false,
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -59,7 +63,11 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
           backgroundColor: Colors.red.shade500,
         ),
       );
-      context.pop(SubmitInfoScreen.routeName);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const SubmitInfoScreen(),
+        ),
+      );
     }
   }
 

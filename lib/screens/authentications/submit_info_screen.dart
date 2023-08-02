@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/submit_nickname_screen.dart';
@@ -44,8 +43,15 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
       return;
     }
     FocusScope.of(context).unfocus();
-    context.pushNamed(SubmitNicknameScreen.routeName,
-        queryParameters: {'email': _email, 'password': _password});
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SubmitNicknameScreen(
+          email: _email,
+          password: _password,
+        ),
+      ),
+    );
     _emailController.clear();
     _passwordController.clear();
   }

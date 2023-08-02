@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
@@ -118,7 +117,12 @@ class _MainScreenState extends State<MainScreen> {
         //   fontSize: Sizes.size20,
         // );
         if (!mounted) return;
-        context.pushReplacementNamed(HomeScreen.routeName);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+          (route) => false,
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -135,7 +139,11 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onSubmitTab(BuildContext context) {
-    context.pushNamed(SubmitTermScreen.routeName);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const SubmitTermScreen(),
+      ),
+    );
   }
 
   @override

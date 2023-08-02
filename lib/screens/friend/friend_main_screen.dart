@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/models/friendship_request_get_model.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_select_action_friend.dart';
@@ -12,7 +11,7 @@ import '../authentications/home_screen.dart';
 
 class FriendMainScreen extends StatefulWidget {
   static const routeName = 'friend';
-  static const routeURL = '/friend';
+  static const routeURL = ':index';
   final int index;
   const FriendMainScreen({super.key, required this.index});
 
@@ -21,6 +20,7 @@ class FriendMainScreen extends StatefulWidget {
 }
 
 class _FriendMainScreenState extends State<FriendMainScreen> {
+  final GlobalKey<AnimatedListState> _key = GlobalKey<AnimatedListState>();
   final TextEditingController _friendController = TextEditingController();
   String _friend = "";
   int _currentIndex = 0;
@@ -60,7 +60,12 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
   }
 
   void toHomeScreen(BuildContext context) {
-    context.pushReplacementNamed(HomeScreen.routeName);
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
+      (route) => false,
+    );
   }
 
   void _requestFriend() {
@@ -230,6 +235,7 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
         ],
       ),
       body: Padding(
+        key: _key,
         padding: const EdgeInsets.symmetric(
           horizontal: Sizes.size20,
           vertical: Sizes.size10,

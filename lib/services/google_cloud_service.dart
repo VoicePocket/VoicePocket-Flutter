@@ -35,7 +35,7 @@ Future<AutoRefreshingAuthClient> getAuthClient() async {
 //   }
 // }
 
-Future<void> readWavFileFromNotification(String wavUrl) async {
+Future<void> readWavFile(String wavUrl) async {
   // wav파일 bucket에서 받아오는 함수
   final client = await getAuthClient();
   final directory = await getPublicDownloadFolderPath();
