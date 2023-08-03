@@ -11,6 +11,8 @@ import 'package:voicepocket/widgets/membership_button.dart';
 import '../../constants/gaps.dart';
 
 class MainScreen extends StatefulWidget {
+  static const routeName = 'main';
+  static const routeURL = '/main';
   const MainScreen({super.key});
 
   @override
@@ -68,12 +70,8 @@ class _MainScreenState extends State<MainScreen> {
           //   fontSize: Sizes.size20,
           // );
           if (!mounted) return;
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
-            ),
-            (route) => false,
-          );
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(HomeScreen.routeName, (route) => false);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

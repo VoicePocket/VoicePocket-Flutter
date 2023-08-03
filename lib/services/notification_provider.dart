@@ -6,29 +6,18 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/screens/friend/friend_main_screen.dart';
-import 'package:voicepocket/screens/voicepocket/post_text_screen_demo_friend.dart';
-import 'package:voicepocket/services/google_cloud_service.dart';
 import 'package:voicepocket/models/database_service.dart';
 
 import '../screens/voicepocket/post_text_screen_demo.dart';
+import '../screens/voicepocket/post_text_screen_demo_friend.dart';
 import 'global_var.dart';
 
 class NotificationProvider extends AsyncNotifier {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   String defaultEmail = "";
 
-  //메시지 전송 함수
-  sendMessage(String text) async {
-    final pref = await SharedPreferences.getInstance();
-    defaultEmail = pref.getString("email")!;
-    if (text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": text,
-        "sender": 'SERVER',
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
-      DatabaseService().sendMessage(defaultEmail, chatMessageMap);
-    }
+  handleClickNotification(String? payload) {
+    print('clicked ${payload.toString()}');
   }
 
   //FCM 상태는 3가지(Back / Fore / Terminated)
@@ -69,11 +58,16 @@ class NotificationProvider extends AsyncNotifier {
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
     var initializationSettingsAndroid =
-        const AndroidInitializationSettings('@mipmap/ic_launcher');
+        const AndroidInitializationSettings('ic_noti');
     var initializationSettingsIOS = const IOSInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true);
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false);
+    await flutterLocalNotificationsPlugin.initialize(
+      InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS),
+    );
     //Foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification? notification = message.notification;
@@ -81,87 +75,20 @@ class NotificationProvider extends AsyncNotifier {
       AppleNotification? ios = message.notification?.apple;
       print("I got message in FOREGROUND\nMessage data: ${message.data['ID']}");
       if (notification != null && (android != null || ios != null)) {
-        await flutterLocalNotificationsPlugin.initialize(
-          InitializationSettings(
-              android: initializationSettingsAndroid,
-              iOS: initializationSettingsIOS),
+        await flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channelDescription: channel.description,
+              enableVibration: true,
+              channelShowBadge: true,
+            ),
+          ),
         );
-        if (android != null) {
-          await flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                channelDescription: channel.description,
-                enableVibration: true,
-                channelShowBadge: true,
-              ),
-            ),
-          );
-        }
-        if (message.data['ID'].toString() == "3") {
-          final wavUrl = message.data['wavUrl'];
-          await readWavFileFromNotification(wavUrl);
-          if (message.data['wavUrl'].endsWith('.wav')) {
-            final pref = await SharedPreferences.getInstance();
-            defaultEmail = pref.getString("email")!;
-
-            //파이어베이스에 서버 명의로 메시지 전송
-            Map<String, dynamic> chatMessageMap = {
-              "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
-              "sender": 'SERVER',
-              "time": DateTime.now().millisecondsSinceEpoch,
-            };
-            final notiEmail = wavUrl.split("/")[0];
-            if (defaultEmail == notiEmail) {
-              DatabaseService().sendMessage(defaultEmail, chatMessageMap);
-              Navigator.of(GlobalVariable.navState.currentContext!)
-                  .pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => PostTextScreenDemo(
-                    email: defaultEmail,
-                  ),
-                ),
-              );
-            } else {
-              DatabaseService().sendMessageForFriend(
-                  defaultEmail, notiEmail, chatMessageMap);
-              Navigator.of(GlobalVariable.navState.currentContext!)
-                  .pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => PostTextScreenDemoFriend(
-                    email: notiEmail,
-                  ),
-                ),
-              );
-            }
-            return;
-          }
-          //친구 신청(Frined Request)
-        } else if (message.data['ID'].toString() == "1") {
-          Navigator.of(GlobalVariable.navState.currentContext!).push(
-            MaterialPageRoute(
-              builder: (context) => const FriendMainScreen(
-                index: 2,
-              ),
-            ),
-          );
-          //친구 수락(Friend Accept)
-        } else if (message.data['ID'].toString() == "2") {
-          Navigator.of(GlobalVariable.navState.currentContext!).push(
-            MaterialPageRoute(
-              builder: (context) => const FriendMainScreen(
-                index: 0,
-              ),
-            ),
-          );
-        } else {
-          print("데이터 없습니다.");
-          return;
-        }
       }
     });
     //Background
@@ -170,48 +97,25 @@ class NotificationProvider extends AsyncNotifier {
       AndroidNotification? android = message.notification?.android;
       AppleNotification? ios = message.notification?.apple;
       //백그라운드에서 메시지를 받은 경우
-      print("I got message in BACKGROUND\nMessage data: ${message.data['ID']}");
+      print("I got message in CLICKED\nMessage data: ${message.data['ID']}");
       if (notification != null && (android != null || ios != null)) {
         if (message.data['ID'].toString() == "3") {
-          final wavUrl = message.data['wavUrl'];
-          await readWavFileFromNotification(wavUrl);
-          if (message.data['wavUrl'].endsWith('.wav')) {
-            final pref = await SharedPreferences.getInstance();
-            defaultEmail = pref.getString("email")!;
-
-            //파이어베이스에 서버 명의로 메시지 전송
-            Map<String, dynamic> chatMessageMap = {
-              "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
-              "sender": 'SERVER',
-              "time": DateTime.now().millisecondsSinceEpoch,
-            };
-            final notiEmail = wavUrl.split("/")[0];
-            if (defaultEmail == notiEmail) {
-              DatabaseService().sendMessage(defaultEmail, chatMessageMap);
-              Navigator.of(GlobalVariable.navState.currentContext!)
-                  .pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => PostTextScreenDemo(
-                    email: defaultEmail,
-                  ),
-                ),
-              );
-            } else {
-              DatabaseService().sendMessageForFriend(
-                  defaultEmail, notiEmail, chatMessageMap);
-              Navigator.of(GlobalVariable.navState.currentContext!)
-                  .pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => PostTextScreenDemoFriend(
-                    email: notiEmail,
-                  ),
-                ),
-              );
-            }
-            return;
-          }
+          Navigator.pushReplacement(
+            GlobalVariable.navState.currentContext!,
+            PageRouteBuilder(
+              pageBuilder: (BuildContext context, Animation<double> animation1,
+                  Animation<double> animation2) {
+                return PostTextScreenDemo(
+                  email: defaultEmail,
+                );
+              },
+              transitionDuration: Duration.zero,
+              reverseTransitionDuration: Duration.zero,
+            ),
+          );
           //친구 신청(Frined Request)
         } else if (message.data['ID'].toString() == "1") {
+          print('친구 신청');
           Navigator.of(GlobalVariable.navState.currentContext!).push(
             MaterialPageRoute(
               builder: (context) => const FriendMainScreen(
@@ -219,8 +123,13 @@ class NotificationProvider extends AsyncNotifier {
               ),
             ),
           );
+          // context.pushReplacementNamed(
+          //   FriendMainScreen.routeName,
+          //   pathParameters: {'index': '2'},
+          // );
           //친구 수락(Friend Accept)
         } else if (message.data['ID'].toString() == "2") {
+          print('친구 수락');
           Navigator.of(GlobalVariable.navState.currentContext!).push(
             MaterialPageRoute(
               builder: (context) => const FriendMainScreen(
@@ -228,6 +137,10 @@ class NotificationProvider extends AsyncNotifier {
               ),
             ),
           );
+          // context.pushReplacementNamed(
+          //   FriendMainScreen.routeName,
+          //   pathParameters: {'index': '0'},
+          // );
         } else {
           print("데이터 없습니다.");
           return;
@@ -243,7 +156,7 @@ class NotificationProvider extends AsyncNotifier {
       if (notification != null && android != null) {
         if (message.data['ID'].toString() == "3") {
           final wavUrl = message.data['wavUrl'];
-          await readWavFileFromNotification(wavUrl);
+          //await readWavFileFromNotification(wavUrl);
           if (message.data['wavUrl'].endsWith('.wav')) {
             final pref = await SharedPreferences.getInstance();
             defaultEmail = pref.getString("email")!;
@@ -281,6 +194,7 @@ class NotificationProvider extends AsyncNotifier {
           }
           //친구 신청(Frined Request)
         } else if (message.data['ID'].toString() == "1") {
+          print('친구 신청(Terminate)');
           Navigator.of(GlobalVariable.navState.currentContext!).push(
             MaterialPageRoute(
               builder: (context) => const FriendMainScreen(
@@ -290,6 +204,7 @@ class NotificationProvider extends AsyncNotifier {
           );
           //친구 수락(Friend Accept)
         } else if (message.data['ID'].toString() == "2") {
+          print('친구 수락(Terminate)');
           Navigator.of(GlobalVariable.navState.currentContext!).push(
             MaterialPageRoute(
               builder: (context) => const FriendMainScreen(

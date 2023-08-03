@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen copy.dart';
 
 class AudioPlayerHelper {
   final AudioPlayer audioPlayer = AudioPlayer();

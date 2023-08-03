@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
+import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 
 import '../authentications/home_screen.dart';
 
@@ -12,7 +14,11 @@ enum Progress {
 }
 
 class RecordroomMainScreen extends StatefulWidget {
-  const RecordroomMainScreen({super.key});
+  static const routeName = 'recordroom-main-screen';
+  final Map<String, List<String>> metaData;
+  final int modelIndex;
+  const RecordroomMainScreen(
+      {super.key, required this.metaData, required this.modelIndex});
 
   @override
   State<RecordroomMainScreen> createState() => _RecordroomMainScreenState();
@@ -45,6 +51,17 @@ class _RecordroomMainScreenState extends State<RecordroomMainScreen> {
     );
   }
 
+  void reRecord() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => RecordroomStudioScreen(
+          metaData: widget.metaData,
+          modelIndex: widget.modelIndex - 1,
+        ),
+      ),
+    );
+  }
+
   String getProgress(Progress progress) {
     switch (progress) {
       case Progress.proceeding:
@@ -54,6 +71,78 @@ class _RecordroomMainScreenState extends State<RecordroomMainScreen> {
       case Progress.paused:
         return "중지";
     }
+  }
+
+  void reRecordDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              title: const Text(
+                "친구 신청",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: const [
+                    Text("상대의 이메일을 입력하시오."),
+                  ],
+                ),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () => reRecord(),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                      const EdgeInsets.all(15),
+                    ),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(Sizes.size10),
+                        side: const BorderSide(
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    "요청",
+                    style: TextStyle(
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                      const EdgeInsets.all(15),
+                    ),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(Sizes.size10),
+                        side: const BorderSide(color: Colors.red),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    "취소",
+                    style: TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
+        });
   }
 
   @override
@@ -71,8 +160,8 @@ class _RecordroomMainScreenState extends State<RecordroomMainScreen> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.account_circle_rounded),
-            onPressed: () {},
+            icon: const Icon(FontAwesomeIcons.repeat),
+            onPressed: () => reRecordDialog(),
           ),
         ],
       ),

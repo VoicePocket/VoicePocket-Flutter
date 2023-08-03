@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:voicepocket/constants/gaps.dart';
+import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/voicepocket/url_player_screen.dart';
+import 'package:voicepocket/services/google_cloud_service.dart';
 
 class MessageTile extends StatefulWidget {
+  final String wavUrl;
   final String message;
   final String sender;
   final bool sentByMe;
@@ -11,6 +15,7 @@ class MessageTile extends StatefulWidget {
     required this.message,
     required this.sender,
     required this.sentByMe,
+    required this.wavUrl,
   }) : super(key: key);
 
   @override
@@ -32,6 +37,10 @@ class _MessageTileState extends State<MessageTile> {
         isUrlMessage = true;
       });
     }
+  }
+
+  Future<void> downloadTap(String wavUrl) async {
+    await readWavFile(wavUrl);
   }
 
   @override
@@ -87,12 +96,42 @@ class _MessageTileState extends State<MessageTile> {
               height: 8,
             ),
             if (isUrlMessage)
-              SizedBox(
-                height: 50, // 적절한 크기를 지정하세요.
-                child: AudioPlayerPage(
-                    message: widget.message,
-                    sender: widget.sender,
-                    sentByMe: widget.sentByMe),
+              Column(
+                children: [
+                  SizedBox(
+                    height: 50, // 적절한 크기를 지정하세요.
+                    child: AudioPlayerPage(
+                        message: widget.message,
+                        sender: widget.sender,
+                        sentByMe: widget.sentByMe),
+                  ),
+                  Gaps.v10,
+                  GestureDetector(
+                    onTap: () async => downloadTap(widget.wavUrl),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(Sizes.size10),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "DOWNLOAD",
+                            style: TextStyle(
+                              color: Colors.grey.shade800,
+                              fontSize: Sizes.size16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               )
             else
               Text(

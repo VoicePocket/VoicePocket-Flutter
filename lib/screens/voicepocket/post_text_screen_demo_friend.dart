@@ -1,8 +1,11 @@
+//현재 사용 중인 페이지
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:voicepocket/models/text_model.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
@@ -14,11 +17,13 @@ import '../authentications/home_screen.dart';
 
 class PostTextScreenDemoFriend extends StatefulWidget {
   final String email;
-  const PostTextScreenDemoFriend({super.key, required this.email});
+  const PostTextScreenDemoFriend({
+    super.key,
+    required this.email,
+  });
 
   @override
-  State<PostTextScreenDemoFriend> createState() =>
-      _PostTextScreenDemoFriendState();
+  State<PostTextScreenDemoFriend> createState() => _PostTextScreenDemoFriendState();
 }
 
 class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
@@ -26,6 +31,7 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
   final TextEditingController _textController = TextEditingController();
   TextModel? response;
   String inputText = "";
+  String wavUrl = "";
   bool isLoading = false;
   String defaultEmail = "";
   late ScrollController _scrollController;
@@ -40,7 +46,7 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
 
   @override
   void initState() {
-    getFriendsChat();
+    getChat();
     super.initState();
     bool isUILoading = false;
     bool bottomFlag = true;
@@ -76,30 +82,52 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
     }
   }
 
-  getFriendsChat() async {
-    final pref = await SharedPreferences.getInstance();
-    defaultEmail = pref.getString("email")!;
-    DatabaseService().getFriendsChats(defaultEmail, widget.email).then((val) {
+  getChat() {
+    DatabaseService().getChats(widget.email).then((val) {
       setState(() {
         chats = val;
       });
     });
   }
 
-  void _postTextTab(String text) async {
+  Future<String> _postTextTab(String text) async {
+    final pref = await SharedPreferences.getInstance();
+    final uuid = const Uuid().v1();
+    final wavUrl = '${widget.email}/$uuid.wav';
+    final notiEmail = widget.email;
+    defaultEmail = pref.getString("email")!;
     setState(() {
       isLoading = true;
     });
-    var response = await postTextDemo(text, widget.email);
-    if (!mounted) return;
+    var response = await postTextDemo(text, widget.email, uuid);
+    /* await Future.delayed(
+      const Duration(
+        seconds: 10,
+      ),
+    );
+    if (!mounted) return ''; */
     if (response.success) {
       setState(() {
         isLoading = false;
       });
+      /* Map<String, dynamic> chatMessageMap = {
+        "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
+        "sender": 'SERVER',
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+      if (defaultEmail == notiEmail) {
+        DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+      } else {
+        DatabaseService()
+            .sendMessageForFriend(defaultEmail, notiEmail, chatMessageMap);
+      } */
+      print(wavUrl);
+      return wavUrl;
     } else if (response.code == -1006) {
       await tokenRefreshPost();
+      return '토큰 만료';
     } else {
-      return;
+      return '';
     }
   }
 
@@ -132,7 +160,14 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
+        //키보드 제외 영역 터치시 키보드 감춤 기능
+        body: GestureDetector(
+          onTap: (){
+            FocusScope.of(context).unfocus();
+          },
+          //스크롤뷰로 감싸 키보드 팝업 시 채팅창이 키보드 위로 올라가게 함
+          child:
+          SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
@@ -164,11 +199,12 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
                         width: 12,
                       ),
                       InkWell(
-                        onTap: () {
+                      onTap: () {
                           sendMessageForFriend(inputText);
                           _postTextTab(inputText);
                           bottomFlag = true;
                         },
+
                         child: Container(
                           height: 50,
                           width: 50,
@@ -190,7 +226,8 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
               ),
             ],
           ),
-        ));
+        ))
+    );
   }
 
   sendMessageForFriend(String text) async {
@@ -213,12 +250,13 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
 
   chatMessages() {
     return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.75,
+        height: MediaQuery.of(context).size.height * 0.79,
         child: StreamBuilder(
           stream: chats,
           builder: (context, AsyncSnapshot snapshot) {
             return snapshot.hasData
                 ? ListView.builder(
+                    reverse: true,
                     physics: const BouncingScrollPhysics(),
                     controller: _scrollController,
                     itemCount: snapshot.data.docs.length,
@@ -227,9 +265,10 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           MessageTile(
+                            wavUrl: wavUrl,
                             message: snapshot.data.docs[index]['message'],
                             sender: snapshot.data.docs[index]['sender'],
-                            sentByMe: defaultEmail ==
+                            sentByMe: widget.email ==
                                 snapshot.data.docs[index]['sender'],
                           ),
                           if (isLoading &&
