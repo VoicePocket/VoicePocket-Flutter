@@ -1,3 +1,5 @@
+//지금 안쓰는 페이지
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:voicepocket/models/text_model.dart';
