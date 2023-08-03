@@ -100,17 +100,17 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
       isLoading = true;
     });
     var response = await postTextDemo(text, widget.email, uuid);
-    await Future.delayed(
+    /* await Future.delayed(
       const Duration(
         seconds: 10,
       ),
     );
-    if (!mounted) return '';
+    if (!mounted) return ''; */
     if (response.success) {
       setState(() {
         isLoading = false;
       });
-      Map<String, dynamic> chatMessageMap = {
+      /* Map<String, dynamic> chatMessageMap = {
         "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
         "sender": 'SERVER',
         "time": DateTime.now().millisecondsSinceEpoch,
@@ -120,7 +120,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
       } else {
         DatabaseService()
             .sendMessageForFriend(defaultEmail, notiEmail, chatMessageMap);
-      }
+      } */
       print(wavUrl);
       return wavUrl;
     } else if (response.code == -1006) {
@@ -160,7 +160,14 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
+        //키보드 제외 영역 터치시 키보드 감춤 기능
+        body: GestureDetector(
+          onTap: (){
+            FocusScope.of(context).unfocus();
+          },
+          //스크롤뷰로 감싸 키보드 팝업 시 채팅창이 키보드 위로 올라가게 함
+          child:
+          SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
@@ -218,7 +225,8 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
               ),
             ],
           ),
-        ));
+        ))
+    );
   }
 
   sendMessage(String text) async {
@@ -246,6 +254,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
           builder: (context, AsyncSnapshot snapshot) {
             return snapshot.hasData
                 ? ListView.builder(
+                    reverse: true,
                     physics: const BouncingScrollPhysics(),
                     controller: _scrollController,
                     itemCount: snapshot.data.docs.length,

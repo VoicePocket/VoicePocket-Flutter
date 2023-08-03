@@ -29,7 +29,7 @@ class DatabaseService {
     return userCollection
         .doc(email)
         .collection("message")
-        .orderBy("time")
+        .orderBy("time", descending: true)
         .snapshots();
   }
 
@@ -38,7 +38,7 @@ class DatabaseService {
     return userCollection
         .doc(email)
         .collection(friendsemail)
-        .orderBy("time")
+        .orderBy("time", descending: true)
         .snapshots();
   }
 
