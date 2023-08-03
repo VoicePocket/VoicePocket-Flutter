@@ -1,3 +1,5 @@
+//친구 창에서 사용 중인 페이지
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';

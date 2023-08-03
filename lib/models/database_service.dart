@@ -28,7 +28,7 @@ class DatabaseService {
   getChats(String email) async {
     return userCollection
         .doc(email)
-        .collection("messages")
+        .collection("message")
         .orderBy("time")
         .snapshots();
   }
@@ -44,7 +44,7 @@ class DatabaseService {
 
   ///메시지 전송
   sendMessage(String email, Map<String, dynamic> chatMessageData) async {
-    userCollection.doc(email).collection("messages").add(chatMessageData);
+    userCollection.doc(email).collection("message").add(chatMessageData);
     userCollection.doc(email).update({
       "recentMessage": chatMessageData['message'],
       "recentMessageSender": chatMessageData['sender'],
