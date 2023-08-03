@@ -35,12 +35,12 @@ Future<AutoRefreshingAuthClient> getAuthClient() async {
 //   }
 // }
 
-Future<void> readWavFileFromNotification(String wavUrl) async {
+Future<void> readWavFile(String wavUrl) async {
   // wav파일 bucket에서 받아오는 함수
   final client = await getAuthClient();
   final directory = await getPublicDownloadFolderPath();
   try {
-    final storage = Storage(client, "My First Project");
+    final storage = Storage(client, "VoicePocket");
     final bucket = storage.bucket("voice_pocket_egg");
 
     await bucket.read(wavUrl).pipe(
@@ -60,7 +60,7 @@ Future<void> readAllWavFiles(String email) async {
   final client = await getAuthClient();
   final directory = await getApplicationDocumentsDirectory();
   try {
-    final storage = Storage(client, "My First Project");
+    final storage = Storage(client, "VoicePocket");
     final bucket = storage.bucket("voice_pocket_egg");
 
     final wavlist = bucket.list(
@@ -68,10 +68,13 @@ Future<void> readAllWavFiles(String email) async {
     );
     await for (var wav in wavlist) {
       if (wav.name.endsWith(".wav") &&
-          !(await File("${directory.path}/wav/${wav.name}").exists())) {
+          !(await File("${directory.path}/model/${wav.name.split("/")[1]}")
+              .exists())) {
         await bucket.read(wav.name).pipe(
-              File("${directory.path}/wav/${wav.name}").openWrite(),
+              File("${directory.path}/model/${wav.name.split("/")[1]}")
+                  .openWrite(),
             );
+        print(wav.name);
       }
     }
     print("받아오기 완료");
@@ -87,7 +90,7 @@ Future<bool> uploadModelVoiceFileToBucket() async {
   final client = await getAuthClient();
   final directory = await getApplicationDocumentsDirectory();
   try {
-    final storage = Storage(client, "My First Project");
+    final storage = Storage(client, "VoicePocket");
     final bucket = storage.bucket("voice_pocket_egg");
 
     await File("${directory.path}/$email.zip") // 로컬의 파일명

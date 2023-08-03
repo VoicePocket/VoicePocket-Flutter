@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
-import 'package:voicepocket/services/notification_provider.dart';
 import 'package:voicepocket/services/global_var.dart';
-import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen.dart';
-import 'package:voicepocket/screens/renewmainpage.dart';
+import 'package:voicepocket/services/notification_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   //String? firebaseToken = await fcmSetting();
   runApp(
     const ProviderScope(
@@ -49,8 +48,7 @@ class App extends ConsumerWidget {
         ),
       ),
       home: const MainScreen(),
-      //home: const VoicePocketPlayScreen(email: 'ssh@gmail.com'),
-      //home: const Renewmainpage(),
+      //home: const PostTextScreen(),
     );
   }
 }
