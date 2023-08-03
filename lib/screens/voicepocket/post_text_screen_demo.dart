@@ -177,15 +177,15 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.1,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   height: MediaQuery.of(context).size.height * 0.1,
                   width: MediaQuery.of(context).size.width,
                   color: const Color.fromRGBO(243, 230, 255, 0.816),
                   child: Row(
+                    //mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                          child: TextFormField(
+                        child: TextFormField(
                         controller: _textController,
                         style: const TextStyle(color: Colors.black),
                         decoration: const InputDecoration(
@@ -195,9 +195,9 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                           border: InputBorder.none,
                         ),
                       )),
-                      const SizedBox(
+                      /* const SizedBox(
                         width: 12,
-                      ),
+                      ), */
                       InkWell(
                         onTap: () async {
                           sendMessage(inputText);
