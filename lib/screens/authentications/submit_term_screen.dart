@@ -5,6 +5,9 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'submit_info_screen.dart';
 
 class SubmitTermScreen extends StatelessWidget {
+  static const routeName = 'submitTerm';
+  static const routeURL = '/submitTerm';
+
   const SubmitTermScreen({super.key});
 
   void _onAgreeTab(BuildContext context) {

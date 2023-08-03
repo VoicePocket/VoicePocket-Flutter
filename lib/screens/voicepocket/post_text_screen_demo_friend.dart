@@ -5,6 +5,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:voicepocket/models/text_model.dart';
 import 'package:voicepocket/services/post_text.dart';
 import 'package:voicepocket/services/token_refresh_post.dart';
@@ -16,7 +17,10 @@ import '../authentications/home_screen.dart';
 
 class PostTextScreenDemoFriend extends StatefulWidget {
   final String email;
-  const PostTextScreenDemoFriend({super.key, required this.email});
+  const PostTextScreenDemoFriend({
+    super.key,
+    required this.email,
+  });
 
   @override
   State<PostTextScreenDemoFriend> createState() =>
@@ -88,20 +92,44 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
     });
   }
 
-  void _postTextTab(String text) async {
+  Future<String> _postTextTab(String text) async {
+    final pref = await SharedPreferences.getInstance();
+    final uuid = const Uuid().v1();
+    final wavUrl = '${widget.email}/$uuid.wav';
+    final notiEmail = widget.email;
+    defaultEmail = pref.getString("email")!;
     setState(() {
       isLoading = true;
     });
-    var response = await postTextDemo(text, widget.email);
-    if (!mounted) return;
+    var response = await postTextDemo(text, widget.email, uuid);
+    await Future.delayed(
+      const Duration(
+        seconds: 10,
+      ),
+    );
+    if (!mounted) return '';
     if (response.success) {
       setState(() {
         isLoading = false;
       });
+      Map<String, dynamic> chatMessageMap = {
+        "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
+        "sender": 'SERVER',
+        "time": DateTime.now().millisecondsSinceEpoch,
+      };
+      if (defaultEmail == notiEmail) {
+        DatabaseService().sendMessage(defaultEmail, chatMessageMap);
+      } else {
+        DatabaseService()
+            .sendMessageForFriend(defaultEmail, notiEmail, chatMessageMap);
+      }
+      print(wavUrl);
+      return wavUrl;
     } else if (response.code == -1006) {
       await tokenRefreshPost();
+      return '토큰 만료';
     } else {
-      return;
+      return '';
     }
   }
 
@@ -215,7 +243,7 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
 
   chatMessages() {
     return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.75,
+        height: MediaQuery.of(context).size.height * 0.79,
         child: StreamBuilder(
           stream: chats,
           builder: (context, AsyncSnapshot snapshot) {
@@ -229,6 +257,7 @@ class _PostTextScreenDemoFriendState extends State<PostTextScreenDemoFriend> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           MessageTile(
+                            wavUrl: '',
                             message: snapshot.data.docs[index]['message'],
                             sender: snapshot.data.docs[index]['sender'],
                             sentByMe: defaultEmail ==

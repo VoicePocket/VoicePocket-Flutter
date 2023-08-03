@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
@@ -13,14 +14,15 @@ import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
 import 'package:voicepocket/services/load_csv.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
+  static const routeName = 'home';
+  static const routeURL = '/home';
   const HomeScreen({super.key});
-
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends ConsumerState<HomeScreen> {
   late Map<String, List<String>> metaData;
   List<int> modelIndexList = [];
   int modelIndex = 0;
@@ -47,10 +49,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onRecordTab(BuildContext context) {
+    // Navigator.of(context).pushNamed(
+    //   modelIndex == 315
+    //       ? RecordroomMainScreen.routeName
+    //       : RecordroomStudioScreen.routeName,
+    //   arguments: {'metaData': metaData, 'modelIndex': modelIndex},
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => modelIndex == 315
-            ? const RecordroomMainScreen()
+            ? RecordroomMainScreen(
+                metaData: metaData,
+                modelIndex: modelIndex,
+              )
             : RecordroomStudioScreen(
                 metaData: metaData,
                 modelIndex: modelIndex,

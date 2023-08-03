@@ -24,6 +24,7 @@ enum RecordingState {
 }
 
 class RecordroomStudioScreen extends StatefulWidget {
+  static const routeName = 'recordroom-studio-screen';
   final Map<String, List<String>> metaData;
   final int modelIndex;
   const RecordroomStudioScreen(
@@ -195,6 +196,14 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     encoder.zipDirectory(dir, filename: zipPath);
   }
 
+  void deleteFile() async {
+    String filePath =
+        "${modelDir.path}/${widget.metaData['name']![_index - 1]}.wav";
+    if (await File(filePath).exists()) {
+      await File(filePath).delete();
+    }
+  }
+
   void completeModelCreate(BuildContext context) async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
     String filePath =
@@ -215,7 +224,10 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (context) => const RecordroomMainScreen(),
+          builder: (context) => RecordroomMainScreen(
+            metaData: widget.metaData,
+            modelIndex: widget.modelIndex,
+          ),
         ),
         (route) => false,
       );
@@ -295,8 +307,8 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.account_circle_rounded),
-            onPressed: () {},
+            icon: const Icon(FontAwesomeIcons.trashCan),
+            onPressed: () => deleteFile(),
           ),
         ],
       ),

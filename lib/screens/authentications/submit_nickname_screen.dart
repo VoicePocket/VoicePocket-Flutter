@@ -7,6 +7,8 @@ import 'package:voicepocket/screens/authentications/submit_info_screen.dart';
 import 'package:voicepocket/services/signup_post.dart';
 
 class SubmitNicknameScreen extends StatefulWidget {
+  static const routeName = 'submitNickname';
+  static const routeURL = '/submitNickname';
   final String email, password;
   const SubmitNicknameScreen({
     super.key,
@@ -223,7 +225,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
               Gaps.v96,
               Gaps.v96,
               GestureDetector(
-                onTap: _onSubmit,
+                onTap: () => _onSubmit(),
                 child: Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 10,

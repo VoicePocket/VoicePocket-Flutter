@@ -2,13 +2,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
 import 'package:voicepocket/services/global_var.dart';
 import 'package:voicepocket/models/text_model.dart';
 
-Future<TextModel> postText(String email, String text) async {
+Future<TextModel> postText(String email, String text, String uuid) async {
   final pref = await SharedPreferences.getInstance();
-  final uuid = const Uuid().v1();
   const String iosUrl = VoicePocketUri.iosUrl;
   const String androidUrl = VoicePocketUri.androidUrl;
   final uri = defaultTargetPlatform == TargetPlatform.iOS
@@ -50,9 +48,8 @@ Future<TextModel> postText(String email, String text) async {
   }
 }
 
-Future<TextModel> postTextDemo(String text, String email) async {
+Future<TextModel> postTextDemo(String text, String email, String uuid) async {
   final pref = await SharedPreferences.getInstance();
-  final uuid = const Uuid().v1();
   const String iosUrl = VoicePocketUri.iosUrl;
   const String androidUrl = VoicePocketUri.androidUrl;
 
