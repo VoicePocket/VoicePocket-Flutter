@@ -100,27 +100,10 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
       isLoading = true;
     });
     var response = await postTextDemo(text, widget.email, uuid);
-    /* await Future.delayed(
-      const Duration(
-        seconds: 10,
-      ),
-    );
-    if (!mounted) return ''; */
     if (response.success) {
       setState(() {
         isLoading = false;
       });
-      /* Map<String, dynamic> chatMessageMap = {
-        "message": "https://storage.googleapis.com/voicepocket/$wavUrl",
-        "sender": 'SERVER',
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
-      if (defaultEmail == notiEmail) {
-        DatabaseService().sendMessage(defaultEmail, chatMessageMap);
-      } else {
-        DatabaseService()
-            .sendMessageForFriend(defaultEmail, notiEmail, chatMessageMap);
-      } */
       print(wavUrl);
       return wavUrl;
     } else if (response.code == -1006) {
@@ -254,7 +237,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
           builder: (context, AsyncSnapshot snapshot) {
             return snapshot.hasData
                 ? ListView.builder(
-                    reverse: true,
+                    //reverse: true,
                     physics: const BouncingScrollPhysics(),
                     controller: _scrollController,
                     itemCount: snapshot.data.docs.length,
