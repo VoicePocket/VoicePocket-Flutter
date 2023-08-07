@@ -1,6 +1,6 @@
 //현재 사용 중인 페이지
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:just_audio/just_audio.dart';
@@ -32,26 +32,29 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
   TextModel? response;
   String inputText = "";
   String wavUrl = "";
-  bool isLoading = false;
   String defaultEmail = "";
-  late ScrollController _scrollController;
   List<QueryDocumentSnapshot> listMessage = [];
   late AudioPlayer audioPlayer = audioPlayer;
   final BehaviorSubject<PlayerState> _playerStateSubject =
       BehaviorSubject<PlayerState>();
+  late ScrollController _scrollController;
 
-  bool isUILoading = false;
-  bool bottomFlag = true;
-  bool isScrollBottomFixed = true;
 
   @override
   void initState() {
     getChat();
     super.initState();
-    bool isUILoading = false;
-    bool bottomFlag = true;
+
     _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
+
+    // 리스트 뷰의 스크롤 위치가 변경될 때마다 호출되는 리스너를 추가합니다.
+    _scrollController.addListener(() {
+      if (_scrollController.position.atEdge && _scrollController.position.pixels != 0) {
+        // 리스트 뷰의 맨 아래로 스크롤하려는 경우, 더 많은 메시지를 로드합니다.
+        loadMoreMessages();
+      }
+    });
+
     _textController.addListener(() {
       setState(() {
         inputText = _textController.text;
@@ -66,20 +69,6 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
       ),
       (route) => false,
     );
-  }
-
-  _scrollListener() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      setState(() {
-        isScrollBottomFixed = true;
-      });
-    } else {
-      setState(() {
-        isScrollBottomFixed = false;
-      });
-    }
   }
 
   getChat() {
@@ -97,12 +86,10 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
     final notiEmail = widget.email;
     defaultEmail = pref.getString("email")!;
     setState(() {
-      isLoading = true;
     });
     var response = await postTextDemo(text, widget.email, uuid);
     if (response.success) {
       setState(() {
-        isLoading = false;
       });
       print(wavUrl);
       return wavUrl;
@@ -151,6 +138,7 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
           //스크롤뷰로 감싸 키보드 팝업 시 채팅창이 키보드 위로 올라가게 함
           child:
           SingleChildScrollView(
+          //controller: _scrollController,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
@@ -185,7 +173,6 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                         onTap: () async {
                           sendMessage(inputText);
                           wavUrl = await _postTextTab(inputText);
-                          bottomFlag = true;
                         },
                         child: Container(
                           height: 50,
@@ -212,6 +199,37 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
     );
   }
 
+  Future<void> loadMoreMessages() async {
+    // 가장 마지막 메시지의 시간을 기준으로 이전 메시지 20개를 가져옴
+    final lastMessageTime = listMessage.isNotEmpty
+        ? listMessage.first['time']
+        : DateTime.now().millisecondsSinceEpoch;
+
+    final moreChats =
+        await getMoreChats(widget.email, lastMessageTime);
+
+    setState(() {
+      listMessage.insertAll(0, moreChats.docs);
+    });
+  }
+
+  Future<QuerySnapshot> getMoreChats(String email, int lastMessageTime) async {
+  try {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('chats')
+        .where('sender', isEqualTo: email)
+        .where('time', isLessThan: lastMessageTime)
+        .orderBy('time', descending: true)
+        .limit(20)
+        .get();
+
+    return querySnapshot;
+  } catch (e) {
+    print("Error getting more chats: $e");
+    rethrow; // 예외를 다시 던져서 상위 호출자에서 처리하도록 함
+  }
+}
+
   sendMessage(String text) async {
     final pref = await SharedPreferences.getInstance();
     defaultEmail = pref.getString("email")!;
@@ -230,37 +248,41 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
   }
 
   chatMessages() {
-    return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.79,
-        child: StreamBuilder(
-          stream: chats,
-          builder: (context, AsyncSnapshot snapshot) {
-            return snapshot.hasData
-                ? ListView.builder(
-                    //reverse: true,
-                    physics: const BouncingScrollPhysics(),
-                    controller: _scrollController,
-                    itemCount: snapshot.data.docs.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          MessageTile(
-                            wavUrl: wavUrl,
-                            message: snapshot.data.docs[index]['message'],
-                            sender: snapshot.data.docs[index]['sender'],
-                            sentByMe: widget.email ==
-                                snapshot.data.docs[index]['sender'],
-                          ),
-                          if (isLoading &&
-                              index == snapshot.data.docs.length - 1)
-                            const MessageTileIndicator(),
-                        ],
-                      );
-                    },
-                  )
-                : Container();
-          },
-        ));
-  }
+  return SizedBox(
+    height: MediaQuery.of(context).size.height * 0.79,
+    child: StreamBuilder(
+      stream: chats,
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            // 리스트 뷰가 다시 그려진 후에 아래로 스크롤합니다.
+            _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+          });
+
+          return ListView.builder(
+            controller: _scrollController, // ScrollController를 지정합니다.
+            physics: const BouncingScrollPhysics(),
+            itemCount: snapshot.data.docs.length,
+            itemBuilder: (context, index) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MessageTile(
+                    wavUrl: wavUrl,
+                    message: snapshot.data.docs[index]['message'],
+                    sender: snapshot.data.docs[index]['sender'],
+                    sentByMe: widget.email == snapshot.data.docs[index]['sender'],
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          return Container();
+        }
+      },
+    ),
+  );
+}
+
 }

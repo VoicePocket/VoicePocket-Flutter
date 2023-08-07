@@ -48,8 +48,8 @@ class App extends ConsumerWidget {
           ),
         ),
       ),
-      //home: const MainScreen(),
-      home: const PostTextScreenDemo( email: 'ssh@gmail.com'),
+      home: const MainScreen(),
+      //home: const PostTextScreenDemo( email: 'ssh@gmail.com'),
     );
   }
 }
