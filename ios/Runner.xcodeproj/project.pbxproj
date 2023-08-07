@@ -366,7 +366,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = BRBLZLM3SM;
+				DEVELOPMENT_TEAM = J37F74C2JU;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -396,7 +396,7 @@
 					"-framework",
 					"\"permission_handler_apple\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.examples.voicepocket;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.voicepocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -523,7 +523,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = BRBLZLM3SM;
+				DEVELOPMENT_TEAM = J37F74C2JU;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -553,7 +553,7 @@
 					"-framework",
 					"\"permission_handler_apple\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.examples.voicepocket;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.voicepocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -574,7 +574,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = BRBLZLM3SM;
+				DEVELOPMENT_TEAM = J37F74C2JU;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -604,7 +604,7 @@
 					"-framework",
 					"\"permission_handler_apple\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.examples.voicepocket;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.voicepocket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";

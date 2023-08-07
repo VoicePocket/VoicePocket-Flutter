@@ -15,8 +15,6 @@ import 'package:voicepocket/services/google_cloud_service.dart';
 import 'package:voicepocket/services/load_csv.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  static const routeName = 'home';
-  static const routeURL = '/home';
   const HomeScreen({super.key});
   @override
   HomeScreenState createState() => HomeScreenState();
@@ -81,7 +79,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
   void _onLogoutTab(BuildContext context) async {
     final pref = await SharedPreferences.getInstance();
-    pref.clear();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -96,6 +93,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       (route) => false,
     );
+    pref.clear();
   }
 
   void _onVoicePocketListTab(BuildContext context) {

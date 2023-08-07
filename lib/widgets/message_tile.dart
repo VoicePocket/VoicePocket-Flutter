@@ -24,6 +24,7 @@ class MessageTile extends StatefulWidget {
 
 class _MessageTileState extends State<MessageTile> {
   bool isUrlMessage = false;
+  bool isDownloaded = false;
 
   @override
   void initState() {
@@ -41,6 +42,9 @@ class _MessageTileState extends State<MessageTile> {
 
   Future<void> downloadTap(String wavUrl) async {
     await readWavFile(wavUrl);
+    setState(() {
+      isDownloaded = true;
+    });
   }
 
   @override
@@ -113,7 +117,8 @@ class _MessageTileState extends State<MessageTile> {
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color:
+                            isDownloaded ? Colors.grey.shade700 : Colors.white,
                         borderRadius: BorderRadius.circular(Sizes.size10),
                       ),
                       child: Row(

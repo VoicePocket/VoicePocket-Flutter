@@ -47,6 +47,9 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="VoicePocketNotificationId" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_noti" />   
         <service
             android:name="com.google.firebase.messaging.FirebaseMessagingService"
              android:exported="false">
