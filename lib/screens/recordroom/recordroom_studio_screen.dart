@@ -24,7 +24,6 @@ enum RecordingState {
 }
 
 class RecordroomStudioScreen extends StatefulWidget {
-  static const routeName = 'recordroom-studio-screen';
   final Map<String, List<String>> metaData;
   final int modelIndex;
   const RecordroomStudioScreen(
@@ -200,7 +199,80 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
     String filePath =
         "${modelDir.path}/${widget.metaData['name']![_index - 1]}.wav";
     if (await File(filePath).exists()) {
-      await File(filePath).delete();
+      if (!mounted) return;
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                title: const Text(
+                  "삭제 하시겠습니까?",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: const [
+                      Text("삭제된 파일은 복구되지 않습니다."),
+                    ],
+                  ),
+                ),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      await File(filePath).delete();
+                      if (!mounted) return;
+                      Navigator.of(context).pop();
+                    },
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsets>(
+                        const EdgeInsets.all(15),
+                      ),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(Sizes.size10),
+                          side: const BorderSide(
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "확인",
+                      style: TextStyle(
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsets>(
+                        const EdgeInsets.all(15),
+                      ),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(Sizes.size10),
+                          side: const BorderSide(color: Colors.red),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      "취소",
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            });
+          });
     }
   }
 

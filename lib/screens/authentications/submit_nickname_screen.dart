@@ -3,12 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
-import 'package:voicepocket/screens/authentications/submit_info_screen.dart';
 import 'package:voicepocket/services/signup_post.dart';
 
 class SubmitNicknameScreen extends StatefulWidget {
-  static const routeName = 'submitNickname';
-  static const routeURL = '/submitNickname';
   final String email, password;
   const SubmitNicknameScreen({
     super.key,
@@ -63,11 +60,7 @@ class _SubmitNicknameScreenState extends State<SubmitNicknameScreen> {
           backgroundColor: Colors.red.shade500,
         ),
       );
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const SubmitInfoScreen(),
-        ),
-      );
+      Navigator.of(context).pop(true);
     }
   }
 

@@ -187,16 +187,13 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                               color: Colors.white,
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ))
-    );
+            )));
   }
 
   Future<void> loadMoreMessages() async {
@@ -268,7 +265,6 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   MessageTile(
-                    wavUrl: wavUrl,
                     message: snapshot.data.docs[index]['message'],
                     sender: snapshot.data.docs[index]['sender'],
                     sentByMe: widget.email == snapshot.data.docs[index]['sender'],
@@ -284,5 +280,4 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
     ),
   );
 }
-
 }
