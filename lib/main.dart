@@ -5,7 +5,9 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/services/global_var.dart';
 import 'package:voicepocket/services/notification_provider.dart';
-import 'package:voicepocket/screens/voicepocket/post_text_screen.dart';
+import 'package:voicepocket/screens/voicepocket/post_text_screen_demo.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_play_screen copy.dart';
+import 'package:voicepocket/screens/voicepocket/voicepocket_select_action.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +52,8 @@ class App extends ConsumerWidget {
       ),
       home: const MainScreen(),
       //home: const PostTextScreenDemo( email: 'ssh@gmail.com'),
+      //home: const VoicePocketPlayScreenCopy(email: 'ssh@gmail.com',),
+      //home: const SelectScreen(email: 'ssh@gmail.com',name: '손석희',),
     );
   }
 }
