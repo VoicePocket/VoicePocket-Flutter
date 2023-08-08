@@ -447,7 +447,7 @@ class _VoicePocketPlayScreenCopyState extends State<VoicePocketPlayScreenCopy> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    IconButton(
+                                    /* IconButton(
                                       padding: const EdgeInsets.all(20),
                                       //use LoopNum
                                       onPressed: _handleLoopButtonPressed,
@@ -456,7 +456,7 @@ class _VoicePocketPlayScreenCopyState extends State<VoicePocketPlayScreenCopy> {
                                         size: 30,
                                       ),
                                       color: Theme.of(context).primaryColor,
-                                    ),
+                                    ), */
                                     IconButton(
                                       padding: const EdgeInsets.all(20),
                                       onPressed: _handlePreviousButtonPressed,
@@ -518,7 +518,7 @@ class _VoicePocketPlayScreenCopyState extends State<VoicePocketPlayScreenCopy> {
                                         height: 40,
                                       ),
                                     ),
-                                    IconButton(
+                                    /* IconButton(
                                       padding: const EdgeInsets.all(20),
                                       onPressed: () => (""),
                                       icon: Image.asset(
@@ -526,7 +526,7 @@ class _VoicePocketPlayScreenCopyState extends State<VoicePocketPlayScreenCopy> {
                                         width: 40,
                                         height: 40,
                                       ),
-                                    ),
+                                    ), */
                                   ],
                                 ),
                               ]);
