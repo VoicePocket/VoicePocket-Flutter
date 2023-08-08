@@ -5,7 +5,6 @@ import 'package:voicepocket/screens/voicepocket/url_player_screen.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
 
 class MessageTile extends StatefulWidget {
-  final String wavUrl;
   final String message;
   final String sender;
   final bool sentByMe;
@@ -15,7 +14,6 @@ class MessageTile extends StatefulWidget {
     required this.message,
     required this.sender,
     required this.sentByMe,
-    required this.wavUrl,
   }) : super(key: key);
 
   @override
@@ -40,7 +38,8 @@ class _MessageTileState extends State<MessageTile> {
     }
   }
 
-  Future<void> downloadTap(String wavUrl) async {
+  Future<void> downloadTap(String message) async {
+    String wavUrl = widget.message.split('/').sublist(4).join('/');
     await readWavFile(wavUrl);
     setState(() {
       isDownloaded = true;
@@ -111,7 +110,8 @@ class _MessageTileState extends State<MessageTile> {
                   ),
                   Gaps.v10,
                   GestureDetector(
-                    onTap: () async => downloadTap(widget.wavUrl),
+                    onTap: () async =>
+                        isDownloaded ? {} : downloadTap(widget.message),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         vertical: 10,
@@ -125,9 +125,11 @@ class _MessageTileState extends State<MessageTile> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "DOWNLOAD",
+                            isDownloaded ? "DOWNLOAD COMPLETED" : "DOWNLOAD",
                             style: TextStyle(
-                              color: Colors.grey.shade800,
+                              color: isDownloaded
+                                  ? Colors.white
+                                  : Colors.grey.shade800,
                               fontSize: Sizes.size16,
                               fontWeight: FontWeight.w600,
                             ),

@@ -162,71 +162,69 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
         ),
         //키보드 제외 영역 터치시 키보드 감춤 기능
         body: GestureDetector(
-          onTap: (){
-            FocusScope.of(context).unfocus();
-          },
-          //스크롤뷰로 감싸 키보드 팝업 시 채팅창이 키보드 위로 올라가게 함
-          child:
-          SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              chatMessages(),
-              Container(
-                alignment: Alignment.bottomCenter,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.1,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  height: MediaQuery.of(context).size.height * 0.1,
-                  width: MediaQuery.of(context).size.width,
-                  color: const Color.fromRGBO(243, 230, 255, 0.816),
-                  child: Row(
-                    //mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                        controller: _textController,
-                        style: const TextStyle(color: Colors.black),
-                        decoration: const InputDecoration(
-                          hintText: "메시지를 입력하세요.",
-                          hintStyle:
-                              TextStyle(color: Colors.black, fontSize: 16),
-                          border: InputBorder.none,
-                        ),
-                      )),
-                      /* const SizedBox(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            //스크롤뷰로 감싸 키보드 팝업 시 채팅창이 키보드 위로 올라가게 함
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  chatMessages(),
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      width: MediaQuery.of(context).size.width,
+                      color: const Color.fromRGBO(243, 230, 255, 0.816),
+                      child: Row(
+                        //mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: TextFormField(
+                            controller: _textController,
+                            style: const TextStyle(color: Colors.black),
+                            decoration: const InputDecoration(
+                              hintText: "메시지를 입력하세요.",
+                              hintStyle:
+                                  TextStyle(color: Colors.black, fontSize: 16),
+                              border: InputBorder.none,
+                            ),
+                          )),
+                          /* const SizedBox(
                         width: 12,
                       ), */
-                      InkWell(
-                        onTap: () async {
-                          sendMessage(inputText);
-                          wavUrl = await _postTextTab(inputText);
-                          bottomFlag = true;
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              Icons.send,
-                              color: Colors.white,
+                          InkWell(
+                            onTap: () async {
+                              sendMessage(inputText);
+                              wavUrl = await _postTextTab(inputText);
+                              bottomFlag = true;
+                            },
+                            child: Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.send,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ))
-    );
+            )));
   }
 
   sendMessage(String text) async {
@@ -263,7 +261,6 @@ class _PostTextScreenDemoState extends State<PostTextScreenDemo> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           MessageTile(
-                            wavUrl: wavUrl,
                             message: snapshot.data.docs[index]['message'],
                             sender: snapshot.data.docs[index]['sender'],
                             sentByMe: widget.email ==
