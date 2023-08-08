@@ -155,7 +155,7 @@ class _SelectScreenState extends State<SelectScreen> {
                                     "음성\n만들기",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: Sizes.size40,
+                                      fontSize: Sizes.size36,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -194,7 +194,7 @@ class _SelectScreenState extends State<SelectScreen> {
                                     textAlign: TextAlign.center,
                                     maxLines: 2,
                                     style: TextStyle(
-                                      fontSize: Sizes.size40,
+                                      fontSize: Sizes.size36,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700,
                                     ),

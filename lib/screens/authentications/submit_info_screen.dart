@@ -5,8 +5,6 @@ import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/submit_nickname_screen.dart';
 
 class SubmitInfoScreen extends StatefulWidget {
-  static const routeName = 'submitInfo';
-  static const routeURL = '/submitInfo';
   const SubmitInfoScreen({super.key});
 
   @override
@@ -38,12 +36,12 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
         .hasMatch(_email);
   }
 
-  void _onSubmit() {
+  void _onSubmit() async {
     if (!_isPasswordValid() || !_isEmailValid()) {
       return;
     }
     FocusScope.of(context).unfocus();
-    Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SubmitNicknameScreen(
@@ -51,9 +49,13 @@ class _SubmitInfoScreenState extends State<SubmitInfoScreen> {
           password: _password,
         ),
       ),
-    );
-    _emailController.clear();
-    _passwordController.clear();
+    ).then((error) {
+      if (error) {
+        _emailController.clear();
+        _passwordController.clear();
+      }
+      return '';
+    });
   }
 
   void _obsecureVisible() {

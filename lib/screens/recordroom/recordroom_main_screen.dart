@@ -14,7 +14,6 @@ enum Progress {
 }
 
 class RecordroomMainScreen extends StatefulWidget {
-  static const routeName = 'recordroom-main-screen';
   final Map<String, List<String>> metaData;
   final int modelIndex;
   const RecordroomMainScreen(
@@ -80,16 +79,9 @@ class _RecordroomMainScreenState extends State<RecordroomMainScreen> {
           return StatefulBuilder(builder: (context, setState) {
             return AlertDialog(
               title: const Text(
-                "친구 신청",
+                "음성 녹음을 다시 진행 하시겠습니까?",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                ),
-              ),
-              content: SingleChildScrollView(
-                child: ListBody(
-                  children: const [
-                    Text("상대의 이메일을 입력하시오."),
-                  ],
                 ),
               ),
               actions: [
@@ -111,7 +103,7 @@ class _RecordroomMainScreenState extends State<RecordroomMainScreen> {
                     ),
                   ),
                   child: const Text(
-                    "요청",
+                    "확인",
                     style: TextStyle(
                       color: Colors.green,
                     ),
