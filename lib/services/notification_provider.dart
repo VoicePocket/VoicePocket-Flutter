@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:voicepocket/screens/friend/friend_main_screen.dart';
 
 import 'global_var.dart';
@@ -13,33 +14,19 @@ class NotificationProvider extends AsyncNotifier {
   String defaultEmail = "";
   //FCM 상태는 3가지(Back / Fore / Terminated)
   Future<void> initListener() async {
+    print('noti init');
     //android & ios permission
-    final permission = await _messaging.requestPermission(
-      alert: true,
-      announcement: true,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-    // apple background setting
-    await _messaging.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    if (permission.authorizationStatus == AuthorizationStatus.denied) return;
-
+    final permission = await Permission.notification.request();
+    if (permission.isLimited ||
+        permission.isDenied ||
+        permission.isPermanentlyDenied) {
+      await openAppSettings();
+    }
     AndroidNotificationChannel channel = const AndroidNotificationChannel(
       'VoicePocketNotificationId', // id
       'VoicePocketNotificationName1',
       description: 'VoicePocket FCM Test!', // description
       importance: Importance.high,
-      playSound: true,
-      enableVibration: true,
-      showBadge: true,
-      enableLights: false,
     );
     //foreground 에서의 푸쉬 알람 표시를 위한 local notification 설정
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -50,10 +37,7 @@ class NotificationProvider extends AsyncNotifier {
         ?.createNotificationChannel(channel);
     var initializationSettingsAndroid =
         const AndroidInitializationSettings('ic_noti');
-    var initializationSettingsIOS = const IOSInitializationSettings(
-        requestAlertPermission: false,
-        requestBadgePermission: false,
-        requestSoundPermission: false);
+    var initializationSettingsIOS = const IOSInitializationSettings();
     await flutterLocalNotificationsPlugin.initialize(
       InitializationSettings(
           android: initializationSettingsAndroid,
@@ -77,6 +61,11 @@ class NotificationProvider extends AsyncNotifier {
               channelDescription: channel.description,
               enableVibration: true,
               channelShowBadge: true,
+            ),
+            iOS: const IOSNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
             ),
           ),
         );
