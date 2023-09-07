@@ -88,7 +88,7 @@ Future<bool> uploadModelVoiceFileToBucket() async {
   final pref = await SharedPreferences.getInstance();
   final email = pref.getString("email");
   final client = await getAuthClient();
-  final directory = await getApplicationDocumentsDirectory();
+  final directory = await getPublicDownloadFolderPath();
   try {
     final storage = Storage(client, "VoicePocket");
     final bucket = storage.bucket("voice_pocket_egg");

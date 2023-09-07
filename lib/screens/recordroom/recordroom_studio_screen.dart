@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:archive/archive_io.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_recorder2/flutter_audio_recorder2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -34,7 +35,7 @@ class RecordroomStudioScreen extends StatefulWidget {
 }
 
 class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
-  bool _hasPermission = false;
+  final bool _hasPermission = false;
   List<String> name = [], content = [];
   List<int> length = [];
   Directory modelDir = Directory("");
@@ -68,8 +69,11 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   }
 
   Future<void> requestPermission() async {
-    _hasPermission = await Permission.microphone.request().isGranted;
-    if (_hasPermission) {
+    var hasPermission = defaultTargetPlatform == TargetPlatform.iOS
+        ? await Permission.microphone.request().isGranted
+        : await Permission.microphone.request().isGranted &&
+            await Permission.manageExternalStorage.request().isGranted;
+    if (hasPermission) {
       setState(() {
         _recordingState = RecordingState.ready;
         _recordIcon = FontAwesomeIcons.microphone;
