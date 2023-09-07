@@ -35,7 +35,7 @@ class RecordroomStudioScreen extends StatefulWidget {
 }
 
 class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
-  final bool _hasPermission = false;
+  bool _hasPermission = false;
   List<String> name = [], content = [];
   List<int> length = [];
   Directory modelDir = Directory("");
@@ -69,11 +69,11 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   }
 
   Future<void> requestPermission() async {
-    var hasPermission = defaultTargetPlatform == TargetPlatform.iOS
+    _hasPermission = defaultTargetPlatform == TargetPlatform.iOS
         ? await Permission.microphone.request().isGranted
         : await Permission.microphone.request().isGranted &&
             await Permission.manageExternalStorage.request().isGranted;
-    if (hasPermission) {
+    if (_hasPermission) {
       setState(() {
         _recordingState = RecordingState.ready;
         _recordIcon = FontAwesomeIcons.microphone;
