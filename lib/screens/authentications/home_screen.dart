@@ -8,7 +8,6 @@ import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/screens/friend/friend_main_screen.dart';
-import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
 import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
@@ -55,9 +54,9 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => modelIndex == 315
-            ? RecordroomMainScreen(
+            ? RecordroomStudioScreen(
                 metaData: metaData,
-                modelIndex: modelIndex,
+                modelIndex: modelIndex - 1,
               )
             : RecordroomStudioScreen(
                 metaData: metaData,

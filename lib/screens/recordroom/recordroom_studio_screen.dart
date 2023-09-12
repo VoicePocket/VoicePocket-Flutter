@@ -8,11 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_recorder2/flutter_audio_recorder2.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/home_screen.dart';
-import 'package:voicepocket/screens/recordroom/recordroom_main_screen.dart';
 import 'package:voicepocket/services/load_csv.dart';
 
 import '../../services/google_cloud_service.dart';
@@ -281,33 +279,80 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
   }
 
   void completeModelCreate(BuildContext context) async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    String filePath =
-        "${modelDir.path}/${widget.metaData['name']![_index - 1]}.wav";
-    if (!await File(filePath).exists()) {
-      return;
-    }
-    setState(() {
-      isLoading = true;
-    });
-    final email = pref.getString('email');
-    zipEncoder(modelDir, "${modelDir.parent.path}/$email.zip");
-    bool success = await uploadModelVoiceFileToBucket();
-    if (success) {
-      setState(() {
-        isLoading = false;
-      });
-      if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => RecordroomMainScreen(
-            metaData: widget.metaData,
-            modelIndex: widget.modelIndex,
-          ),
-        ),
-        (route) => false,
-      );
-    }
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context, diaSetState) {
+            return AlertDialog(
+              title: const Text(
+                "준비중...",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: const [
+                    Text("정식 서비스에서 봐요~~"),
+                  ],
+                ),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                  },
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                      const EdgeInsets.all(15),
+                    ),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(Sizes.size10),
+                        side: const BorderSide(color: Colors.green),
+                      ),
+                    ),
+                  ),
+                  child: const Text(
+                    "확인",
+                    style: TextStyle(
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+    // final SharedPreferences pref = await SharedPreferences.getInstance();
+    // String filePath =
+    //     "${modelDir.path}/${widget.metaData['name']![_index - 1]}.wav";
+    // if (!await File(filePath).exists()) {
+    //   return;
+    // }
+    // setState(() {
+    //   isLoading = true;
+    // });
+    // final email = pref.getString('email');
+    // zipEncoder(modelDir, "${modelDir.parent.path}/$email.zip");
+    // bool success = await uploadModelVoiceFileToBucket();
+    // if (success) {
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    //   if (!mounted) return;
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //     MaterialPageRoute(
+    //       builder: (context) => RecordroomMainScreen(
+    //         metaData: widget.metaData,
+    //         modelIndex: widget.modelIndex,
+    //       ),
+    //     ),
+    //     (route) => false,
+    //   );
+    // }
   }
 
   void toHomeScreen(BuildContext context) {

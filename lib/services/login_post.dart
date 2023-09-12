@@ -80,7 +80,8 @@ Future<LoginModel> loginPost(String email, String password) async {
     );
     if (loginModel.success) {
       print("id = $mobileId");
-      print(loginModel.data!.accessToken);
+      print("Access: ${loginModel.data!.accessToken}");
+      print('Refresh: ${loginModel.data!.refreshToken}');
       await createFolder(email);
       pref.setString("accessToken", loginModel.data!.accessToken);
       pref.setString("refreshToken", loginModel.data!.refreshToken);

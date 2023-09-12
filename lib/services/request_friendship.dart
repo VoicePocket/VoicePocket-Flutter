@@ -78,7 +78,7 @@ Future<List<DataG>> get getFriendShipRequest async {
         utf8.decode(response.bodyBytes),
       ),
     );
-    return name;
+    return friend.data;
   }
 }
 

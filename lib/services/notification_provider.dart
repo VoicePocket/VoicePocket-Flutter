@@ -37,7 +37,11 @@ class NotificationProvider extends AsyncNotifier {
         ?.createNotificationChannel(channel);
     var initializationSettingsAndroid =
         const AndroidInitializationSettings('ic_noti');
-    var initializationSettingsIOS = const IOSInitializationSettings();
+    var initializationSettingsIOS = const IOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     await flutterLocalNotificationsPlugin.initialize(
       InitializationSettings(
           android: initializationSettingsAndroid,
