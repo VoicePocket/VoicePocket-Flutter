@@ -8,10 +8,11 @@ import 'package:voicepocket/constants/gaps.dart';
 import 'package:voicepocket/constants/sizes.dart';
 import 'package:voicepocket/screens/authentications/main_screen.dart';
 import 'package:voicepocket/screens/friend/friend_main_screen.dart';
-import 'package:voicepocket/screens/recordroom/recordroom_studio_screen.dart';
 import 'package:voicepocket/screens/voicepocket/voicepocket_list_screen.dart';
 import 'package:voicepocket/services/google_cloud_service.dart';
 import 'package:voicepocket/services/load_csv.dart';
+
+import '../recordroom/recordroom_studio_screen_test.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -27,10 +28,12 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    loadCSV().then((value) => metaData = value);
-    getPublicDownloadFolderPath().then((dir) {
-      final modelDir = Directory("${dir.path}/model");
-      if (modelDir.listSync().isEmpty) {
+    //loadCSV().then((value) => metaData = value);
+    loadRandomCSV().then((value) => metaData = value);
+    getPublicDownloadFolderPath().then((dir) async {
+      // final modelDir = Directory("${dir.path}/model");
+      final modelDir = Directory("${dir.path}/model/test");
+      if (await modelDir.list().isEmpty) {
         return;
       } else {
         for (var file in modelDir.listSync()) {
@@ -53,12 +56,12 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     //   arguments: {'metaData': metaData, 'modelIndex': modelIndex},
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => modelIndex == 315
-            ? RecordroomStudioScreen(
+        builder: (context) => modelIndex == metaData['name']!.length
+            ? RecordroomStudioTestScreen(
                 metaData: metaData,
                 modelIndex: modelIndex - 1,
               )
-            : RecordroomStudioScreen(
+            : RecordroomStudioTestScreen(
                 metaData: metaData,
                 modelIndex: modelIndex,
               ),
@@ -159,7 +162,8 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
                               "내 목소리 만들기",
@@ -169,7 +173,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
-                            const Spacer(),
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,

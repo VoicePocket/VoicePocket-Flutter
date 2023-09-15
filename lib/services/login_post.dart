@@ -33,15 +33,19 @@ Future<String> getMobileId() async {
 Future<void> createFolder(String email) async {
   final routeDir = await getPublicDownloadFolderPath();
   print("default 저장 경로: ${routeDir.path}");
-  final modelDir = Directory('${routeDir.path}/model');
+  final modelHomeDir = Directory('${routeDir.path}/model');
+  final modelTestDir = Directory('${routeDir.path}/model/test');
   final wavHomeDir = Directory('${routeDir.path}/wav');
   final wavDir = Directory('${routeDir.path}/wav/$email');
   var status = await Permission.storage.status;
   if (!status.isGranted) {
     await Permission.storage.request();
   }
-  if (!(await modelDir.exists())) {
-    await modelDir.create();
+  if (!(await modelHomeDir.exists())) {
+    await modelHomeDir.create();
+  }
+  if (!(await modelTestDir.exists())) {
+    await modelTestDir.create();
   }
   if (!(await wavHomeDir.exists())) {
     await wavHomeDir.create();
