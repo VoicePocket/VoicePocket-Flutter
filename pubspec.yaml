@@ -94,6 +94,8 @@ flutter:
     - assets/images/playlist.png
     - assets/images/heart.png
     - assets/images/playpage2.png
+    - assets/images/make.png
+    - assets/images/storage.png
     - assets/credentials/voicepocket-bucketKey.json
     - assets/etc/metadata.csv
 

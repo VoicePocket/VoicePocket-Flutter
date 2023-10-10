@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 
@@ -19,8 +18,7 @@ class SongProgressBar extends StatefulWidget {
       required this.progress,
       required this.buffered,
       required this.total,
-      required this.onSeek
-      })
+      required this.onSeek})
       : super(key: key);
 
   @override

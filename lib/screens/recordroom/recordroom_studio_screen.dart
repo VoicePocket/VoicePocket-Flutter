@@ -479,8 +479,7 @@ class _RecordroomStudioScreenState extends State<RecordroomStudioScreen> {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              Gaps.h10,
+                            children: [
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.25,
                                 padding: const EdgeInsets.symmetric(

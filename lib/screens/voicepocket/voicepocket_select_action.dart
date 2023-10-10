@@ -139,6 +139,11 @@ class _SelectScreenState extends State<SelectScreen> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(Sizes.size16),
+                          image: const DecorationImage(
+                            image: AssetImage("assets/images/make.png"),
+                            fit: BoxFit.contain,
+                            opacity: 0.2,
+                          ),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -176,6 +181,11 @@ class _SelectScreenState extends State<SelectScreen> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(Sizes.size16),
+                          image: const DecorationImage(
+                            image: AssetImage("assets/images/storage.png"),
+                            fit: BoxFit.contain,
+                            opacity: 0.2,
+                          ),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(

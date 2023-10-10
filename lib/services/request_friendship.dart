@@ -35,13 +35,20 @@ Future<FriendShipRequestModel> requestFriendShip(String requestTo) async {
       print(friend.data!.requestTo.name);
     }
     return friend;
+    // } else if (response.statusCode <= -1007 && response.statusCode >= -1005) {
+    //   print(response.statusCode);
+    //   await tokenRefreshPost();
+    //   return FriendShipRequestModel.fromJson(
+    //     json.decode(
+    //       utf8.decode(response.bodyBytes),
+    //     ),
+    //   );
   } else {
-    FriendShipRequestModel friend = FriendShipRequestModel.fromJson(
+    return FriendShipRequestModel.fromJson(
       json.decode(
         utf8.decode(response.bodyBytes),
       ),
     );
-    return friend;
   }
 }
 
@@ -179,6 +186,15 @@ Future<List<DataG>> get getFriendShip async {
       }
     }
     return name;
+    // } else if (response.statusCode == -1006) {
+    //   // Refresh Token Expired
+    //   print(response.statusCode);
+    //   return name;
+    // } else if (response.statusCode == -1007) {
+    //   // Access Token Expired
+    //   print(response.statusCode);
+    //   await tokenRefreshPost();
+    //   return await getFriendShip();
   } else {
     return name;
   }
@@ -213,6 +229,15 @@ Future<List<DataG>> get getSendFriendShip async {
       }
     }
     return name;
+    // } else if (response.statusCode == -1006) {
+    //   // Refresh Token Expired
+    //   print(response.statusCode);
+    //   return name;
+    // } else if (response.statusCode == -1007) {
+    //   // Access Token Expired
+    //   print(response.statusCode);
+    //   await tokenRefreshPost();
+    //   return await getSendFriendShip();
   } else {
     return name;
   }

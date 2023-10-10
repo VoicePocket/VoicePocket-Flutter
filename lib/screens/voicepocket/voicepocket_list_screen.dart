@@ -115,7 +115,7 @@ class _ListScreenState extends State<ListScreen> {
                           elevation: Sizes.size8,
                           shadowColor: Colors.black,
                           margin: const EdgeInsets.only(bottom: Sizes.size10),
-                          color: const Color.fromARGB(255, 120, 104, 199),
+                          color: Theme.of(context).primaryColor,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                               vertical: Sizes.size16,
@@ -127,13 +127,23 @@ class _ListScreenState extends State<ListScreen> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      "$myName (My)",
-                                      style: const TextStyle(
-                                        fontSize: Sizes.size36,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w900,
-                                      ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          myName,
+                                          style: const TextStyle(
+                                            fontSize: Sizes.size36,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                        Gaps.h10,
+                                        const FaIcon(
+                                          FontAwesomeIcons.userTie,
+                                          size: Sizes.size28,
+                                          color: Colors.white,
+                                        )
+                                      ],
                                     ),
                                     Gaps.v16,
                                     Text(
@@ -178,7 +188,7 @@ class _ListScreenState extends State<ListScreen> {
                               shadowColor: Colors.black,
                               margin:
                                   const EdgeInsets.only(bottom: Sizes.size10),
-                              color: Theme.of(context).primaryColor,
+                              color: Colors.grey.shade50,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: Sizes.size16,
@@ -194,18 +204,20 @@ class _ListScreenState extends State<ListScreen> {
                                       children: [
                                         Text(
                                           name,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: Sizes.size36,
-                                            color: Colors.white,
+                                            color:
+                                                Theme.of(context).primaryColor,
                                             fontWeight: FontWeight.w900,
                                           ),
                                         ),
                                         Gaps.v16,
                                         Text(
                                           email,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: Sizes.size20,
-                                            color: Colors.white,
+                                            color:
+                                                Theme.of(context).primaryColor,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
@@ -213,14 +225,14 @@ class _ListScreenState extends State<ListScreen> {
                                     ),
                                     CircleAvatar(
                                       radius: Sizes.size28,
-                                      backgroundColor: Colors.white,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
                                       child: CircleAvatar(
                                         radius: Sizes.size24 + Sizes.size1,
-                                        backgroundColor:
-                                            Colors.deepPurple.shade300,
-                                        child: const Icon(
+                                        backgroundColor: Colors.white,
+                                        child: Icon(
                                           FontAwesomeIcons.arrowRight,
-                                          color: Colors.white,
+                                          color: Theme.of(context).primaryColor,
                                           size: Sizes.size32,
                                         ),
                                       ),

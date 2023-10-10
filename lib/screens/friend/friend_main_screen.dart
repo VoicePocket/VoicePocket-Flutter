@@ -146,9 +146,9 @@ class _FriendMainScreenState extends State<FriendMainScreen> {
                             backgroundColor: Colors.red.shade500,
                           ),
                         );
+                        _friendController.clear();
+                        Navigator.of(context).pop();
                       }
-                      _friendController.clear();
-                      Navigator.of(context).pop();
                     });
                   },
                   style: ButtonStyle(

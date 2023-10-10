@@ -138,6 +138,11 @@ class _SelectScreenFriendState extends State<SelectScreenFriend> {
                         height: MediaQuery.of(context).size.width * 0.5,
                         margin: const EdgeInsets.only(bottom: Sizes.size10),
                         decoration: BoxDecoration(
+                          image: const DecorationImage(
+                            image: AssetImage("assets/images/make.png"),
+                            fit: BoxFit.contain,
+                            opacity: 0.2,
+                          ),
                           color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(Sizes.size16),
                         ),
@@ -177,6 +182,11 @@ class _SelectScreenFriendState extends State<SelectScreenFriend> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(Sizes.size16),
+                          image: const DecorationImage(
+                            image: AssetImage("assets/images/storage.png"),
+                            fit: BoxFit.contain,
+                            opacity: 0.2,
+                          ),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
